@@ -1,151 +1,86 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { SlidersHorizontal } from 'lucide-react';
 
-interface FilterOption {
-  id: string;
-  label: string;
-  value: string;
+interface FilterBarProps {
+  onFilterChange: (filters: {
+    minRating?: number;
+    maxPrice?: number;
+    availableOnly?: boolean;
+  }) => void;
 }
 
-const chargerTypes: FilterOption[] = [
-  { id: 'all', label: 'All', value: 'all' },
-  { id: 'type1', label: 'Type 1', value: 'type1' },
-  { id: 'type2', label: 'Type 2', value: 'type2' },
-  { id: 'ccs', label: 'CCS', value: 'ccs' },
-  { id: 'chademo', label: 'CHAdeMO', value: 'chademo' }
-];
+const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
+  const [filters, setFilters] = React.useState({
+    minRating: 0,
+    maxPrice: 100,
+    availableOnly: false
+  });
 
-const FilterBar: React.FC = () => {
-  const [activeChargerType, setActiveChargerType] = useState<string>('all');
-  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
-  const [selectedPower, setSelectedPower] = useState<string[]>([]);
-  const [showFastCharging, setShowFastCharging] = useState<boolean>(false);
-
-  const handleChargerTypeChange = (value: string) => {
-    setActiveChargerType(value);
-  };
-
-  const toggleFilter = () => {
-    setIsFilterOpen(!isFilterOpen);
+  const handleFilterChange = (key: keyof typeof filters, value: number | boolean) => {
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
   };
 
   return (
-    <div className="mb-4">
-      {/* Mobile Filter Toggle */}
-      <div className="flex justify-between items-center mb-3 md:hidden">
-        <h3 className="text-lg font-medium text-white/90">Chargers</h3>
-        
-        {/* Fix: Wrap Button with motion.div for animations */}
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Button
-            variant="ghost"
-            className="glass-button px-3 py-1 text-sm"
-            onClick={toggleFilter}
-          >
-            Filters
-            <motion.svg
-              className="ml-1 w-4 h-4"
-              animate={{ rotate: isFilterOpen ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+    <motion.div
+      className="bg-white rounded-lg shadow-md p-4"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="w-5 h-5 text-gray-600" />
+          <span className="font-medium">Filters</span>
+        </div>
+
+        <div className="flex-1 flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Min Rating:</label>
+            <select
+              className="border rounded px-2 py-1 text-sm"
+              value={filters.minRating}
+              onChange={(e) => handleFilterChange('minRating', Number(e.target.value))}
             >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </motion.svg>
-          </Button>
-        </motion.div>
-      </div>
-      
-      {/* Filter Content */}
-      <motion.div
-        className={`glass-card p-3 overflow-hidden ${isFilterOpen ? 'block' : 'hidden'} md:block`}
-        initial={{ height: 0, opacity: 0 }}
-        animate={{ 
-          height: isFilterOpen ? 'auto' : 0,
-          opacity: isFilterOpen ? 1 : 0,
-          display: isFilterOpen ? 'block' : 'none'
-        }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="space-y-4">
-          {/* Charger Types */}
-          <div>
-            <h4 className="text-sm font-medium text-white/80 mb-2">Charger Type</h4>
-            <ToggleGroup 
-              type="single" 
-              value={activeChargerType} 
-              onValueChange={(value) => {
-                if (value) handleChargerTypeChange(value);
-              }}
-              className="flex flex-wrap gap-2"
-            >
-              {chargerTypes.map((type) => (
-                <ToggleGroupItem
-                  key={type.id}
-                  value={type.value}
-                  className={`rounded-full glass-button text-xs px-3 py-1 ${
-                    activeChargerType === type.value ? 'bg-ev-blue/30 border-ev-blue text-white' : 'text-white/70'
-                  }`}
-                >
-                  {type.label}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
+              <option value="0">Any</option>
+              <option value="3">3+ Stars</option>
+              <option value="4">4+ Stars</option>
+              <option value="4.5">4.5+ Stars</option>
+            </select>
           </div>
-          
-          {/* Power Range */}
-          <div>
-            <h4 className="text-sm font-medium text-white/80 mb-2">Power Range</h4>
-            <ToggleGroup
-              type="multiple"
-              value={selectedPower}
-              onValueChange={setSelectedPower}
-              className="flex flex-wrap gap-2"
+
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Max Price:</label>
+            <select
+              className="border rounded px-2 py-1 text-sm"
+              value={filters.maxPrice}
+              onChange={(e) => handleFilterChange('maxPrice', Number(e.target.value))}
             >
-              <ToggleGroupItem
-                value="slow"
-                className={`rounded-full glass-button text-xs px-3 py-1 ${
-                  selectedPower.includes('slow') ? 'bg-ev-blue/30 border-ev-blue text-white' : 'text-white/70'
-                }`}
-              >
-                Slow (&lt;= 7kW)
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="medium"
-                className={`rounded-full glass-button text-xs px-3 py-1 ${
-                  selectedPower.includes('medium') ? 'bg-ev-blue/30 border-ev-blue text-white' : 'text-white/70'
-                }`}
-              >
-                Medium (&lt;= 22kW)
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="fast"
-                className={`rounded-full glass-button text-xs px-3 py-1 ${
-                  selectedPower.includes('fast') ? 'bg-ev-blue/30 border-ev-blue text-white' : 'text-white/70'
-                }`}
-              >
-                Fast (&lt;= 50kW)
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="superfast"
-                className={`rounded-full glass-button text-xs px-3 py-1 ${
-                  selectedPower.includes('superfast') ? 'bg-ev-blue/30 border-ev-blue text-white' : 'text-white/70'
-                }`}
-              >
-                Ultra (&gt; 50kW)
-              </ToggleGroupItem>
-            </ToggleGroup>
+              <option value="100">Any</option>
+              <option value="50">₹50/kWh</option>
+              <option value="30">₹30/kWh</option>
+              <option value="20">₹20/kWh</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Availability:</label>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={filters.availableOnly}
+                onChange={(e) => handleFilterChange('availableOnly', e.target.checked)}
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              <span className="ml-2 text-sm text-gray-600">Available Only</span>
+            </label>
           </div>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 };
 

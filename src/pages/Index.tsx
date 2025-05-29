@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar';
@@ -8,10 +7,12 @@ import StationList from '../components/stations/StationList';
 import BookingForm from '../components/booking/BookingForm';
 import SearchBar from '../components/ui/SearchBar';
 import HeroSection from '../components/ui/HeroSection';
+import MapComponent from '../components/Map';
 
 const Index = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [showMap, setShowMap] = useState(true);
   
   // Handle scroll events
   useEffect(() => {
@@ -28,6 +29,10 @@ const Index = () => {
   // This would be triggered when a station is selected
   const toggleBooking = () => {
     setIsBookingOpen(!isBookingOpen);
+  };
+
+  const toggleView = () => {
+    setShowMap(!showMap);
   };
 
   // Animation variants for staggered children
@@ -71,26 +76,50 @@ const Index = () => {
         </motion.div>
         
         <motion.div 
-          className="mb-6 flex items-center justify-center"
+          className="mb-6 flex items-center justify-center gap-4"
           variants={itemVariants}
         >
           <LocationButton />
+          <motion.button
+            className="glass-button py-2 px-4"
+            onClick={toggleView}
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 0 20px rgba(30, 174, 219, 0.6)"
+            }}
+          >
+            {showMap ? "Show List" : "Show Map"}
+          </motion.button>
         </motion.div>
         
         <motion.div 
           className="grid grid-cols-1 gap-6"
           variants={itemVariants}
         >
-          <motion.div 
-            className="glass-card p-5 h-full"
-            whileHover={{ 
-              scale: 1.02,
-              boxShadow: "0 0 25px rgba(30, 174, 219, 0.5)",
-              transition: { type: "spring", stiffness: 400, damping: 10 }
-            }}
-          >
-            <StationList />
-          </motion.div>
+          {showMap ? (
+            <motion.div 
+              className="glass-card p-5 h-[600px]"
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 0 25px rgba(30, 174, 219, 0.5)",
+                transition: { type: "spring", stiffness: 400, damping: 10 }
+              }}
+            >
+              <MapComponent />
+            </motion.div>
+          ) : (
+            <motion.div 
+              className="glass-card p-5 h-full"
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 0 25px rgba(30, 174, 219, 0.5)",
+                transition: { type: "spring", stiffness: 400, damping: 10 }
+              }}
+            >
+              <StationList />
+            </motion.div>
+          )}
           
           {/* Mobile view station toggle button */}
           <motion.div 

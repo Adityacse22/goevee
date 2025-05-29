@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, Zap, CreditCard, Check, X, Car, Battery } from 'lucide-react';
@@ -150,26 +149,24 @@ const BookingForm: React.FC<BookingFormProps> = ({
     );
   }
 
-  const renderStepIndicator = () => (
-    <div className="flex items-center justify-center mb-6">
-      {[1, 2].map((step) => (
-        <React.Fragment key={step}>
-          <div 
-            className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              bookingStep >= step ? 'bg-ev-blue text-white' : 'bg-white/10 text-white/50'
-            }`}
-          >
-            {step}
+  const renderStepIndicator = () => {
+    return (
+      <div className="flex justify-between mb-8">
+        {steps.map((step, index) => (
+          <div key={step.id} className="flex flex-col items-center">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                currentStep >= index ? 'bg-blue-500 text-white' : 'bg-gray-200'
+              }`}
+            >
+              {index + 1}
+            </div>
+            <span className="text-sm mt-2">{step.label}</span>
           </div>
-          {step < 2 && (
-            <div className={`h-[2px] w-10 ${
-              bookingStep > step ? 'bg-ev-blue' : 'bg-white/10'
-            }`}></div>
-          )}
-        </React.Fragment>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  };
 
   const formVariants = {
     hidden: { opacity: 0, y: 20 },
