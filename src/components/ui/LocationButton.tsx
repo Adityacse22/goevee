@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin } from 'lucide-react';
@@ -52,7 +51,7 @@ const LocationButton: React.FC = () => {
         setShowRipple(true);
         setIsLoading(false);
         
-        // Store location in localStorage for persistence
+        // Store location in localStorage in the format expected by StationList
         localStorage.setItem('userLocation', JSON.stringify({ latitude, longitude }));
         
         toast.success("Location successfully detected!");
