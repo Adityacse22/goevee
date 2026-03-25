@@ -22,13 +22,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
+    const initAuth = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.warn('Auth error (non-fatal, map will still work):', error);
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+        setUser(data.session?.user ?? null);
+        if (data.session?.user) {
+          fetchProfile(data.session.user.id);
+        }
+      } catch (e) {
+        console.warn('Supabase unreachable:', e);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    };
+    
+    initAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {

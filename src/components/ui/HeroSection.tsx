@@ -40,6 +40,8 @@ const HeroSection: React.FC = () => {
       transition={{ duration: 1 }}
     >
       {/* Animated background layers with parallax effect */}
+      {/* Removed the broken background image elements */}
+      {/*
       <motion.div 
         className="absolute inset-0 z-0"
         style={{
@@ -48,7 +50,6 @@ const HeroSection: React.FC = () => {
         }}
       />
       
-      {/* Distant city skyline */}
       <motion.div 
         className="absolute bottom-0 left-0 right-0 h-[40vh] z-0 bg-cover bg-bottom opacity-20"
         style={{ 
@@ -57,7 +58,6 @@ const HeroSection: React.FC = () => {
         }}
       />
       
-      {/* Charging station silhouette */}
       <motion.div
         className="absolute bottom-0 left-0 right-0 h-[25vh] z-1 bg-contain bg-bottom bg-no-repeat opacity-40"
         style={{ 
@@ -65,8 +65,9 @@ const HeroSection: React.FC = () => {
           transform: `translateY(${scrollY * 0.05}px) translateX(${mousePosition.x * -30}px)`
         }}
       />
+      */}
       
-      {/* Light beams */}
+      {/* Light beams (optional - keep or remove as desired) */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {[...Array(5)].map((_, i) => (
           <motion.div
@@ -90,7 +91,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Foreground content */}
-      <div className="relative z-10 text-center px-4 max-w-5xl">
+      <div className="relative z-10 text-center px-4 max-w-5xl flex flex-col items-center">
         {/* Staggered headline animation */}
         <div className="overflow-hidden mb-6">
           <motion.h1 
@@ -178,9 +179,9 @@ const HeroSection: React.FC = () => {
           </motion.button>
         </Link>
 
-        {/* Scroll indicator */}
+        {/* Scroll indicator - positioned below the button */}
         <motion.div 
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+          className="mt-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 1 }}
@@ -198,10 +199,9 @@ const HeroSection: React.FC = () => {
               className="w-1 h-3 bg-white/70 rounded-full"
               animate={{ 
                 y: [0, 6, 0],
-                opacity: [0.7, 0.2, 0.7]
               }}
-              transition={{ 
-                duration: 2,
+              transition={{
+                duration: 1.5,
                 repeat: Infinity,
                 repeatType: "loop"
               }}

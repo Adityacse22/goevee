@@ -9,9 +9,19 @@ import { Link } from 'react-router-dom';
 
 interface NavbarProps {
   hasScrolled?: boolean;
+  searchQuery?: string;
+  onSearchChange?: (val: string) => void;
+  onSearchSubmit?: () => void;
+  isSearching?: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ hasScrolled = false }) => {
+const Navbar: React.FC<NavbarProps> = ({ 
+  hasScrolled = false,
+  searchQuery,
+  onSearchChange,
+  onSearchSubmit,
+  isSearching
+}) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -123,7 +133,12 @@ const Navbar: React.FC<NavbarProps> = ({ hasScrolled = false }) => {
         className="hidden md:block flex-grow max-w-md mx-4"
         variants={itemVariants}
       >
-        <SearchBar />
+        <SearchBar 
+          value={searchQuery}
+          onChange={onSearchChange}
+          onSubmit={onSearchSubmit}
+          isLoading={isSearching}
+        />
       </motion.div>
       
       <motion.div 

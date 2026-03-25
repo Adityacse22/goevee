@@ -3,16 +3,36 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import LocationButton from '../components/ui/LocationButton';
-import StationList from '../components/stations/StationList';
-import BookingForm from '../components/booking/BookingForm';
 import SearchBar from '../components/ui/SearchBar';
 import HeroSection from '../components/ui/HeroSection';
 import MapComponent from '../components/Map';
+import StationPanel from '../components/stations/StationPanel';
+import BookingModal from '../components/booking/BookingModal';
+import { mockStations, MockStation } from '@/data/mockStations';
+import { BookingDetails } from '../components/booking/BookingModal';
+import toast from 'react-hot-toast';
+import { MapErrorBoundary } from '../components/MapErrorBoundary';
+import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [selectedStation, setSelectedStation] = useState<MockStation | any>(null);
+  const [highlightedStationId, setHighlightedStationId] = useState<string | null>(null);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [showMap, setShowMap] = useState(true);
+  const { user, loading } = useAuth();
+  
+  useEffect(() => {
+    console.log('5. Supabase session loading:', loading);
+    console.log('6. Supabase user:', user);
+    console.log('7. isLoading blocks map render:', 'no, Map is safely decoupled');
+  }, [loading, user]);
+
+  // Live Search States
+  const [globalSearchQuery, setGlobalSearchQuery] = useState('');
+  const [triggerSearch, setTriggerSearch] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
+  const [liveStations, setLiveStations] = useState<any[]>([]);
   
   // Handle scroll events
   useEffect(() => {
@@ -26,13 +46,34 @@ const Index = () => {
     };
   }, []);
   
-  // This would be triggered when a station is selected
-  const toggleBooking = () => {
-    setIsBookingOpen(!isBookingOpen);
+  const togglePanel = () => {
+    setIsPanelOpen(!isPanelOpen);
   };
 
-  const toggleView = () => {
-    setShowMap(!showMap);
+  const handleSearchSubmit = () => {
+    if (globalSearchQuery.trim()) {
+      setTriggerSearch(Date.now());
+      setIsPanelOpen(true); // Auto-open panel on search
+    }
+  };
+
+  const handleBookStation = (station: any) => {
+    setSelectedStation(station);
+    setIsBookingOpen(true);
+  };
+
+  const handleConfirmBooking = (booking: BookingDetails) => {
+    toast.success(`Booking confirmed at ${booking.stationName}! 🎉`);
+    setIsBookingOpen(false);
+    setSelectedStation(null);
+  };
+
+  const handleStationHover = (stationId: string | null) => {
+    setHighlightedStationId(stationId);
+  };
+
+  const handleStationClick = (station: any) => {
+    setHighlightedStationId(station.id);
   };
 
   // Animation variants for staggered children
@@ -60,7 +101,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full pb-0 overflow-x-hidden">
-      <Navbar hasScrolled={hasScrolled} />
+      <Navbar 
+        hasScrolled={hasScrolled} 
+        searchQuery={globalSearchQuery}
+        onSearchChange={setGlobalSearchQuery}
+        onSearchSubmit={handleSearchSubmit}
+        isSearching={isSearching}
+      />
       
       {/* Hero Section */}
       <HeroSection />
@@ -72,7 +119,12 @@ const Index = () => {
         animate="visible"
       >
         <motion.div className="mb-6 md:hidden" variants={itemVariants}>
-          <SearchBar />
+          <SearchBar 
+            value={globalSearchQuery}
+            onChange={setGlobalSearchQuery}
+            onSubmit={handleSearchSubmit}
+            isLoading={isSearching}
+          />
         </motion.div>
         
         <motion.div 
@@ -82,14 +134,14 @@ const Index = () => {
           <LocationButton />
           <motion.button
             className="glass-button py-2 px-4"
-            onClick={toggleView}
+            onClick={togglePanel}
             whileTap={{ scale: 0.95 }}
             whileHover={{ 
               scale: 1.05,
               boxShadow: "0 0 20px rgba(30, 174, 219, 0.6)"
             }}
           >
-            {showMap ? "Show List" : "Show Map"}
+            {isPanelOpen ? "Hide List" : "Show List"}
           </motion.button>
         </motion.div>
         
@@ -97,72 +149,54 @@ const Index = () => {
           className="grid grid-cols-1 gap-6"
           variants={itemVariants}
         >
-          {showMap ? (
-            <motion.div 
-              className="glass-card p-5 h-[600px]"
-              whileHover={{ 
-                scale: 1.02,
-                boxShadow: "0 0 25px rgba(30, 174, 219, 0.5)",
-                transition: { type: "spring", stiffness: 400, damping: 10 }
-              }}
-            >
-              <MapComponent />
-            </motion.div>
-          ) : (
-            <motion.div 
-              className="glass-card p-5 h-full"
-              whileHover={{ 
-                scale: 1.02,
-                boxShadow: "0 0 25px rgba(30, 174, 219, 0.5)",
-                transition: { type: "spring", stiffness: 400, damping: 10 }
-              }}
-            >
-              <StationList />
-            </motion.div>
-          )}
-          
-          {/* Mobile view station toggle button */}
+          {/* Map is always visible and isolated from Auth failures */}
           <motion.div 
-            className="md:hidden mt-4 flex justify-center"
-            variants={itemVariants}
+            className="glass-card p-5 h-[600px]"
+            whileHover={{ 
+              scale: 1.02,
+              boxShadow: "0 0 25px rgba(30, 174, 219, 0.5)",
+              transition: { type: "spring", stiffness: 400, damping: 10 }
+            }}
           >
-            <motion.button 
-              className="glass-button py-2 px-4 flex items-center gap-2"
-              onClick={toggleBooking}
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 0 20px rgba(30, 174, 219, 0.6)"
-              }}
-            >
-              <span>{isBookingOpen ? "View Stations" : "Book Station"}</span>
-              <motion.svg 
-                className="w-5 h-5" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-                animate={{ rotate: isBookingOpen ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </motion.svg>
-            </motion.button>
-          </motion.div>
-          
-          {/* Mobile view booking (conditionally rendered) */}
-          <motion.div 
-            className={`md:hidden mt-6 ${isBookingOpen ? 'block' : 'hidden'}`}
-            variants={itemVariants}
-            initial="hidden"
-            animate={isBookingOpen ? "visible" : "hidden"}
-          >
-            {isBookingOpen && <BookingForm />}
+            <MapErrorBoundary>
+              <MapComponent 
+                externalSearchQuery={globalSearchQuery}
+                triggerSearch={triggerSearch}
+                onStationsUpdate={setLiveStations}
+                onSearchingChange={setIsSearching}
+                onHighlightedStationChange={setHighlightedStationId}
+              />
+            </MapErrorBoundary>
           </motion.div>
         </motion.div>
       </motion.main>
 
       {/* Footer */}
       <Footer />
+
+      {/* Station Side Panel — overlays on top of map */}
+      <StationPanel
+        isOpen={isPanelOpen}
+        onClose={() => setIsPanelOpen(false)}
+        stations={liveStations}
+        onBookStation={handleBookStation}
+        onStationHover={handleStationHover}
+        onStationClick={handleStationClick}
+        highlightedStationId={highlightedStationId}
+      />
+
+      {/* Booking Modal - Only rendered if user exists, otherwise login required logic applied in StationPanel */}
+      {user && (
+        <BookingModal
+          isOpen={isBookingOpen}
+          station={selectedStation}
+          onClose={() => {
+            setIsBookingOpen(false);
+            setSelectedStation(null);
+          }}
+          onConfirm={handleConfirmBooking}
+        />
+      )}
     </div>
   );
 };

@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root { height: 100%; margin: 0; }
+
 body {
   @apply bg-black text-white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -181,4 +183,246 @@ button:not(:disabled) {
 .DialogOverlay,
 .DialogContent {
   pointer-events: auto !important;
+}
+
+/* ============================================
+   Station Side Panel
+   ============================================ */
+
+.station-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  height: 100vh;
+  background: rgba(15, 15, 15, 0.97);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 640px) {
+  .station-panel {
+    width: 100%;
+  }
+}
+
+.station-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.station-panel-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.station-panel-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(30, 174, 219, 0.3) transparent;
+}
+
+.station-panel-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.station-panel-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.station-panel-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1EAEdb, #64ffda);
+  border-radius: 10px;
+}
+
+/* Station Card */
+.station-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.station-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(30, 174, 219, 0.25);
+  box-shadow: 0 0 20px rgba(30, 174, 219, 0.08);
+}
+
+.station-card-highlighted {
+  background: rgba(30, 174, 219, 0.08) !important;
+  border-color: rgba(30, 174, 219, 0.4) !important;
+  box-shadow: 0 0 24px rgba(30, 174, 219, 0.15) !important;
+}
+
+/* Status Badges */
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.status-available {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-busy {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Connector Badges */
+.connector-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.connector-available {
+  background: rgba(30, 174, 219, 0.1);
+  color: rgba(30, 174, 219, 0.8);
+  border: 1px solid rgba(30, 174, 219, 0.15);
+}
+
+.connector-unavailable {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  text-decoration: line-through;
+}
+
+/* Book Now Button */
+.book-now-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #1EAEdb, #64ffda);
+  color: #0f0f0f;
+  transition: all 0.2s ease;
+}
+
+.book-now-btn:hover {
+  box-shadow: 0 4px 20px rgba(30, 174, 219, 0.35);
+}
+
+.book-now-btn:disabled {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.25);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ============================================
+   Booking Modal
+   ============================================ */
+
+.booking-modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: 440px;
+  max-width: 95vw;
+  height: fit-content;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: rgba(20, 20, 20, 0.98);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 28px;
+  z-index: 70;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+
+.booking-modal::-webkit-scrollbar {
+  width: 4px;
+}
+
+.booking-modal::-webkit-scrollbar-thumb {
+  background: rgba(30, 174, 219, 0.3);
+  border-radius: 4px;
+}
+
+.booking-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.booking-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.booking-input:focus {
+  border-color: rgba(30, 174, 219, 0.5);
+}
+
+/* Time Slot Buttons */
+.time-slot-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-slot-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.time-slot-active {
+  background: rgba(30, 174, 219, 0.15) !important;
+  border-color: rgba(30, 174, 219, 0.4) !important;
+  color: #1EAEdb !important;
 }

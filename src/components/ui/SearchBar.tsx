@@ -3,13 +3,31 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 
-const SearchBar: React.FC = () => {
+interface SearchBarProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  onSubmit?: () => void;
+  isLoading?: boolean;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ 
+  value = '', 
+  onChange, 
+  onSubmit,
+  isLoading = false
+}) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value);
+  };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSubmit?.();
+    }
+  };
 
   return (
     <motion.div 
@@ -22,11 +40,13 @@ const SearchBar: React.FC = () => {
       <motion.input
         type="text"
         placeholder="Search for charging stations..."
-        className="glass-input w-full pr-10 pl-10"
+        className="glass-input w-full pr-10"
+        style={{ paddingLeft: '40px' }}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onChange={handleChange}
-        value={searchValue}
+        onKeyDown={handleKeyDown}
+        value={value}
         animate={{ 
           boxShadow: isFocused 
             ? "0 0 0 2px rgba(30, 174, 219, 0.5), 0 0 15px rgba(30, 174, 219, 0.3)" 
@@ -44,26 +64,38 @@ const SearchBar: React.FC = () => {
         }}
         transition={{ type: "spring", stiffness: 400, damping: 15 }}
       >
-        <Search className="h-5 w-5" />
+        {isLoading ? (
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          >
+            <svg className="h-4 w-4 text-ev-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </motion.div>
+        ) : (
+          <Search className="h-5 w-5" />
+        )}
       </motion.div>
       
       {/* Animated line under search input */}
       <motion.div
         className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-ev-blue to-ev-green rounded-full"
         initial={{ width: "0%" }}
-        animate={{ width: isFocused ? "100%" : searchValue ? "100%" : "0%" }}
+        animate={{ width: isFocused ? "100%" : value ? "100%" : "0%" }}
         transition={{ type: "tween", duration: 0.3 }}
       />
       
       {/* Clear button appears when there is text */}
-      {searchValue && (
+      {value && (
         <motion.button
           className="absolute inset-y-0 right-3 flex items-center"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
           transition={{ duration: 0.2 }}
-          onClick={() => setSearchValue('')}
+          onClick={() => onChange?.('')}
         >
           <motion.div
             className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center"
