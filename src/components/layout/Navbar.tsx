@@ -133,24 +133,12 @@ const Navbar: React.FC<NavbarProps> = ({
         className="hidden md:flex items-center gap-4 flex-grow max-w-md mx-4"
         variants={itemVariants}
       >
-<<<<<<< HEAD
         <SearchBar 
           value={searchQuery}
           onChange={onSearchChange}
           onSubmit={onSearchSubmit}
           isLoading={isSearching}
         />
-=======
-        <SearchBar />
-        <Link to="/booking">
-          <Button 
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 whitespace-nowrap"
-            size="sm"
-          >
-            Book Now
-          </Button>
-        </Link>
->>>>>>> origin/main
       </motion.div>
       
       <motion.div 
