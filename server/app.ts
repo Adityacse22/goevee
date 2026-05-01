@@ -14,11 +14,11 @@ app.use(cors({
 
 app.use(express.json());
 
-app.get('/health', (_req, res) => {
+app.get(['/health', '/api/health'], (_req, res) => {
   res.json({
     status: 'ok',
-    api: 'legacy-root',
-    google_maps_key_set: Boolean(GOOGLE_MAPS_API_KEY.trim()),
+    api: 'serverless-ready',
+    google_maps_key_set: Boolean(GOOGLE_MAPS_API_KEY?.trim()),
     booking_buffer_minutes: BOOKING_BUFFER_MINUTES,
   });
 });
