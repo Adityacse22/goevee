@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const HeroSection: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
+  const navigate = useNavigate();
   
   // Track scroll position
   useEffect(() => {
@@ -81,7 +82,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Foreground content */}
-      <div className="relative z-10 text-center px-4 max-w-5xl flex flex-col items-center mt-24">
+      <div className="relative z-30 text-center px-4 max-w-5xl flex flex-col items-center mt-24">
         {/* Staggered headline animation */}
         <div className="overflow-hidden mb-6">
           <motion.h1 
@@ -120,57 +121,56 @@ const HeroSection: React.FC = () => {
           Discover and book the nearest charging stations for your electric vehicle with our innovative platform.
         </motion.p>
         {/* Animated CTA button */}
-        <Link to="/benefits">
-          <motion.button
-            className="relative px-8 py-3 text-lg font-medium rounded-full bg-gradient-to-r from-ev-blue to-ev-green text-white overflow-hidden group"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ 
-              delay: 1.5,
-              type: "spring",
-              stiffness: 400,
-              damping: 10
+        <motion.button
+          onClick={() => navigate('/ev-charger-station')}
+          className="relative px-8 py-3 text-lg font-medium rounded-full bg-gradient-to-r from-ev-blue to-ev-green text-white overflow-hidden group"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ 
+            delay: 1.5,
+            type: "spring",
+            stiffness: 400,
+            damping: 10
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          {/* Inner glow effect */}
+          <motion.span 
+            className="absolute inset-0 bg-white opacity-0 rounded-full"
+            animate={{ 
+              opacity: [0, 0.2, 0],
+              scale: [1, 1.05, 1],
             }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {/* Inner glow effect */}
-            <motion.span 
-              className="absolute inset-0 bg-white opacity-0 rounded-full"
+            transition={{ 
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "loop"
+            }}
+          />
+          
+          {/* Button content */}
+          <span className="relative z-10 flex items-center gap-2">
+            Locate Chargers
+            <motion.span
               animate={{ 
-                opacity: [0, 0.2, 0],
-                scale: [1, 1.05, 1],
+                y: [0, -5, 0],
               }}
               transition={{ 
-                duration: 2,
+                duration: 1.5,
                 repeat: Infinity,
                 repeatType: "loop"
               }}
-            />
-            
-            {/* Button content */}
-            <span className="relative z-10 flex items-center gap-2">
-              Locate Chargers
-              <motion.span
-                animate={{ 
-                  y: [0, -5, 0],
-                }}
-                transition={{ 
-                  duration: 1.5,
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
-              >
-                <ChevronDown className="w-5 h-5" />
-              </motion.span>
-            </span>
-            
-            {/* Hover effect */}
-            <motion.span 
-              className="absolute inset-0 bg-gradient-to-r from-ev-green to-ev-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            />
-          </motion.button>
-        </Link>
+            >
+              <ChevronDown className="w-5 h-5" />
+            </motion.span>
+          </span>
+          
+          {/* Hover effect */}
+          <motion.span 
+            className="absolute inset-0 bg-gradient-to-r from-ev-green to-ev-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          />
+        </motion.button>
       </div>
 
       <motion.div 

@@ -92,47 +92,14 @@ const Navbar: React.FC<NavbarProps> = ({
       animate="visible"
       variants={navVariants}
     >
-      <motion.div className="flex items-center" variants={itemVariants}>
-        <motion.div 
-          className="mr-3"
-          whileHover={{ 
-            rotate: [0, -10, 10, -10, 0],
-            transition: { duration: 0.5 }
-          }}
-        >
-          <motion.svg 
-            className="w-8 h-8" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1, rotate: 360 }}
-            transition={{ 
-              type: "spring", 
-              stiffness: 260, 
-              damping: 20,
-              delay: 0.2
-            }}
-          >
-            <motion.path 
-              d="M8 3V8M16 3V8M7 16H9M15 16H17M11 11H13M11 15H13M7 12H9M15 12H17M5 21H19C20.1046 21 21 20.1046 21 19V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V19C3 20.1046 3.89543 21 5 21Z" 
-              className="stroke-ev-blue" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            />
-          </motion.svg>
-        </motion.div>
+      <Link to="/" className="flex items-center">
         <motion.h1 
-          className="text-lg font-bold gradient-text hidden sm:block"
+          className="text-2xl font-bold gradient-text"
           variants={itemVariants}
         >
           Evee
         </motion.h1>
-      </motion.div>
+      </Link>
       
       <motion.div 
         className="hidden md:flex items-center gap-4 flex-grow max-w-md mx-4"
@@ -259,9 +226,9 @@ const Navbar: React.FC<NavbarProps> = ({
               <Sun className="w-5 h-5 opacity-70" />
               <span className="text-sm">Home / Map</span>
             </Link>
-            <Link to="/search" onClick={toggleMenu} className="flex items-center gap-3 text-white hover:text-ev-blue transition-colors p-3 rounded-xl hover:bg-white/5">
+            <Link to="/ev-charger-station" onClick={toggleMenu} className="flex items-center gap-3 text-white hover:text-ev-blue transition-colors p-3 rounded-xl hover:bg-white/5">
               <motion.svg className="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></motion.svg>
-              <span className="text-sm">Find Chargers</span>
+              <span className="text-sm">Locate Chargers</span>
             </Link>
           </div>
 

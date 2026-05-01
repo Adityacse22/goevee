@@ -127,12 +127,14 @@ export async function fetchNearbyStations(
     stations: Array<ApiStation | { station: ApiStation; distanceKm: string | number }>;
   }>(`/stations/nearby?${params.toString()}`);
 
+  if (!response?.stations) return [];
+
   return response.stations.map((item) => {
-    if ('station' in item) {
+    if (item && typeof item === 'object' && 'station' in item) {
       return mapStationToEVStation(item.station, numberFrom(item.distanceKm));
     }
 
-    return mapStationToEVStation(item);
+    return mapStationToEVStation(item as ApiStation);
   });
 }
 

@@ -13,6 +13,7 @@ interface MapComponentProps {
   onSearchingChange?: (isSearching: boolean) => void;
   onHighlightedStationChange?: (id: string | null) => void;
   onBookStation?: (station: EVStation) => void;
+  showControls?: boolean;
 }
 
 const MapComponent = ({
@@ -20,6 +21,7 @@ const MapComponent = ({
   onSearchingChange,
   onHighlightedStationChange,
   onBookStation,
+  showControls = true,
 }: MapComponentProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<GoogleMap | null>(null);
@@ -241,38 +243,40 @@ const MapComponent = ({
 
   return (
     <div className="relative h-full w-full">
-      <div className="absolute right-4 top-4 z-10 flex w-full max-w-[200px] flex-col gap-3">
-        <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3 shadow-lg backdrop-blur-xl">
-          <label className="block text-sm font-medium text-white/80">
-            Search Radius ({searchRadius / 1000}km)
-          </label>
-          <select
-            value={searchRadius}
-            onChange={(event) => {
-              const nextRadius = Number(event.target.value);
-              setSearchRadius(nextRadius);
-              if (latestCoordsRef.current) {
-                void loadEVChargers(latestCoordsRef.current.lat, latestCoordsRef.current.lng);
-              }
-            }}
-            className="mt-2 w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white"
-          >
-            {RADIUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+      {showControls && (
+        <div className="absolute right-4 top-4 z-10 flex w-full max-w-[200px] flex-col gap-3">
+          <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3 shadow-lg backdrop-blur-xl">
+            <label className="block text-sm font-medium text-white/80">
+              Search Radius ({searchRadius / 1000}km)
+            </label>
+            <select
+              value={searchRadius}
+              onChange={(event) => {
+                const nextRadius = Number(event.target.value);
+                setSearchRadius(nextRadius);
+                if (latestCoordsRef.current) {
+                  void loadEVChargers(latestCoordsRef.current.lat, latestCoordsRef.current.lng);
+                }
+              }}
+              className="mt-2 w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white"
+            >
+              {RADIUS_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <button
-          onClick={requestCurrentLocation}
-          disabled={locationStatus === 'loading' || sdkStatus !== 'ready'}
-          className="rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm font-medium text-white shadow-lg backdrop-blur-xl transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {locationStatus === 'loading' ? 'Detecting...' : 'Find My Location'}
-        </button>
-      </div>
+          <button
+            onClick={requestCurrentLocation}
+            disabled={locationStatus === 'loading' || sdkStatus !== 'ready'}
+            className="rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm font-medium text-white shadow-lg backdrop-blur-xl transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {locationStatus === 'loading' ? 'Detecting...' : 'Find My Location'}
+          </button>
+        </div>
+      )}
 
       {(isFetching || isSearching) && sdkStatus === 'ready' && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm">

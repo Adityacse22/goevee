@@ -58,12 +58,7 @@ const Footer: React.FC = () => {
           {/* Company & App Info */}
           <motion.div className="lg:col-span-2" variants={itemVariants}>
             <Link to="/" className="inline-flex items-center mb-4">
-              <div className="mr-3">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 3V8M16 3V8M7 16H9M15 16H17M11 11H13M11 15H13M7 12H9M15 12H17M5 21H19C20.1046 21 21 20.1046 21 19V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V19C3 20.1046 3.89543 21 5 21Z" className="stroke-ev-blue" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold gradient-text">Evee</h2>
+              <h2 className="text-3xl font-bold gradient-text">Evee</h2>
             </Link>
             
             <p className="text-white/70 mb-6">Empowering your electric journey with reliable charging stations and seamless booking experience.</p>
@@ -115,7 +110,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {[
                 { name: "Home", href: "/" },
-                { name: "Station Finder", href: "/stations" },
+                { name: "Locate Chargers", href: "/ev-charger-station" },
                 { name: "Booking", href: "/booking" },
                 { name: "Pricing", href: "/pricing" },
                 { name: "Dashboard", href: "/dashboard" },

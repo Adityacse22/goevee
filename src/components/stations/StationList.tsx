@@ -22,6 +22,7 @@ interface UIStation {
   available: boolean;
   latitude: number;
   longitude: number;
+  connectors: Array<{ power_output: number; connector_type: string }>;
 }
 
 interface Location {
@@ -56,6 +57,7 @@ const StationList: React.FC<StationListProps> = ({ onStationSelect }) => {
         available: station.available !== false,
         latitude: station.latitude,
         longitude: station.longitude,
+        connectors: station.connectors || [],
       }))
       .filter(station => {
         if (station.latitude == null || station.longitude == null) return false;

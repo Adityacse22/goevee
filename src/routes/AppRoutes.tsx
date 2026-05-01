@@ -18,10 +18,12 @@ import OperatorDashboard from '@/pages/OperatorDashboard';
 import AdminDashboard from '@/pages/AdminDashboard';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { BookingHistory, VehicleProfile, Settings, Help, About } from '@/pages/Placeholders';
+import EvChargerStation from '@/pages/EvChargerStation';
 
 const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<Index />} />
+    <Route path="/ev-charger-station" element={<EvChargerStation />} />
     <Route path="/search" element={<NearbyStations />} />
     <Route path="/stations" element={<NearbyStations />} />
     <Route path="/stations/:stationId" element={<StationDetails />} />
