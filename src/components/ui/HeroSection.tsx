@@ -4,33 +4,23 @@ import { ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const HeroSection: React.FC = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
   
-  // Track mouse position for parallax effect
+  // Track scroll position
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: e.clientX / window.innerWidth - 0.5,
-        y: e.clientY / window.innerHeight - 0.5
-      });
-    };
-    
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
     
-    window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll);
     
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   // Staggered text animation
-  const headlineWords = "Future of EV Charging".split(" ");
+  const headlineWords = "Building India's One-Stop Solution for Ev Vehicles".split(" ");
   
   return (
     <motion.div 
@@ -75,7 +65,7 @@ const HeroSection: React.FC = () => {
             className="absolute w-[1px] h-[80vh] bg-gradient-to-b from-transparent via-ev-blue to-transparent opacity-30"
             style={{ 
               left: `${15 + i * 20}%`,
-              transform: `rotate(${5 - i * 2}deg) translateX(${mousePosition.x * 20}px)`
+              transform: `rotate(${5 - i * 2}deg)`
             }}
             animate={{
               height: ["70vh", "80vh", "70vh"],
@@ -91,29 +81,33 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Foreground content */}
-      <div className="relative z-10 text-center px-4 max-w-5xl flex flex-col items-center">
+      <div className="relative z-10 text-center px-4 max-w-5xl flex flex-col items-center mt-24">
         {/* Staggered headline animation */}
         <div className="overflow-hidden mb-6">
           <motion.h1 
-            className="text-4xl md:text-6xl lg:text-7xl font-bold gradient-text flex flex-wrap justify-center gap-x-4"
+            className="text-4xl md:text-5xl lg:text-7xl font-bold text-white flex flex-wrap justify-center gap-x-4 gap-y-2"
             initial="hidden"
             animate="visible"
           >
-            {headlineWords.map((word, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ 
-                  duration: 0.8, 
-                  delay: 0.5 + i * 0.1,
-                  type: "spring",
-                  damping: 12
-                }}
-              >
-                {word}
-              </motion.span>
-            ))}
+            {headlineWords.map((word, i) => {
+              const isHighlight = word === "One-Stop" || word === "Solution";
+              return (
+                <motion.span
+                  key={i}
+                  className={isHighlight ? "text-transparent bg-clip-text bg-gradient-to-r from-ev-blue to-ev-green" : ""}
+                  initial={{ y: 100, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ 
+                    duration: 0.8, 
+                    delay: 0.5 + i * 0.1,
+                    type: "spring",
+                    damping: 12
+                  }}
+                >
+                  {word}
+                </motion.span>
+              );
+            })}
           </motion.h1>
         </div>
         
@@ -125,11 +119,10 @@ const HeroSection: React.FC = () => {
         >
           Discover and book the nearest charging stations for your electric vehicle with our innovative platform.
         </motion.p>
-        
         {/* Animated CTA button */}
         <Link to="/benefits">
           <motion.button
-            className="relative px-8 py-4 text-lg font-medium rounded-full bg-gradient-to-r from-ev-blue to-ev-green text-white overflow-hidden group"
+            className="relative px-8 py-3 text-lg font-medium rounded-full bg-gradient-to-r from-ev-blue to-ev-green text-white overflow-hidden group"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ 
@@ -157,7 +150,7 @@ const HeroSection: React.FC = () => {
             
             {/* Button content */}
             <span className="relative z-10 flex items-center gap-2">
-              Explore Benefits
+              Locate Chargers
               <motion.span
                 animate={{ 
                   y: [0, -5, 0],
@@ -178,38 +171,30 @@ const HeroSection: React.FC = () => {
             />
           </motion.button>
         </Link>
-
-        {/* Scroll indicator - positioned below the button */}
-        <motion.div 
-          className="mt-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 1 }}
-        >
-          <motion.div
-            className="w-8 h-12 rounded-full border-2 border-white/30 flex items-start justify-center p-2"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ 
-              duration: 2,
-              repeat: Infinity,
-              repeatType: "loop"
-            }}
-          >
-            <motion.div
-              className="w-1 h-3 bg-white/70 rounded-full"
-              animate={{ 
-                y: [0, 6, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                repeatType: "loop"
-              }}
-            />
-          </motion.div>
-        </motion.div>
       </div>
 
+      <motion.div 
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 1 }}
+      >        <motion.img
+          src="/images/tata_harrier_ev_transparent.png"
+          alt="Tata Harrier EV"
+          className="w-48 object-contain"
+          style={{ filter: 'drop-shadow(0 0 10px rgba(30, 174, 219, 0.5))' }}
+          animate={{ 
+            y: [0, 8, 0],
+            scale: [1, 1.02, 1]
+          }}
+          transition={{ 
+            duration: 2.5,
+            repeat: Infinity,
+            repeatType: "loop",
+            ease: "easeInOut"
+          }}
+        />
+      </motion.div>
       {/* Floating particles */}
       {[...Array(15)].map((_, i) => (
         <motion.div
