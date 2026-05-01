@@ -2,28 +2,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import SearchBar from "../ui/SearchBar";
+import SearchBar from "../SearchBar";
 import { Menu, User, Sun, Moon } from "lucide-react";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/controllers/useAuth';
 
 interface NavbarProps {
   hasScrolled?: boolean;
-  searchQuery?: string;
-  onSearchChange?: (val: string) => void;
-  onSearchSubmit?: () => void;
-  isSearching?: boolean;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ 
-  hasScrolled = false,
-  searchQuery,
-  onSearchChange,
-  onSearchSubmit,
-  isSearching
+  hasScrolled = false
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     // Check system preference or saved preference when component mounts
@@ -52,6 +46,17 @@ const Navbar: React.FC<NavbarProps> = ({
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
 
   const navVariants = {
     hidden: { y: -20, opacity: 0 },
@@ -133,12 +138,7 @@ const Navbar: React.FC<NavbarProps> = ({
         className="hidden md:flex items-center gap-4 flex-grow max-w-md mx-4"
         variants={itemVariants}
       >
-        <SearchBar 
-          value={searchQuery}
-          onChange={onSearchChange}
-          onSubmit={onSearchSubmit}
-          isLoading={isSearching}
-        />
+        <SearchBar />
       </motion.div>
       
       <motion.div 
@@ -175,7 +175,7 @@ const Navbar: React.FC<NavbarProps> = ({
         
         {/* User Button */}
         <motion.div whileTap={{ scale: 0.9 }}>
-          <Link to="/login">
+          <Link to={user ? "/profile" : "/login"}>
             <Button 
               variant="ghost" 
               size="icon" 
@@ -191,9 +191,8 @@ const Navbar: React.FC<NavbarProps> = ({
           </Link>
         </motion.div>
         
-        {/* Menu Button (Mobile) */}
         <motion.div 
-          className="md:hidden"
+          className="flex items-center"
           whileTap={{ scale: 0.9 }}
         >
           <Button 
@@ -216,22 +215,97 @@ const Navbar: React.FC<NavbarProps> = ({
         </motion.div>
       </motion.div>
 
-      {/* Mobile menu */}
+      {/* Hamburger / Mobile menu */}
       {isMenuOpen && (
-        <motion.div 
-          className="absolute top-full left-0 right-0 glass-card mt-2 p-4 flex flex-col gap-2 md:hidden"
+        <>
+          {/* Backdrop to close menu when clicking outside */}
+          <div 
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm" 
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <motion.div 
+            className="absolute top-full right-0 bg-zinc-950 border border-white/10 mt-2 p-4 flex flex-col gap-4 z-[101] max-h-[85vh] w-full max-w-[300px] overflow-y-auto origin-top-right rounded-2xl shadow-2xl"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
         >
-          <Link to="/" className="text-white hover:text-ev-blue transition-colors p-2">Home</Link>
-          <Link to="/stations" className="text-white hover:text-ev-blue transition-colors p-2">Station Finder</Link>
-          <Link to="/booking" className="text-white hover:text-ev-blue transition-colors p-2">Booking</Link>
-          <Link to="/pricing" className="text-white hover:text-ev-blue transition-colors p-2">Pricing</Link>
-          <Link to="/login" className="text-white hover:text-ev-blue transition-colors p-2">Login / Sign Up</Link>
+          {/* User Section */}
+          {user ? (
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-ev-blue/20 flex items-center justify-center border border-ev-blue/30">
+                <User className="w-5 h-5 text-ev-blue" />
+              </div>
+              <div className="flex flex-col overflow-hidden text-left">
+                <span className="text-sm font-bold text-white truncate">{user.fullName || 'User'}</span>
+                <span className="text-xs text-white/50 truncate">{user.email}</span>
+              </div>
+            </div>
+          ) : (
+            <Link 
+              to="/login" 
+              onClick={toggleMenu}
+              className="flex items-center gap-3 p-3 rounded-xl bg-ev-blue/10 border border-ev-blue/20 text-ev-blue"
+            >
+              <User className="w-5 h-5" />
+              <span className="text-sm font-bold">Login / Sign Up</span>
+            </Link>
+          )}
+
+          {/* DISCOVERY Section */}
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-3 mb-1 text-left">Discovery</span>
+            <Link to="/" onClick={toggleMenu} className="flex items-center gap-3 text-white hover:text-ev-blue transition-colors p-3 rounded-xl hover:bg-white/5">
+              <Sun className="w-5 h-5 opacity-70" />
+              <span className="text-sm">Home / Map</span>
+            </Link>
+            <Link to="/search" onClick={toggleMenu} className="flex items-center gap-3 text-white hover:text-ev-blue transition-colors p-3 rounded-xl hover:bg-white/5">
+              <motion.svg className="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></motion.svg>
+              <span className="text-sm">Find Chargers</span>
+            </Link>
+          </div>
+
+          {/* ACTIVITY Section */}
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-3 mb-1 text-left">Activity</span>
+            <Link to="/bookings" onClick={toggleMenu} className="flex items-center gap-3 text-white hover:text-ev-blue transition-colors p-3 rounded-xl hover:bg-white/5">
+              <motion.svg className="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3V8M16 3V8M3 10H21M5 5H19C20.1 5 21 5.9 21 7V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V7C3 5.9 3.9 5 5 5Z" /></motion.svg>
+              <span className="text-sm">My Bookings</span>
+            </Link>
+            <Link to="/favorites" onClick={toggleMenu} className="flex items-center gap-3 text-white hover:text-ev-blue transition-colors p-3 rounded-xl hover:bg-white/5">
+              <motion.svg className="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.7 0l-1.1 1-1.1-1a5.5 5.5 0 0 0-7.7 7.8l1.1 1 7.7 7.8 7.7-7.8 1.1-1a5.5 5.5 0 0 0 0-7.8Z" /></motion.svg>
+              <span className="text-sm">Favorites</span>
+            </Link>
+          </div>
+
+          {/* ACCOUNT Section */}
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-3 mb-1 text-left">Account</span>
+            <Link to="/profile" onClick={toggleMenu} className="flex items-center gap-3 text-white hover:text-ev-blue transition-colors p-3 rounded-xl hover:bg-white/5">
+              <User className="w-5 h-5 opacity-70" />
+              <span className="text-sm">My Profile</span>
+            </Link>
+            <Link to="/settings" onClick={toggleMenu} className="flex items-center gap-3 text-white hover:text-ev-blue transition-colors p-3 rounded-xl hover:bg-white/5">
+              <motion.svg className="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12.2 2h-.4a2 2 0 0 0-1.9 1.5l-.2 1.2a7.7 7.7 0 0 1-1.2.5l-1.1-.5a2 2 0 0 0-2.4.5l-.3.3a2 2 0 0 0-.5 2.4l.5 1.1a7.7 7.7 0 0 1-.5 1.2l-1.2.2A2 2 0 0 0 2 11.8v.4a2 2 0 0 0 1.5 1.9l1.2.2a7.7 7.7 0 0 1 .5 1.2l-.5 1.1a2 2 0 0 0 .5 2.4l.3.3a2 2 0 0 0 2.4.5l1.1-.5a7.7 7.7 0 0 1 1.2.5l.2 1.2A2 2 0 0 0 11.8 22h.4a2 2 0 0 0 1.9-1.5l.2-1.2a7.7 7.7 0 0 1 1.2-.5l1.1.5a2 2 0 0 0 2.4-.5l.3-.3a2 2 0 0 0 .5-2.4l-.5-1.1a7.7 7.7 0 0 1 .5-1.2l1.2-.2a2 2 0 0 0 1.5-1.9v-.4a2 2 0 0 0-1.5-1.9l-1.2-.2a7.7 7.7 0 0 1-.5-1.2l.5-1.1a2 2 0 0 0-.5-2.4l-.3-.3a2 2 0 0 0-2.4-.5l-1.1.5a7.7 7.7 0 0 1-1.2-.5l-.2-1.2A2 2 0 0 0 12.2 2z" /><circle cx="12" cy="12" r="3" /></motion.svg>
+              <span className="text-sm">Settings</span>
+            </Link>
+          </div>
+
+          {/* AUTH Section */}
+          {user && (
+            <div className="flex flex-col gap-1 pt-2 border-t border-white/5">
+              <button 
+                onClick={() => { signOut(); toggleMenu(); }} 
+                className="flex items-center gap-3 text-red-400 hover:text-red-300 transition-colors p-3 rounded-xl hover:bg-red-500/10 text-left w-full"
+              >
+                <motion.svg className="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></motion.svg>
+                <span className="text-sm font-bold">Logout</span>
+              </button>
+            </div>
+          )}
         </motion.div>
-      )}
+      </>
+    )}
     </motion.nav>
   );
 };

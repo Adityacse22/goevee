@@ -4,9 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 import { Facebook, Twitter, Linkedin, Mail, CheckCircle } from "lucide-react";
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/controllers/useAuth';
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState('');
@@ -41,9 +41,9 @@ const SignUp: React.FC = () => {
       await signUp(email, password, name);
       toast.success("Account created successfully! Please check your email to verify your account.");
       navigate('/');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Signup error:", error);
-      toast.error(error.message || "Failed to create account. Please try again.");
+      toast.error(error instanceof Error ? error.message : "Failed to create account. Please try again.");
     } finally {
       setIsLoading(false);
     }

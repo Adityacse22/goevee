@@ -1,0 +1,995 @@
+{
+   "html_attributions" : [],
+   "next_page_token" : "AU_ZVEHDQpOfEs6djDoybG5ZtdZsiH9AF2ITHp9Dv9ixDLp2PFv1y2c7eoMx7XD4a7bDXFsJmygmRTa-767MWFBGkDMoULplFcmFEyvBowk82CWRKac2iK4jlbMWocfu2YyGV_5P0pcmezr2vZNNm143tkM53GNtLqgazGdFtQKlqPMUyh4Y8xyS1NntZa0LHcNgnZ64qB6OomjBz7QISBPeU_WrmLTFfM9u8OcJftGN3vR5-0zccwKcDYFZxk1MkHnYTwY8S_EUyP0pqg2IbDb3zHM4VnfQepXYP7aXD78eZsB4Q2DBhsF46Nq69JdsOYQzRjFk0LuQVQJI_wF85zXc7gSD22cqlncFXQhgqemJBuuHLdu_it_A7wlY6ssCC_FcrVBGR67Mo3y8g7BR8fkjWA7XlfknxtzGmgXaU5HeIqE0IPXb2DbqUcUGdjHn1ygOLenRO6s0",
+   "results" : 
+   [
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.0155807,
+               "lng" : 76.9124995
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.01682917989272,
+                  "lng" : 76.91402462989274
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.01412952010728,
+                  "lng" : 76.91132497010729
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 74048 87076",
+         "name" : "E-Fill Electric Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 576,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/107803146950818670825\"\u003eE-Fill Charging Station\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEEWIB3wfObwEJ1MIHWsx5dL0vj9XW2kaBNtqrOBTGuVuEKmgp47Oxzm8P95f2VgPkBmsDpkNG0vtE63p6zVy0dFUbj2NqjNlDOgBC2WWDv-sVSZpXiyo5BVB0hi_GcXSSytPGNqf0tlRSY7ZoKLW5WHsBAaykwpfE4kApreanGsNxgN7iC_7d0kGFOyqUmqOPicocFQ4YRw2EuEOMFC3vnU19jFkSgY9hTKVJ4qmCetFS_QEgobJBIwNKaEAoMdjp5_otjqZ0icAs-54YFMwHugK5VViWsvWagfsq3JWx7WGziPykh5JvYZGLhgMcY-yp3B8aK1djK3CZfEc3m5TIJ2TftihIiTh-xfiEAbrmLcqCjyZkCwonRhwtHTP6bZ6HvhaEEEu-WDsxzQybLyagIu_HxVsmEmfSiCTsBP-ZxRE6jP2kzMzzUPGI1uZi0Gs07rZQtIeXDC1MlII057sM0C1OwBEkihrWIcMEs2mKUnLgfBA40LqfSvpbaw_n4PlyvpX6AHGWvq37UooQzBEJTFR3_D4a_w6SYiGlREGF-cL5C3AH1JJiPrcH7zgVPaxbKANxzBKttT_g",
+               "width" : 1024
+            }
+         ],
+         "place_id" : "ChIJmcW-1WGvDTkRcbS0SAV-u-4",
+         "rating" : 4.4,
+         "reference" : "ChIJmcW-1WGvDTkRcbS0SAV-u-4",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 60,
+         "vicinity" : "Plot No.-57, Ratangarh Road, Dongran, Bhatgaon, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.0042234,
+               "lng" : 77.0326336
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.00557672989272,
+                  "lng" : 77.03402847989271
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.00287707010727,
+                  "lng" : 77.03132882010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 1800 833 2233",
+         "name" : "Tata Power Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 4032,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/109416170058184111821\"\u003eArpit Batra\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEEu1f8xuYN_wWldmWAHeDpInc6ObkwNCJao8tCsyCT4QCajxF0871Nkf9pnQaBPVnwSfFUO9qLqM-ruCdVh7JTKBPbyR6GZ5zJFz3x_Xq9uYW3b38Rn1XYYhkpTPDNTPHo8XYwcMpTpbYFDKoTjPLg6dw6ADJTPTU4PU7DZMLUHUqAySKXzVyXr6vhKu5Hy9_ecphvXR8U82X1cN2IK3yGWgc4rder_qjeYEqZioEyoHej0mpbxk4wwjlCkYzh6v5JHDnV66wcZBTdVfvug7LCdObgSvf0yEQw8dbfj2Ov6rgxp2No798P8hw23sapymLE6k8w1mtElm18sSCW8W18xNkgkwx-20TQvu0HaZhAlIU-1URPsWe-qh2qcsJiVJWHyPBFjfoAIDrPuifjYMM5sBRXCecmQREb7kvtssWjw-9dJLeAyUDyMhEAUgejYVfnffif7U6iw-USt-3tQSF2r2SBGVPQb8pQL1-zQQXFHzrShbZtpJdpqMiotdPm1YRdYgyWeakHsNLw1t7cIRnIkzrU7AiZV5EYKcYcs3pNCHT8VSR-c_A1qQFe6WHrNbBdBUevfg2KKqg",
+               "width" : 3024
+            }
+         ],
+         "place_id" : "ChIJfQqL5y2xDTkRRi78YKsHXHg",
+         "rating" : 2.9,
+         "reference" : "ChIJfQqL5y2xDTkRRi78YKsHXHg",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 7,
+         "vicinity" : "223M+M3J, Sector 14, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.0529033,
+               "lng" : 77.06549699999999
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.05427042989272,
+                  "lng" : 77.06684737989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.05157077010728,
+                  "lng" : 77.06414772010727
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 91191 15675",
+         "name" : "Ather Grid Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 3200,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/104862361019230090316\"\u003eAnkit Pahal\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEH5w8JhaZvtBdqgnMi__8mFqfQfDLTd4D7_11KP1YbIXb71O__-2CuSFmYfMG8Yw8ZT97bC4FQoSowSkVGd322n-lNSe3j0hC2n47nP1fLQtTU1e1gAc6Deuk8PSAzp19BIU5cZSfS-58ZYVek2kRnOvmSl48z_sy49UuKObowcqZcmDWxX96rKNSCCg1G6wqQ-R4v5Ohiw8pd8eTqstI7jsRdL8N48vnqA2rF4qkq8fue3JnPX7FdoF6uVJAbhTwocm98Brt8iVelIvTL1AcBlyLFoZyUr3QW_q49G99CN_nhUSrqUeVtYqP7B4cS3oM6EsBwX7diKZAQ6p6Dj6lU1ZgVg1FHlJU4anLxb_t688TdpJuwhAXaSKQUXZ1Fnz8DUtnrUg8bC1lZ6BsgigZApMQ-QvjOxWSnit8jUH3CYk3Eph7_LWjoSTo-VgaqcK8-LPIvs3hL8QU-XyCQGbZz5NevzEKnovU2UgVCeF3lcLZYeE_jpk5ni237tJ0n0Vqkd-WjGBSuJ1Z3DEvBWPT0xfVd7Xj2_lJcLkLeFg0-sdN6phYvkdNfYAKHY6INUSsv6UJaPLzevSeMID3je_s2vnTb3yw",
+               "width" : 2400
+            }
+         ],
+         "place_id" : "ChIJxywPBCWxDTkR8UIkoX_dUgc",
+         "rating" : 3.6,
+         "reference" : "ChIJxywPBCWxDTkR8UIkoX_dUgc",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 5,
+         "vicinity" : "51-52 KM Stone GT Karnal Road, Murthal, Sonepat, Haryana 131024, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.970076,
+               "lng" : 77.08953099999999
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.97142577989272,
+                  "lng" : 77.09087402989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.96872612010727,
+                  "lng" : 77.08817437010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 1800 102 2269",
+         "name" : "BMW Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 1115,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/114916660878713281362\"\u003eSandip Garg\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEFWQJfL0dAfR0cfGvRrWQYFyGsxbkLWHa20GwQTH2zSW7gME8w4PEJu01qu0DY-gwEA1YyiaI1KmSk727Vx0W0eYCuPRgeTM1TSqsYw82TiBykc2Or2zYw2RU3J47xDKgKMKXe1Wf0DpHnTJffBmB5xNA0lni2znO0SjkoobkaI-j5ec_tXtU7NkNB5lZWW9VbdfesA5j89J1lRbPaZDf-RXzFE7cWObHnMC3ZVF1kr5cKp9EO-KCikOBW-eFN--8LKNsuthpR6qQue2hyGmKZ7lbgAGZmVtAafUNZj11dpLd6OXd2VyWlfW2vjZqwPhwtJdJNgPf56EoV-K4GGJfnxTS_iuZjLs14_rKr8tfhutJVGL5x26NiIATbtAQ0Pt7fbVu2exM6QmKxbDr8KkxbDj4153TfoDK7ItPpSJinB5fa7_tLDuv5v09LtktTwZBz9gdxmLzsvAZOvmqOE2Xi58f48_XCKacMGUpNqnCMwmFe5KP4kH0H37CGxB2JBAOEy4g6idUUAGu2Q0rwzdbRv-pi_2ZVhG8enRD795ojqIlQqgsILXdlvXnnkug4Bp6EeVFp1HyxL2p-r2yPZ0kkwW_RlAA",
+               "width" : 1376
+            }
+         ],
+         "place_id" : "ChIJG54BFhuuDTkR6s8XiGaRaCs",
+         "rating" : 5,
+         "reference" : "ChIJG54BFhuuDTkR6s8XiGaRaCs",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 2,
+         "vicinity" : "42nd, Hotel Surface Parking, Milestone Hotels, Sector 29, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.9905005,
+               "lng" : 77.0847783
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.99189777989272,
+                  "lng" : 77.08611307989273
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.98919812010728,
+                  "lng" : 77.08341342010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 91191 15675",
+         "name" : "Ecoplug Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 4032,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/117110504529462402597\"\u003eVikas Balhara\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEEUjF7B6LVIQcR4_Xr3RMZGgntwCJ63tvX8YrjgWUBe-5z8OPE8w01hyMr5MR8nukfpmsFiGu_QCZdr5_Ngu95Z73eH2IkVJsMQ3k1NE-srtgfsUe_gyOJQR13DM2LzgZTV4sLAJ417ZyJZHKlhayIBsqJAPX52-HvJPAVAsycO3bqtGYW9lcYHM_BpZyCYHga3pn32Ti9SZQ3tZ4-d4VdTLzvuH11h4_XVyuHydRJ2NQoshu1cCVTOG_FSLJt7r5y6dq3e3ra7j-QjhOqXFaVbZ6G5MGmnlFD93CvQaeGSCJNuXdvyxDDjBFgna1O1yW0ZjMeEsXO9R1UGFnOgxKA0IU0cMCSZyuZVMDPwD2KbrHDZOKbsXaCEEnEbpH73EK879LgXswAiPuwRCWFxOs28SqbrntVz0Tix0JrDiF12OvlHA8Va8rCc_LO3-NAUyADSbpeQLAWAySu6Wt8SBM1nMfpDQcSsUpp47WD_CAZ3DFU6HgESyVAn0S6FjCgJBUFC4Cp-6S_CH1rUcp9M5Icd9urKb30aYMu0RYYK49TJginAjF6CYbt4U18SFZiHwDPuipodtiNaMIKaISZRdgLaKG0",
+               "width" : 3024
+            }
+         ],
+         "place_id" : "ChIJPzKNzuixDTkR9DtOT7v_n-I",
+         "reference" : "ChIJPzKNzuixDTkR9DtOT7v_n-I",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "vicinity" : "X3RM+6W2 GANPATI DHABA, Kumashpur, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.0353171,
+               "lng" : 77.0709119
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.03659892989272,
+                  "lng" : 77.07226637989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.03389927010727,
+                  "lng" : 77.06956672010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 80707 43743",
+         "name" : "Statiq Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "place_id" : "ChIJSZXUUhCxDTkR3hRQh7OAjbs",
+         "rating" : 3.5,
+         "reference" : "ChIJSZXUUhCxDTkR3hRQh7OAjbs",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 2,
+         "vicinity" : "23PC+49F Jhilmil Dhaba, Murthal, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.031097,
+               "lng" : 77.0728361
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.03250587989272,
+                  "lng" : 77.07417537989271
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.02980622010728,
+                  "lng" : 77.07147572010727
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 91191 15675",
+         "name" : "ECOPLUG Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "place_id" : "ChIJudGebw6xDTkRpzxWEGblRu0",
+         "rating" : 2.5,
+         "reference" : "ChIJudGebw6xDTkRpzxWEGblRu0",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 2,
+         "vicinity" : "NH-44, Grand Trunk Rd, Murthal, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.984699,
+               "lng" : 76.971397
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.98605582989273,
+                  "lng" : 76.97276117989273
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.98335617010728,
+                  "lng" : 76.97006152010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Statiq Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "place_id" : "ChIJP67cP9y6DTkROnM7cxyshuc",
+         "rating" : 5,
+         "reference" : "ChIJP67cP9y6DTkROnM7cxyshuc",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 1,
+         "vicinity" : "XXMC+VHC IndianOil, Mehlana Rd, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.0477983,
+               "lng" : 77.06661489999999
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.04921577989272,
+                  "lng" : 77.06818237989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.04651612010728,
+                  "lng" : 77.06548272010727
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Adani Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 2151,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/110644894240192343116\"\u003eAnanthu Pillai\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEH8sUerCNJumiv_ctRXAQd3tp7xL0Y-Sdj_O507jOMKVxO8rr8go9yzaYLmnKLEeyKSLyDaStVEjPhlR86n7uBQz-IvwoWwExyidaocz032E3pTbwdCq5YbnOld8REOQh4kJiOL3_ImKzUoN19-sq75nzJy9g_1NiaEKKDMRYILEEuxse2EJJIxUrML34DBFIcw72D4HhD87lbuyEkOuM2gHp1AfRk1twiBd4c3gPIARo_aiBPtTZLrvtGe8_y-VIapTzoI-bBt1jYoqcye-tfnb6MJ7L2kXhtjxPf4LDDFYEGosoriLn8W3jQfYUFhxcIWEN6zvkJxNDGf5oK9ige9Q3JjEWcyCqw7ctTZJls3nkxSvkxh6nS-MBGNC8gWNfHhS9WfGRidiVnMNrrJczkdnt6X1LaNRZda5RPDpeR7oFakKzfTIw54NjvwFaFvaEXQuL4_tXR7PztBwE5HT2B1-5MiitwH-PvAG7zRSRgnvJf24DI2vmETZsgQ8Nms0nXTTdTKuLaYcufBI7RrF5fVvT2OO8MCWyr02Yx-0fuy8FiiXIuEPgXHA_5X9-ZvHsuRchL4W6_2tKSo7xOAvedeSj4x7w",
+               "width" : 2808
+            }
+         ],
+         "place_id" : "ChIJAx-RPSOxDTkRdBfYfmLpHSM",
+         "rating" : 2,
+         "reference" : "ChIJAx-RPSOxDTkRdBfYfmLpHSM",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 1,
+         "vicinity" : "Hawai Adda, Kurar Rd, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.0751803,
+               "lng" : 77.0607122
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.07653472989272,
+                  "lng" : 77.06206202989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.07383507010727,
+                  "lng" : 77.05936237010727
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Ather Grid Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 4000,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/118293246882910771950\"\u003eAvneet Choudhary\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEE-ylUmXhJT_5abF-r718f1WT2rpo9kzY92Pc7sZtV5d7hZIj1UanfFitNiiLVvuUQQ4g2x8KGRrIkTwH--Jks-yDjG_XDcK3AGaS-rfZsbNVnjHF-VQ5PKUgTc7F-GcezxhgvcRS1DnZxKVgEe3CZBORvt0inSt0qvxNnhO6VGCP1Ag9mYsPhAYdpeu2vJh_fu_J43TYJwQsiQt4RPTIPVjuKc6R05h9KH2t_5YL5TcjIM6C2jy7cdY5nuGmiUb2qZV7fP9iqUMxmFk4NkIcCtYuYgYhN527ADcmRazK1wOJUR__wEHaLh1VEGmXm9T2-lnD7hiyP-Nhnw9KV3BDHaHJ1JeMA7pDLsOPmg9H4xj-0X-EJMSolc7xt82sSs-1b7iuTmiQ1mOLqmGu2E6oFOBrw0lWVQd0e92RRi9fcHZ-mBt0wFwlrfwuBURzeyfALvkQWH2_pGEZU5LmlYG-2LDaeMJ95Q_dT6CD50zlDzKoOcHmUpl0Gvjt5bMEwyn0lJeyNGzcQ2jveoQLtHl9Pz9WiI4wWWnoLcoQgxqz2q3xwlkDLDnYX6yL9pDmAuGT6ohplxHlhPZ2MtaYtsh_zHnFdA-Q",
+               "width" : 3000
+            }
+         ],
+         "place_id" : "ChIJ3w5-Lde2DTkRINCIWDto2js",
+         "rating" : 5,
+         "reference" : "ChIJ3w5-Lde2DTkRINCIWDto2js",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 3,
+         "vicinity" : "Mile Stone, 54th, Grand Trunk Rd, Murthal, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.093355,
+               "lng" : 77.053145
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.09467352989272,
+                  "lng" : 77.05449882989271
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.09197387010728,
+                  "lng" : 77.05179917010726
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Adani Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "place_id" : "ChIJiYlEjx63DTkRm8JdYPGQYPQ",
+         "rating" : 2,
+         "reference" : "ChIJiYlEjx63DTkRm8JdYPGQYPQ",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 1,
+         "vicinity" : "Cygnett Hotel, Cozzet Sonipat – A, 55 Milestone, NH-1, Ganaur, Larsauli, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.0484922,
+               "lng" : 77.06708139999999
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.04982182989272,
+                  "lng" : 77.06852377989271
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.04712217010728,
+                  "lng" : 77.06582412010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 1800 833 2233",
+         "name" : "Tata Power Charging Station",
+         "photos" : 
+         [
+            {
+               "height" : 2250,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/112567402137479730655\"\u003eBhaskar Bhattacharya\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEF1Kd_6bkrBzmi1qGzzo6GKbbxNqRWSN2Qisy0ZN-yc1PpxZau-JJ2LM_ZfGXEiXsyqxddaEGyBwInHJaPWWzyVrX8VWBsUc5viAq9GRMhGS-ejelUcqJgwIzCAj1rEIZNrN9YoStPh-rl15K1zqDiK7JWz8IFAgJRNeIT8vlZ1P2zWAPo9KkqH4c1IfMHl111y8LlV1UXaKChgS0xOdxYXABncVYHY2n4E_hxdBJnQXZ6oA4ZLTxv4Ja7A4z7vtpV2-3JHXrwmJ9XZWeRs88cEmDf7TIcTaQ8B8NqpdMOJoOzuo7hUmeOYYbR2iH4jA-wMqfEe6FNxdnUTpQce2hLDY7pqmkRFFmGkACrVALWp13s4SWe2mP_avTJLb5d_ca5cAEaGhZW2F9_c86DWWSPG8SNLqjOOHAduUefqE8rG6ztefpflnZXfOd0xVd7hGvWzPwTapD7oRD-jT3easTjReGgyGswZHRZC8dxS14gF-uRrqcPqZpi_VVXc9gAAty7SbOu9Lxr6xLW3i6k266tIXgGfsT-kswr-mBIhKHi44b5MDHaI8kLBvP0CsbFOn4qnLmxKcM-HOQ",
+               "width" : 4000
+            }
+         ],
+         "place_id" : "ChIJBX3qWACxDTkR0pmUpM9Ol90",
+         "rating" : 3.4,
+         "reference" : "ChIJBX3qWACxDTkR0pmUpM9Ol90",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 5,
+         "vicinity" : "23X8+9RW, Murthal, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.9804437,
+               "lng" : 77.0289616
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.98180907989272,
+                  "lng" : 77.03030117989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.97910942010728,
+                  "lng" : 77.02760152010727
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 89013 57675",
+         "name" : "EVI Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 3024,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/104986461376170672182\"\u003eEV CHARGING STATION\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEGqhkR8nzHXdc0Mw_J5Q3ugRtnbwVmUx1vVf2aulFo7K47_Sqkbnq5Xmo9rIzOFbhp3Xxq7PqpK6B3F3IX2QFXkAeqonFR_jBxiQn2ys_xMzwOT9S5iu7Vzje6J7UhIUZLA8mDaSKO7qvMVMSIJpuml9FkolHlS_1UEu7hyn5LJ608TA5RFCcqu-PYbVuJlURd12KvOekZvNmc6LRrF5OHCrxLwImGy9GTStWQbHyXZHIc20qr8j9XwQuvGvLWv3AG4k3Bk0OBJYbtCmCMQmGFdWyAqsLng0GA6MticeUkY3JVwqvUsQucYTA_0KFWJsEmDbkbKjI43DNqRIvzRZStPUFB-o87cOH7p3p_hI0WwQNs0Jf5mOwy45J3uO9lZ8XeBqhuFFGIZHrLZRem5H2q-SI3zHMab2FbqxUh0CqU_uRDDGzM8VcTNIpL2G1bMOIUnSgcQYmp6Ebf94vn-PZGJzWDE95ThT5LYwiJvoEMCTXhcqXz2K8L-LXveiYiDlC5HRQzBL9XcANk7t_g0Zx8s9LqoJqybla9dt6vdLtOLPeWE4d5ZL7xmJNyDmizwTsk-pf-B",
+               "width" : 4032
+            }
+         ],
+         "place_id" : "ChIJ_d3CZWuwDTkRhvm3JOhdYZo",
+         "rating" : 4.1,
+         "reference" : "ChIJ_d3CZWuwDTkRhvm3JOhdYZo",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 14,
+         "vicinity" : "ANAND HALL, KABIRPUR ROAD, near Milk Point, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.9709744,
+               "lng" : 77.08902139999999
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.97233972989272,
+                  "lng" : 77.09047087989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.96964007010727,
+                  "lng" : 77.08777122010727
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 80707 43743",
+         "name" : "BMW Destination Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "place_id" : "ChIJoQMTbxuuDTkR7Uk5vxZ8cpQ",
+         "rating" : 3,
+         "reference" : "ChIJoQMTbxuuDTkR7Uk5vxZ8cpQ",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 1,
+         "vicinity" : "NH 44, opp Sports Authority of India, Sector -29, Bahalgarh, Sonipat Haryana 131001, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.901674,
+               "lng" : 76.839409
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.90307347989272,
+                  "lng" : 76.84074917989273
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.90037382010727,
+                  "lng" : 76.83804952010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 1800 22 4344",
+         "name" : "BPCL Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "place_id" : "ChIJQ_NrYmOiDTkRYM3OhAkIaNc",
+         "reference" : "ChIJQ_NrYmOiDTkRYM3OhAkIaNc",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "vicinity" : "WR2Q+MQ7, Sonipat, Garhi Sisana"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.9315003,
+               "lng" : 77.09983029999999
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.93286917989273,
+                  "lng" : 77.10117537989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.93016952010728,
+                  "lng" : 77.09847572010727
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Electric Vehicle Charging Station",
+         "place_id" : "ChIJP-nyYICuDTkRkzJRYBHCog4",
+         "rating" : 3.7,
+         "reference" : "ChIJP-nyYICuDTkRkzJRYBHCog4",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 3,
+         "vicinity" : "W3JX+JW4, Sector 38, Rai, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.9904724,
+               "lng" : 77.0247265
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.99180172989271,
+                  "lng" : 77.02603712989273
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.98910207010727,
+                  "lng" : 77.02333747010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "Ather Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "place_id" : "ChIJVZOMXwCxDTkRWTwUuWAQrgc",
+         "rating" : 1,
+         "reference" : "ChIJVZOMXwCxDTkRWTwUuWAQrgc",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 1,
+         "vicinity" : "263/14, Anand Nagar,, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.0751434,
+               "lng" : 77.06054429999999
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.07651827989272,
+                  "lng" : 77.06188362989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.07381862010728,
+                  "lng" : 77.05918397010727
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 84477 46385",
+         "name" : "Bolt.Earth EV Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "place_id" : "ChIJG3v447G3DTkR8lFb0JHN1gs",
+         "reference" : "ChIJG3v447G3DTkR8lFb0JHN1gs",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "vicinity" : "Grand Trunk Rd, Murthal"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 28.931161,
+               "lng" : 77.0988467
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 28.93268607989272,
+                  "lng" : 77.10049957989273
+               },
+               "southwest" : 
+               {
+                  "lat" : 28.92998642010728,
+                  "lng" : 77.09779992010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "name" : "BHEL Charging Station",
+         "photos" : 
+         [
+            {
+               "height" : 1920,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/118063499916505951729\"\u003eParamjeet Singh Jamwal\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEENfUoyWTkiud6qqbE31wmslNopPC0p7fzEXx6yLUfn5GPj8W4pZaINujk2WXkhfN1GKKxEv4uaYgCSegSMcJeTwatlYDsqb8V7C84TPI7PWBphLm6Q6V5Ag_2a4qDe3qWSE12awpn0UfG8ds2IJCXFP7oRi9dy30YIVaDP-4QvoYnz_3-WM_h1fCxR5mZeVBMYepHCaDX8W1YGvkGDr-_s_JSAL9LdY7sgkpkEjCDT5sgrlsT4chLdKMVc_RzpKyC2wfHD-CLbW4rwePvu5N6_PXZF21WIBIyCyIntG2-LiYYjHFg9d66GedeQfS7I1jAxhGMDDOJDfNi_K1Sh1_N9-b45kfB5zzVaJtDYeOhGhGp_TtqttW-Cze1KKpi0cfoDEQCp7kfyii88PkNc1GW-VM-qzcHIG6UwbUIMjIOvF-owVTpiEuem7wfiyMO9nyQbeqeEhQAbRRJaUs1Huuk9x9XhMv0TYXcIvxkbKOXoVsZhIRUW8GhWwRkMoJ5Py0wrBPUUDVQGuk2EQcUgQputNGeCB69tpETy7FGI1R8fiOVO5LXm00ia4_SMYQ2iCAGa9_z2HffR1g",
+               "width" : 1080
+            }
+         ],
+         "place_id" : "ChIJQ2K0WpSvDTkR_OFAbaWcn9I",
+         "rating" : 1.7,
+         "reference" : "ChIJQ2K0WpSvDTkR_OFAbaWcn9I",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 3,
+         "vicinity" : "W3JX+FG9, Sector 38, Sonipat"
+      },
+      {
+         "business_status" : "OPERATIONAL",
+         "geometry" : 
+         {
+            "location" : 
+            {
+               "lat" : 29.068394,
+               "lng" : 77.060903
+            },
+            "viewport" : 
+            {
+               "northeast" : 
+               {
+                  "lat" : 29.06974557989272,
+                  "lng" : 77.06229102989272
+               },
+               "southwest" : 
+               {
+                  "lat" : 29.06704592010728,
+                  "lng" : 77.05959137010728
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+         "icon_background_color" : "#7B9EB0",
+         "icon_mask_base_uri" : "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+         "international_phone_number" : "+91 80707 43743",
+         "name" : "Statiq x TATA.ev MegaCharger Charging Station",
+         "opening_hours" : 
+         {
+            "open_now" : true
+         },
+         "photos" : 
+         [
+            {
+               "height" : 3060,
+               "html_attributions" : 
+               [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/101561806939577368325\"\u003eTilak Raj\u003c/a\u003e"
+               ],
+               "photo_reference" : "AU_ZVEFfY-KJhAHDmHUekfNkSojbAUuczh7bT79AM7yeg9xV-zELZKs3NJxHBLCosjhNhNL-QokZAt8fOMLeqLbCUoGoZGbwckOPuGotB8RljTAG6vQJw_64EHHf7WPmEW9W3H5faeveRc_s9LYn5NoURu7X0mFKFGXRMsAgprUSYaaToS-Kcwx1-Dwu9HRXJmSO8nZuUiT333DvVSy8y-uhBjBxnS1If9Wt7DpzWfTr1CjmutosssnO-3WyVtzd0_UzuBpsQ4NOrr5OS2Ag9KTuWp2Ahmt_iT2Ib5mz1JiAHH5U2VyLRqhLUMCEq9beBuF9kIzS8KcptuyWrDMyLPfIwwXC2OnG-2dEYV1QkDk2e6N2lY4nlSWag4qEEfNra1S6b58m9aWLYTTSgAnm7upHz6Xy3dizfAmXrRxFh6Gib1ZMUMI6VT8Dpu2eAwPNbvUWDShgMboi43watbzyBHj6a-DLaJNytKu2BFI_RcstiJIeAWmKSBOxE-ulJcJBiMwEOEdxsyvlqb8x8eUiii0V1PoRP7mzyRiT2gPrsrJdIE0k7IbUkSHawhalVM9CTVCXg6xzz_m2ercCDjHbYJNjNXuOXQA",
+               "width" : 4080
+            }
+         ],
+         "place_id" : "ChIJt8iPktS2DTkRuSjnNlhHC7c",
+         "rating" : 5,
+         "reference" : "ChIJt8iPktS2DTkRuSjnNlhHC7c",
+         "scope" : "GOOGLE",
+         "types" : 
+         [
+            "point_of_interest",
+            "establishment"
+         ],
+         "user_ratings_total" : 3,
+         "vicinity" : "Haveli Restaurant And Resorts Limited, G.T. R, Sonipat"
+      }
+   ],
+   "status" : "OK"
+}

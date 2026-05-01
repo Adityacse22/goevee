@@ -1,16 +1,27 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Zap, Star, Clock, ChevronRight } from 'lucide-react';
-import { MockStation } from '@/data/mockStations';
+import type { EVStation } from '@/models/station.model';
+import { formatDistance } from '@/utils/formatting';
 
 interface StationPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  stations: any[];
-  onBookStation: (station: any) => void;
+  stations: EVStation[];
+  onBookStation: (station: EVStation) => void;
   onStationHover?: (stationId: string | null) => void;
-  onStationClick?: (station: any) => void;
+  onStationClick?: (station: EVStation) => void;
   highlightedStationId?: string | null;
+}
+
+function formatStationDistance(distance?: number) {
+  if (distance == null) {
+    return 'Distance unavailable';
+  }
+
+  return distance < 1000
+    ? `${Math.round(distance)} m`
+    : `${(distance / 1000).toFixed(1)} km`;
 }
 
 const StationPanel: React.FC<StationPanelProps> = ({
@@ -116,17 +127,17 @@ const StationPanel: React.FC<StationPanelProps> = ({
                     <div className="flex items-center gap-3 mb-3 text-xs">
                       <span className="text-white/60 flex items-center gap-1">
                         <ChevronRight className="w-3 h-3 text-ev-blue" />
-                        {station.distance ? station.distance.toFixed(1) : '1.2'} km
+                        {formatStationDistance(station.distance)}
                       </span>
                       <span className="text-white/60 flex items-center gap-1">
                         <Star className="w-3 h-3 text-yellow-400" />
-                        {station.rating || '4.5'} ({station.total_reviews || station.totalReviews || 0})
+                        {station.rating || '4.5'} ({station.total_reviews || 0})
                       </span>
                       <span className="text-white/60 flex items-center gap-1">
                         <Zap className="w-3 h-3 text-ev-green" />
-                        ₹{station.price_per_kwh || station.pricePerKwh || 14}/kWh
+                        ₹{station.price_per_kwh || 14}/kWh
                       </span>
-                      {(station.isOpen || station.openNow) && (
+                      {station.isOpen && (
                         <span className="text-green-400 flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           Open
@@ -136,12 +147,12 @@ const StationPanel: React.FC<StationPanelProps> = ({
 
                     {/* Connectors */}
                     <div className="flex flex-wrap gap-1.5 mb-3">
-                      {station.connectors?.map((c: any, i: number) => (
+                      {station.connectors?.map((connector, index) => (
                         <span
-                          key={i}
-                          className={`connector-badge ${c.available ? 'connector-available' : 'connector-unavailable'}`}
+                          key={index}
+                          className={`connector-badge ${connector.available ? 'connector-available' : 'connector-unavailable'}`}
                         >
-                          {c.connector_type || c.type} · {c.power_output || c.power}kW
+                          {connector.connector_type} · {connector.power_output}kW
                         </span>
                       ))}
                     </div>

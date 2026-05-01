@@ -426,3 +426,20 @@ button:not(:disabled) {
   border-color: rgba(30, 174, 219, 0.4) !important;
   color: #1EAEdb !important;
 }
+
+/* ============================================
+   Light Mode Override (CSS Filter based)
+   ============================================ */
+html.light-mode {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Re-invert elements that should preserve their natural colors */
+html.light-mode img,
+html.light-mode video,
+html.light-mode .gm-style,
+html.light-mode [class*="map"],
+html.light-mode canvas {
+  filter: invert(1) hue-rotate(180deg);
+}
+

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Linkedin, Instagram, Mail, MessageSquare, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
 const Footer: React.FC = () => {
   const handleNewsletterSubmit = (e: React.FormEvent) => {

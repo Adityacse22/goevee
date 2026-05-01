@@ -17,7 +17,6 @@
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| @supabase/supabase-js | ^2.49.8 | Supabase client (auth + DB) |
 | @tanstack/react-query | ^5.56.2 | Server state management |
 | react-router-dom | ^6.26.2 | Client-side routing |
 | @react-google-maps/api | ^2.20.6 | Google Maps integration |
@@ -67,15 +66,13 @@
 
 | Service | Provider | Purpose |
 |---------|----------|---------|
-| Database (PostgreSQL) | Supabase | Application data storage |
-| Authentication | Supabase Auth | User signup/login (email+password) |
-| Row Level Security | Supabase/Postgres | Data access control |
+| Database (PostgreSQL) | Docker / Local Postgres | Application data storage |
+| Authentication | JWT + Express | User signup/login (email+password) |
 | Maps | Google Maps Platform | Station map display & geolocation |
 
 ## Configuration
 
 | Variable | Purpose | Location |
 |----------|---------|----------|
-| SUPABASE_URL | Supabase project URL | `src/integrations/supabase/client.ts` (hardcoded) |
-| SUPABASE_PUBLISHABLE_KEY | Supabase anon key | `src/integrations/supabase/client.ts` (hardcoded) |
+| VITE_API_BASE_URL | Backend API endpoint | `.env` |
 | Google Maps API Key | Maps rendering | `src/components/Map.tsx` (runtime) |

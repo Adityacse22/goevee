@@ -4,10 +4,10 @@ import { Calendar, Clock, Zap, CreditCard, Check, X, Car, Battery } from 'lucide
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useAuth } from '@/hooks/useAuth';
-import { useCreateBooking } from '@/hooks/useBookings';
-import { useStation } from '@/hooks/useStations';
-import { toast } from 'sonner';
+import { useAuth } from '@/controllers/useAuth';
+import { useCreateBooking } from '@/controllers/useBookings';
+import { useStation } from '@/controllers/useStations';
+import toast from 'react-hot-toast';
 
 interface BookingFormProps {
   stationId: string;
@@ -150,6 +150,12 @@ const BookingForm: React.FC<BookingFormProps> = ({
   }
 
   const renderStepIndicator = () => {
+    const steps = [
+      { id: 'details', label: 'Details' },
+      { id: 'confirmation', label: 'Confirmation' }
+    ];
+    const currentStep = bookingStep - 1;
+
     return (
       <div className="flex justify-between mb-8">
         {steps.map((step, index) => (

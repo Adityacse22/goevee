@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Zap, Calendar, Clock, CreditCard } from 'lucide-react';
-import { MockStation } from '@/data/mockStations';
+
+interface BookingConnector {
+  available?: boolean;
+  connector_type?: string;
+  type?: string;
+  power_output?: number;
+  power?: number;
+}
+
+interface BookingStation {
+  id: string;
+  name: string;
+  address?: string;
+  distance?: number;
+  price_per_kwh?: number;
+  pricePerKwh?: number;
+  connectors?: BookingConnector[];
+}
 
 interface BookingModalProps {
   isOpen: boolean;
-  station: any | null;
+  station: BookingStation | null;
   onClose: () => void;
   onConfirm: (booking: BookingDetails) => void;
 }
@@ -49,8 +66,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, station, onClose, o
 
   if (!station) return null;
 
-  const availableConnectors = station.connectors?.filter((c: any) => c.available) || [];
-  const activeConnector = availableConnectors.find((c: any) => (c.connector_type || c.type) === selectedConnector) || availableConnectors[0];
+  const availableConnectors = station.connectors?.filter((c) => c.available) || [];
+  const activeConnector = availableConnectors.find((c) => (c.connector_type || c.type) === selectedConnector) || availableConnectors[0];
   const estimatedKwh = activeConnector ? (activeConnector.power_output || activeConnector.power || 50) * selectedDuration * 0.8 : 0;
   const price = station.price_per_kwh || station.pricePerKwh || 14;
   const estimatedCost = estimatedKwh * price;

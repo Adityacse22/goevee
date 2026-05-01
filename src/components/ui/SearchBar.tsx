@@ -40,7 +40,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       <motion.input
         type="text"
         placeholder="Search for charging stations..."
-        className="glass-input w-full pr-10"
+        className="glass-input w-full pr-24"
         style={{ paddingLeft: '40px' }}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -87,6 +87,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
         transition={{ type: "tween", duration: 0.3 }}
       />
       
+      <motion.button
+        type="button"
+        className="absolute inset-y-0 right-10 flex items-center"
+        onClick={() => onSubmit?.()}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <motion.div
+          className="rounded-full bg-ev-blue/80 px-3 py-1 text-xs font-semibold text-white"
+          animate={{
+            opacity: value ? 1 : 0.7,
+          }}
+          transition={{ duration: 0.2 }}
+        >
+          Search
+        </motion.div>
+      </motion.button>
+
       {/* Clear button appears when there is text */}
       {value && (
         <motion.button

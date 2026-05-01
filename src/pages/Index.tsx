@@ -3,36 +3,30 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import LocationButton from '../components/ui/LocationButton';
-import SearchBar from '../components/ui/SearchBar';
+import SearchBar from '../components/SearchBar';
 import HeroSection from '../components/ui/HeroSection';
 import MapComponent from '../components/Map';
 import StationPanel from '../components/stations/StationPanel';
 import BookingModal from '../components/booking/BookingModal';
-import { mockStations, MockStation } from '@/data/mockStations';
 import { BookingDetails } from '../components/booking/BookingModal';
 import toast from 'react-hot-toast';
 import { MapErrorBoundary } from '../components/MapErrorBoundary';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/controllers/useAuth';
+import { useCreateBooking } from '@/controllers/useBookings';
+import type { EVStation } from '@/models/station.model';
+import { containerVariants, itemVariants } from '@/config/animations';
 
 const Index = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [selectedStation, setSelectedStation] = useState<MockStation | any>(null);
+  const [selectedStation, setSelectedStation] = useState<EVStation | null>(null);
   const [highlightedStationId, setHighlightedStationId] = useState<string | null>(null);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const { user, loading } = useAuth();
-  
-  useEffect(() => {
-    console.log('5. Supabase session loading:', loading);
-    console.log('6. Supabase user:', user);
-    console.log('7. isLoading blocks map render:', 'no, Map is safely decoupled');
-  }, [loading, user]);
+  const { user } = useAuth();
 
   // Live Search States
-  const [globalSearchQuery, setGlobalSearchQuery] = useState('');
-  const [triggerSearch, setTriggerSearch] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
-  const [liveStations, setLiveStations] = useState<any[]>([]);
+  const [liveStations, setLiveStations] = useState<EVStation[]>([]);
   
   // Handle scroll events
   useEffect(() => {
@@ -46,67 +40,55 @@ const Index = () => {
     };
   }, []);
   
+  const createBooking = useCreateBooking();
+  
   const togglePanel = () => {
     setIsPanelOpen(!isPanelOpen);
   };
 
-  const handleSearchSubmit = () => {
-    if (globalSearchQuery.trim()) {
-      setTriggerSearch(Date.now());
-      setIsPanelOpen(true); // Auto-open panel on search
+  const handleBookStation = (station: EVStation) => {
+    if (!user) {
+      toast.error('Please log in to book a station');
+      return;
     }
-  };
-
-  const handleBookStation = (station: any) => {
     setSelectedStation(station);
     setIsBookingOpen(true);
   };
 
   const handleConfirmBooking = (booking: BookingDetails) => {
-    toast.success(`Booking confirmed at ${booking.stationName}! 🎉`);
-    setIsBookingOpen(false);
-    setSelectedStation(null);
+    createBooking.mutate({
+      connector_id: booking.stationId, // Using stationId as a fallback for now, needs to be a real chargerId
+      booking_date: booking.date,
+      start_time: booking.timeSlot,
+      end_time: String(Number(booking.timeSlot.split(':')[0]) + booking.duration).padStart(2, '0') + ':00',
+      total_price: booking.estimatedCost,
+      status: 'confirmed',
+      user_id: user?.id || '',
+      station_id: booking.stationId,
+      duration_hours: booking.duration,
+    }, {
+      onSuccess: () => {
+        setIsBookingOpen(false);
+        setSelectedStation(null);
+      }
+    });
   };
 
   const handleStationHover = (stationId: string | null) => {
     setHighlightedStationId(stationId);
   };
 
-  const handleStationClick = (station: any) => {
+  const handleStationClick = (station: EVStation) => {
     setHighlightedStationId(station.id);
   };
 
-  // Animation variants for staggered children
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        type: "spring",
-        damping: 12
-      }
-    }
-  };
+
+
 
   return (
     <div className="min-h-screen w-full pb-0 overflow-x-hidden">
       <Navbar 
-        hasScrolled={hasScrolled} 
-        searchQuery={globalSearchQuery}
-        onSearchChange={setGlobalSearchQuery}
-        onSearchSubmit={handleSearchSubmit}
-        isSearching={isSearching}
+        hasScrolled={hasScrolled}
       />
       
       {/* Hero Section */}
@@ -118,15 +100,6 @@ const Index = () => {
         initial="hidden"
         animate="visible"
       >
-        <motion.div className="mb-6 md:hidden" variants={itemVariants}>
-          <SearchBar 
-            value={globalSearchQuery}
-            onChange={setGlobalSearchQuery}
-            onSubmit={handleSearchSubmit}
-            isLoading={isSearching}
-          />
-        </motion.div>
-        
         <motion.div 
           className="mb-6 flex items-center justify-center gap-4"
           variants={itemVariants}
@@ -153,18 +126,16 @@ const Index = () => {
           <motion.div 
             className="glass-card p-5 h-[600px]"
             whileHover={{ 
-              scale: 1.02,
-              boxShadow: "0 0 25px rgba(30, 174, 219, 0.5)",
-              transition: { type: "spring", stiffness: 400, damping: 10 }
+              boxShadow: "0 0 22px rgba(30, 174, 219, 0.35)",
+              transition: { type: "spring", stiffness: 300, damping: 22 }
             }}
           >
             <MapErrorBoundary>
               <MapComponent 
-                externalSearchQuery={globalSearchQuery}
-                triggerSearch={triggerSearch}
                 onStationsUpdate={setLiveStations}
                 onSearchingChange={setIsSearching}
                 onHighlightedStationChange={setHighlightedStationId}
+                onBookStation={handleBookStation}
               />
             </MapErrorBoundary>
           </motion.div>

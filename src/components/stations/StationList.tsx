@@ -1,41 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import StationCard from './StationCard';
-import { useStations } from '@/hooks/useStations';
+import { useStations } from '@/controllers/useStations';
 import { Loader2, Clock } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'react-hot-toast';
+import { calculateDistance } from '@/utils/geo';
+import type { StationWithConnectors } from '@/models/station.model';
+
+interface StationListProps {
+  onStationSelect?: (stationId: string, stationName: string) => void;
+}
+
+// We map the database StationWithConnectors to a simpler UI shape used by cards
+interface UIStation {
+  id: string;
+  name: string;
+  address: string;
+  rating: number;
+  total_reviews: number;
+  price_per_kwh: number;
+  available: boolean;
+  latitude: number;
+  longitude: number;
+}
 
 interface Location {
   lat: number;
   lng: number;
 }
 
-interface EVStation {
-  id: string;
-  name: string;
-  location: Location;
-  available: boolean;
-  rating: number;
-  total_reviews: number;
-  address: string;
-  price_per_kwh: number;
-}
-
-interface BookingTime {
-  startTime: string;
-  duration: number;
-}
-
-const StationList: React.FC = () => {
+const StationList: React.FC<StationListProps> = ({ onStationSelect }) => {
   const { data: stations, isLoading, error } = useStations();
-  const [visibleStations, setVisibleStations] = useState<EVStation[]>([]);
+  const [visibleStations, setVisibleStations] = useState<UIStation[]>([]);
   const [userLocation, setUserLocation] = useState<Location | null>(null);
-  const [searchRadius, setSearchRadius] = useState(5000); // 5km radius
-  const [selectedTime, setSelectedTime] = useState<BookingTime>({
+  const [searchRadius] = useState(5000); // 5km radius
+
+  // Keeping Time Selection visually but not managing insertion here
+  const [selectedTime, setSelectedTime] = useState({
     startTime: new Date().toISOString().slice(0, 16),
     duration: 2
   });
+
+  const filterNearbyStations = useCallback((
+    location: Location, 
+    allStations: StationWithConnectors[]
+  ) => {
+    const nearbyStations = allStations
+      .map(station => ({
+        id: station.id,
+        name: station.name,
+        address: station.address || 'Unknown address',
+        rating: station.rating || 4.5,
+        total_reviews: station.total_reviews || 0,
+        price_per_kwh: station.price_per_kwh || 14,
+        available: station.available !== false,
+        latitude: station.latitude,
+        longitude: station.longitude,
+      }))
+      .filter(station => {
+        if (station.latitude == null || station.longitude == null) return false;
+        const distance = calculateDistance(
+          location.lat,
+          location.lng,
+          station.latitude,
+          station.longitude
+        );
+        return distance <= searchRadius / 1000; // Convert radius to km
+      })
+      .sort((a, b) => b.rating - a.rating);
+
+    setVisibleStations(nearbyStations);
+  }, [searchRadius]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -46,90 +81,35 @@ const StationList: React.FC = () => {
             lng: position.coords.longitude
           };
           setUserLocation(newLocation);
-          filterNearbyStations(newLocation, stations || []);
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-          toast.error('Please enable location services to find nearby stations');
-        }
-      );
-    }
-  }, [stations]);
-
-  const filterNearbyStations = (location: Location, allStations: any[]) => {
-    const nearbyStations = allStations
-      .map(station => ({
-        ...station,
-        location: {
-          lat: station.latitude,
-          lng: station.longitude
-        }
-      }))
-      .filter(station => {
-        const distance = calculateDistance(
-          location.lat,
-          location.lng,
-          station.location.lat,
-          station.location.lng
-        );
-        return distance <= searchRadius / 1000; // Convert radius to km
-      })
-      .sort((a, b) => b.rating - a.rating);
-
-    setVisibleStations(nearbyStations);
-  };
-
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371;
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
-  const deg2rad = (deg: number) => {
-    return deg * (Math.PI / 180);
-  };
-
-  const handleBooking = async (stationId: string) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error('Please login to book a station');
-        return;
-      }
-
-      const startTime = new Date(selectedTime.startTime);
-      const endTime = new Date(startTime.getTime() + selectedTime.duration * 60 * 60 * 1000);
-
-      const { error } = await supabase
-        .from('bookings')
-        .insert([
-          {
-            station_id: stationId,
-            user_id: user.id,
-            status: 'pending',
-            booking_date: startTime.toISOString().split('T')[0],
-            start_time: startTime.toISOString(),
-            end_time: endTime.toISOString(),
-            duration_hours: selectedTime.duration,
-            total_price: 0,
-            special_requests: ''
+          if (stations) {
+            filterNearbyStations(newLocation, stations);
           }
-        ]);
+        },
+        (err: GeolocationPositionError) => {
+          console.error('Error getting location:', err);
+          const GEO_ERRORS: Record<number, string> = {
+            1: 'Location access denied. Please allow location in your browser settings.',
+            2: 'Your position is unavailable. Check device GPS or Wi-Fi.',
+            3: 'Location request timed out. Please try again.',
+          };
+          toast.error(GEO_ERRORS[err.code] ?? 'Please enable location services to find nearby stations');
+          // Fallback: show all stations when location is unavailable
+          if (stations) {
+            filterNearbyStations({ lat: 0, lng: 0 }, stations);
+          }
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 }
+      );
+    } else if (stations) {
+      filterNearbyStations({ lat: 0, lng: 0 }, stations);
+    }
+  }, [filterNearbyStations, stations]);
 
-      if (error) throw error;
-      toast.success('Booking successful!');
-      if (userLocation) {
-        filterNearbyStations(userLocation, stations || []);
-      }
-    } catch (error) {
-      console.error('Error booking station:', error);
-      toast.error('Failed to book station');
+  const handleBookingClick = (stationId: string, stationName: string) => {
+    if (onStationSelect) {
+      onStationSelect(stationId, stationName);
+    } else {
+      console.warn('onStationSelect prop is missing in StationList');
     }
   };
 
@@ -138,9 +118,7 @@ const StationList: React.FC = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.1 }
     }
   };
   
@@ -180,7 +158,7 @@ const StationList: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-red-400"
         >
-          <p>Error loading stations: {error.message}</p>
+          <p>Error loading stations: {error instanceof Error ? error.message : 'Unknown error'}</p>
           <p className="text-sm text-white/50 mt-2">Please try refreshing the page</p>
         </motion.div>
       </div>
@@ -209,7 +187,7 @@ const StationList: React.FC = () => {
         </motion.span>
       </motion.div>
 
-      {/* Time Selection */}
+      {/* Time Selection Display (Information only) */}
       <motion.div 
         className="mb-4 flex gap-4"
         initial={{ opacity: 0, y: -10 }}
@@ -217,7 +195,7 @@ const StationList: React.FC = () => {
         transition={{ delay: 0.3 }}
       >
         <div className="flex-1">
-          <label className="block text-sm text-white/70 mb-1">Start Time</label>
+          <label className="block text-sm text-white/70 mb-1">Start Time Target</label>
           <div className="relative">
             <input
               type="datetime-local"
@@ -229,7 +207,7 @@ const StationList: React.FC = () => {
           </div>
         </div>
         <div className="w-32">
-          <label className="block text-sm text-white/70 mb-1">Duration (hours)</label>
+          <label className="block text-sm text-white/70 mb-1">Duration Focus</label>
           <select
             value={selectedTime.duration}
             onChange={(e) => setSelectedTime(prev => ({ ...prev, duration: Number(e.target.value) }))}
@@ -257,7 +235,7 @@ const StationList: React.FC = () => {
           >
             <StationCard
               station={station}
-              onBook={() => handleBooking(station.id)}
+              onBook={() => handleBookingClick(station.id, station.name)}
             />
           </motion.div>
         ))}
@@ -269,7 +247,7 @@ const StationList: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          No charging stations found nearby
+          No charging stations found near your location.
         </motion.div>
       )}
     </div>

@@ -1,377 +1,306 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useMapplsLoader } from '@/hooks/useMapplsLoader';
-
-interface Location {
-  lat: number;
-  lng: number;
-}
-
-interface Connector {
-  id: string;
-  station_id: string;
-  connector_type: string;
-  power_output: number;
-  available: boolean;
-  created_at: string;
-}
-
-export interface EVStation {
-  id: string;
-  name: string;
-  location: Location;
-  rating: number;
-  total_reviews: number;
-  address: string;
-  price_per_kwh: number;
-  available: boolean;
-  connectors: Connector[];
-  distance?: number;
-  isOpen?: boolean;
-}
+import { useSearch } from '@/controllers/useSearchController';
+import { useGoogleMapsLoader } from '@/controllers/useGoogleMapsLoader';
+import { searchNearbyEVStations } from '@/services/googleMapsService';
+import { type EVStation, type Location as MapLocation } from '@/models/station.model';
+import { formatDistance } from '@/utils/formatting';
+import { DEFAULT_CENTER, DEFAULT_RADIUS, RADIUS_OPTIONS } from '@/config/constants';
+import PlacesAutocompleteInput from './PlacesAutocompleteInput';
 
 interface MapComponentProps {
-  externalSearchQuery?: string;
-  triggerSearch?: number;
   onStationsUpdate?: (stations: EVStation[]) => void;
   onSearchingChange?: (isSearching: boolean) => void;
   onHighlightedStationChange?: (id: string | null) => void;
+  onBookStation?: (station: EVStation) => void;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({
-  externalSearchQuery = '',
-  triggerSearch = 0,
+const MapComponent = ({
   onStationsUpdate,
   onSearchingChange,
-  onHighlightedStationChange
-}) => {
-  const [userLocation, setUserLocation] = useState<Location | null>(null);
-  const [stations, setStations] = useState<EVStation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [scriptsLoaded, setScriptsLoaded] = useState(false);
-  const [searchRadius, setSearchRadius] = useState(50000); // 50km
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  onHighlightedStationChange,
+  onBookStation,
+}: MapComponentProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
-  const markersRef = useRef<{ [key: string]: any }>({});
-  
-  const sdkStatus = useMapplsLoader();
+  const mapRef = useRef<GoogleMap | null>(null);
+  const markersRef = useRef<GoogleMarker[]>([]);
+  const infoWindowRef = useRef<GoogleInfoWindow | null>(null);
+  const locationMarkerRef = useRef<GoogleMarker | null>(null);
+  const stationsRef = useRef<EVStation[]>([]);
+  const latestCoordsRef = useRef<MapLocation | null>(null);
+  const [stations, setStations] = useState<EVStation[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+  const [searchRadius, setSearchRadius] = useState(DEFAULT_RADIUS);
+  const [panelQuery, setPanelQuery] = useState('');
+  const mapId = useId().replace(/:/g, '-');
+  const sdkStatus = useGoogleMapsLoader();
 
-  // Diagnostic Logs
-  useEffect(() => {
-    console.group('🗺️ MAP DEBUG');
-    console.log('1. window.mappls:', window.mappls);
-    console.log('2. MAPPLS_KEY:', import.meta.env.VITE_MAPPLS_KEY);
-    console.log('3. map container el:', document.getElementById('map'));
-    console.log('4. container height:', document.getElementById('map')?.getBoundingClientRect());
-    console.groupEnd();
+  const {
+    triggerSearch,
+    resolvedCoords,
+    resolvedViewport,
+    resolvedName,
+    resolvedRequestId,
+    isSearching,
+    searchError,
+    requestCurrentLocation,
+    locationRequestId,
+    locationStatus,
+    setLocationStatus,
+  } = useSearch();
+
+  const clearMarkers = useCallback(() => {
+    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current = [];
   }, []);
 
-  const radiusOptions = [
-    { value: 10000, label: '10 km' },
-    { value: 25000, label: '25 km' },
-    { value: 50000, label: '50 km' },
-    { value: 100000, label: '100 km' }
-  ];
+  const renderStations = useCallback((results: EVStation[]) => {
+    if (!mapRef.current || !window.google?.maps) return;
 
-  // Initialize Map
-  useEffect(() => {
-    if (sdkStatus !== 'ready') return;
-    if (mapRef.current) return; // prevent double init
-    if (!mapContainerRef.current) return;
-    
-    try {
-      mapRef.current = new window.mappls.Map('map', {
-        center: { lat: 28.6139, lng: 77.2090 }, // Default Delhi
-        zoom: 12,
-        zoomControl: true,
-        location: true,
-        search: false // Disabled default search to use our own
-      });
+    clearMarkers();
+    const bounds = new window.google.maps.LatLngBounds();
 
-      mapRef.current.addListener('load', () => {
-        setMapLoaded(true);
-        setLoading(false);
-        console.log('Mappls map loaded');
-        
-        if (userLocation) {
-          fetchNearbyStations(userLocation);
-        }
-      });
-    } catch (e) {
-      console.error("Error initializing Mappls Map:", e);
-      setLoading(false);
-      toast.error("Failed to load map. Check API Key format.");
-    }
-
-    return () => {
-      // Clear markers on unmount
-      Object.values(markersRef.current).forEach(m => m.remove());
-      markersRef.current = {};
-    };
-  }, [sdkStatus, userLocation]); // removed fetchNearbyStations from dep array temporarily to avoid recursive loops
-
-  // Fetch stations using Mappls Nearby plugin
-  const fetchNearbyStations = useCallback((location: Location) => {
-    if (isSearching || !mapRef.current || !window.mappls.nearby) return;
-
-    setIsSearching(true);
-    // Clear old markers
-    Object.values(markersRef.current).forEach(m => m.remove());
-    markersRef.current = {};
-    setStations([]);
-
-    window.mappls.nearby({
-      keywords: 'EV Charging Station',
-      refLocation: [location.lat, location.lng],
-      radius: searchRadius,
-      region: 'IND',
-      map: mapRef.current,
-      fitbounds: false,
-      callback: (data: any) => {
-        setIsSearching(false);
-        
-        if (!data || !data.suggestedLocations || data.suggestedLocations.length === 0) {
-          toast.error('No EV charging stations found in this area.');
-          return;
-        }
-
-        const validStations: EVStation[] = data.suggestedLocations.map((place: any, index: number) => {
-          // Normalize Mappls API properties to match EVStation props
-          return {
-            id: place.eLoc || place.poiId || Math.random().toString(),
-            name: place.placeName || 'Unknown Station',
-            location: {
-              lat: parseFloat(place.latitude),
-              lng: parseFloat(place.longitude),
-            },
-            address: place.placeAddress || place.vicinity || 'Address not available',
-            rating: place.rating || (3.5 + Math.random() * 1.5),
-            total_reviews: place.totalReviews || Math.floor(Math.random() * 50),
-            price_per_kwh: 15, // Default Indian Rupee mock price
-            available: Math.random() > 0.3, // Mock operational state
-            distance: place.distance || undefined,
-            isOpen: true,
-            connectors: [
-              {
-                id: `conn_${index}_1`,
-                station_id: place.eLoc || '',
-                connector_type: 'CCS2',
-                power_output: 50,
-                available: true,
-                created_at: new Date().toISOString()
-              }
-            ]
-          };
-        });
-
-        toast.success(`Found ${validStations.length} charging stations`);
-        setStations(validStations);
-        renderMarkers(validStations);
-        
-        // Auto-fit bounds
-        if (validStations.length > 0) {
-           // Basic panning if fitbounds doesn't work out of the box
-           mapRef.current.setCenter({ lat: validStations[0].location.lat, lng: validStations[0].location.lng });
-           mapRef.current.setZoom(12);
-        }
-      }
-    });
-  }, [searchRadius, isSearching]);
-
-  const renderMarkers = (stationList: EVStation[]) => {
-    stationList.forEach(station => {
-      const marker = new window.mappls.Marker({
+    results.forEach((station) => {
+      const distanceText = formatDistance(station.distance);
+      const marker = new window.google.maps.Marker({
         map: mapRef.current,
-        position: { lat: station.location.lat, lng: station.location.lng },
-        popupHtml: `
-          <div class="popup-dark" style="background:#1a1a1a; color:#fff; padding:10px; border-radius:8px;">
-            <strong>${station.name}</strong>
-            <p style="font-size: 12px; color: #aaa; margin: 5px 0;">${station.address}</p>
-            <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${station.available ? '#00c9a7' : '#ff4d4d'}; color: ${station.available ? '#000': '#fff'}">
-              ${station.available ? 'Available' : 'Busy'}
-            </span>
-          </div>
-        `
+        position: station.location,
+        title: station.name,
       });
-      
-      markersRef.current[station.id] = marker;
+
+      marker.addListener('click', () => {
+        onHighlightedStationChange?.(station.id);
+        infoWindowRef.current = new window.google.maps.InfoWindow({
+          content: `
+            <div style="padding:12px;min-width:210px;font-family:sans-serif">
+              <strong style="font-size:13px;color:#0f766e">${station.name}</strong>
+              <p style="font-size:11px;color:#4b5563;margin:6px 0 2px">${station.address}</p>
+              <p style="font-size:11px;margin:0 0 8px">${distanceText} away</p>
+              <button
+                onclick="window.__eveeBook && window.__eveeBook('${station.id}')"
+                style="background:#00c9a7;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold;font-size:12px"
+              >
+                Book Now
+              </button>
+            </div>
+          `,
+        });
+        infoWindowRef.current.open({ map: mapRef.current!, anchor: marker });
+      });
+
+      bounds.extend(station.location);
+      markersRef.current.push(marker);
     });
-  };
 
-  // Mappls REST API Geocoding
-  const geocodeLocation = async (query: string): Promise<Location | null> => {
+    if (results.length > 1) {
+      mapRef.current.fitBounds(bounds);
+    }
+  }, [clearMarkers, onHighlightedStationChange]);
+
+  const loadEVChargers = useCallback(async (lat: number, lng: number) => {
+    if (!mapRef.current) return;
+
+    setIsFetching(true);
+    onSearchingChange?.(true);
+    setStations([]);
+    clearMarkers();
+
     try {
-      const MAPPLS_KEY = import.meta.env.VITE_MAPPLS_KEY;
-      if (!MAPPLS_KEY) {
-         toast.error("VITE_MAPPLS_KEY is missing from environment");
-         return null;
-      }
-      const res = await fetch(
-        `https://atlas.mappls.com/api/places/geocode?address=${encodeURIComponent(query)}&region=IND`,
-        { headers: { Authorization: `bearer ${MAPPLS_KEY}` } }
+      const nearbyStations = await searchNearbyEVStations(
+        lat,
+        lng,
+        searchRadius,
       );
-      const data = await res.json();
-      if (data.copResults) {
-        return {
-          lat: parseFloat(data.copResults.latitude),
-          lng: parseFloat(data.copResults.longitude)
-        };
+      setStations(nearbyStations);
+      stationsRef.current = nearbyStations;
+      onStationsUpdate?.(nearbyStations);
+      renderStations(nearbyStations);
+
+      if (nearbyStations.length === 0) {
+        toast.error('No EV charging stations found nearby. Try a larger radius.');
       }
-      throw new Error('Location not found in Mappls');
-    } catch(e) {
-      console.error(e);
-      return null;
+    } catch (error) {
+      console.error('Nearby station lookup failed:', error);
+      toast.error('Could not load nearby EV stations. Check your connection.');
+    } finally {
+      setIsFetching(false);
+      onSearchingChange?.(false);
     }
-  };
+  }, [clearMarkers, onSearchingChange, onStationsUpdate, renderStations, searchRadius]);
 
-  const handleSearch = useCallback(async (queryOverride?: string) => {
-    const query = queryOverride || searchQuery;
-    if (!query.trim()) return;
-
-    setIsSearching(true);
-    setLoading(true);
-
-    const coords = await geocodeLocation(query);
-    if (!coords) {
-       toast.error('Location not found. Please try a different search term.');
-       setIsSearching(false);
-       setLoading(false);
-       return;
+  useEffect(() => {
+    if (sdkStatus !== 'ready' || mapRef.current || !mapContainerRef.current || !window.google?.maps) {
+      return;
     }
 
-    if (mapRef.current) {
-      mapRef.current.setCenter(coords);
+    mapRef.current = new window.google.maps.Map(mapContainerRef.current, {
+      center: DEFAULT_CENTER,
+      zoom: 12,
+      mapTypeControl: false,
+      fullscreenControl: true,
+      streetViewControl: false,
+    });
+  }, [sdkStatus]);
+
+  useEffect(() => {
+    return () => {
+      clearMarkers();
+      locationMarkerRef.current?.setMap(null);
+      mapRef.current = null;
+    };
+  }, [clearMarkers]);
+
+  useEffect(() => {
+    if (!resolvedCoords || !mapRef.current || sdkStatus !== 'ready' || !window.google?.maps) {
+      return;
+    }
+
+    latestCoordsRef.current = resolvedCoords;
+    
+    if (resolvedViewport) {
+      mapRef.current.fitBounds(resolvedViewport);
+    } else {
+      mapRef.current.setCenter(resolvedCoords);
       mapRef.current.setZoom(13);
     }
-    
-    // Pass coordinates to Mappls nearby
-    fetchNearbyStations(coords);
-    setIsSearching(false);
-    setLoading(false);
-  }, [searchQuery, fetchNearbyStations]);
 
-  // Handle external search props
-  useEffect(() => {
-    if (triggerSearch > 0 && externalSearchQuery) {
-      setSearchQuery(externalSearchQuery);
-      handleSearch(externalSearchQuery);
-    }
-  }, [triggerSearch, externalSearchQuery, handleSearch]);
+    locationMarkerRef.current?.setMap(null);
+    locationMarkerRef.current = new window.google.maps.Marker({
+      map: mapRef.current,
+      position: resolvedCoords,
+      title: resolvedName || 'Selected Location',
+    });
 
-  // Bubble up stations
-  useEffect(() => {
-    onStationsUpdate?.(stations);
-  }, [stations, onStationsUpdate]);
+    void loadEVChargers(resolvedCoords.lat, resolvedCoords.lng);
+  }, [loadEVChargers, resolvedCoords, resolvedName, resolvedRequestId, sdkStatus]);
 
   useEffect(() => {
-    onSearchingChange?.(isSearching);
-  }, [isSearching, onSearchingChange]);
+    if (!locationRequestId) return;
 
-  const handleFindNearby = useCallback(() => {
     if (!navigator.geolocation) {
       toast.error('Geolocation is not supported by your browser');
       return;
     }
-    setLoading(true);
+
+    setLocationStatus('loading');
     navigator.geolocation.getCurrentPosition(
       (position) => {
-         const loc = { lat: position.coords.latitude, lng: position.coords.longitude };
-         setUserLocation(loc);
-         if (mapRef.current) {
-            mapRef.current.setCenter(loc);
-            mapRef.current.setZoom(14);
-         }
-         fetchNearbyStations(loc);
+        const coords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+
+        latestCoordsRef.current = coords;
+        setLocationStatus('active');
+
+        if (mapRef.current && window.google?.maps) {
+          mapRef.current.setCenter(coords);
+          mapRef.current.setZoom(13);
+          locationMarkerRef.current?.setMap(null);
+          locationMarkerRef.current = new window.google.maps.Marker({
+            map: mapRef.current,
+            position: coords,
+            title: 'Current Location',
+          });
+        }
+
+        void loadEVChargers(coords.lat, coords.lng);
       },
-      (error) => {
-         toast.error('Error getting location. Please enable location permissions.');
-         setLoading(false);
-      }
+      (err: GeolocationPositionError) => {
+        setLocationStatus('idle');
+        const GEO_ERRORS: Record<number, string> = {
+          1: 'Location access denied. Please allow location in your browser settings.',
+          2: 'Your position is unavailable. Check device GPS or Wi-Fi.',
+          3: 'Location request timed out. Please try again.',
+        };
+        toast.error(GEO_ERRORS[err.code] ?? 'Could not access your location.');
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 0,
+      },
     );
-  }, [fetchNearbyStations]);
+  }, [loadEVChargers, locationRequestId, setLocationStatus]);
+
+  useEffect(() => {
+    window.__eveeBook = (id: string) => {
+      const station = stationsRef.current.find((item) => item.id === id);
+      if (station) onBookStation?.(station);
+    };
+
+    return () => {
+      delete window.__eveeBook;
+    };
+  }, [onBookStation]);
+
+  const handleInlineSearch = (query = panelQuery) => {
+    if (!query.trim()) return;
+    void triggerSearch(query);
+  };
 
   return (
-    <div className="relative w-full h-full">
-      {/* Top Controls Overlay */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col space-y-2 max-w-sm">
-        <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-md p-2 flex space-x-2">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search location..."
-            className="flex-1 px-3 py-2 border rounded-md"
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          />
-          <button
-            onClick={() => handleSearch()}
-            disabled={isSearching}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md flex items-center"
+    <div className="relative h-full w-full">
+      <div className="absolute right-4 top-4 z-10 flex w-full max-w-[200px] flex-col gap-3">
+        <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3 shadow-lg backdrop-blur-xl">
+          <label className="block text-sm font-medium text-white/80">
+            Search Radius ({searchRadius / 1000}km)
+          </label>
+          <select
+            value={searchRadius}
+            onChange={(event) => {
+              const nextRadius = Number(event.target.value);
+              setSearchRadius(nextRadius);
+              if (latestCoordsRef.current) {
+                void loadEVChargers(latestCoordsRef.current.lat, latestCoordsRef.current.lng);
+              }
+            }}
+            className="mt-2 w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white"
           >
-            {isSearching ? 'Searching...' : 'Search'}
-          </button>
-        </div>
-
-        <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-md p-2">
-           <label className="block text-sm font-medium">Search Radius ({searchRadius/1000}km)</label>
-           <select 
-             value={searchRadius} 
-             onChange={(e) => setSearchRadius(Number(e.target.value))}
-             className="w-full mt-1 border rounded-md px-2 py-1"
-           >
-             {radiusOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-           </select>
+            {RADIUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button
-          onClick={handleFindNearby}
-          className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md hover:bg-white"
+          onClick={requestCurrentLocation}
+          disabled={locationStatus === 'loading' || sdkStatus !== 'ready'}
+          className="rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm font-medium text-white shadow-lg backdrop-blur-xl transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-70"
         >
-          Find My Location
+          {locationStatus === 'loading' ? 'Detecting...' : 'Find My Location'}
         </button>
       </div>
 
-      {loading && sdkStatus === 'ready' && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+      {(isFetching || isSearching) && sdkStatus === 'ready' && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm">
+          <div className="h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
         </div>
       )}
 
-      {/* Mappls Error State */}
       {sdkStatus === 'error' && (
-        <div style={{
-          display: 'flex', flexDirection: 'column', 
-          alignItems: 'center', justifyContent: 'center', 
-          height: '100%', minHeight: '600px',
-          gap: '12px', color: '#00c9a7'
-        }}>
-          <p>Map failed to load.</p>
-          <p style={{ fontSize: '13px', color: '#888' }}>
-            Check that your Mappls API key is correctly set in index.html
-          </p>
+        <div className="flex h-full min-h-[600px] items-center justify-center text-[#00c9a7]">
+          <p>Map failed to load. Check VITE_GOOGLE_MAPS_API_KEY.</p>
         </div>
       )}
 
-      {/* Mappls Loading State */}
       {sdkStatus === 'loading' && (
-        <div style={{ 
-          display: 'flex', alignItems: 'center', 
-          justifyContent: 'center', height: '100%', minHeight: '600px', color: '#888' 
-        }}>
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mb-4"></div>
-          <p>Booting SDK...</p>
+        <div className="flex h-full min-h-[600px] items-center justify-center text-slate-400">
+          <p>Loading map...</p>
         </div>
       )}
 
-      {/* Mappls Map Container */}
-      <div 
-        ref={mapContainerRef} 
-        id="map" 
-        style={{ width: '100%', height: '100vh', minHeight: '600px', display: sdkStatus === 'ready' ? 'block' : 'none' }}
+      <div
+        id={mapId}
+        ref={mapContainerRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          minHeight: '600px',
+          display: sdkStatus === 'ready' ? 'block' : 'none',
+        }}
       />
     </div>
   );

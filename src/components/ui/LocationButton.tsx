@@ -2,84 +2,38 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
+import { useSearch } from '@/controllers/useSearchController';
 
 const LocationButton: React.FC = () => {
-  const [isActivated, setIsActivated] = useState(false);
   const [showRipple, setShowRipple] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { requestCurrentLocation, locationStatus } = useSearch();
+  const isActivated = locationStatus === 'active';
+  const isLoading = locationStatus === 'loading';
   
   const handleLocationClick = () => {
-    setIsLoading(true);
-    
     if (!navigator.geolocation) {
       toast.error("Geolocation is not supported by your browser");
-      setIsLoading(false);
       return;
     }
-    
-    navigator.permissions.query({ name: 'geolocation' }).then((permissionStatus) => {
-      if (permissionStatus.state === 'granted') {
-        // Permission already granted
-        getLocation();
-      } else if (permissionStatus.state === 'prompt') {
-        // Will show prompt
-        toast.info("Please allow location access");
-        getLocation();
-      } else if (permissionStatus.state === 'denied') {
-        toast.error("Location permissions denied. Please enable location in your browser settings.");
-        setIsLoading(false);
-      }
-      
-      permissionStatus.onchange = () => {
-        if (permissionStatus.state === 'granted') {
-          getLocation();
-        }
-      };
-    });
+
+    requestCurrentLocation();
   };
-  
-  const getLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        // Successfully got location
-        const { latitude, longitude } = position.coords;
-        console.log(`Location: ${latitude}, ${longitude}`);
-        
-        // Show success animation
-        setIsActivated(true);
-        setShowRipple(true);
-        setIsLoading(false);
-        
-        // Store location in localStorage in the format expected by StationList
-        localStorage.setItem('userLocation', JSON.stringify({ latitude, longitude }));
-        
-        toast.success("Location successfully detected!");
-        
-        // Reset ripple after animation
-        setTimeout(() => {
-          setShowRipple(false);
-        }, 2000);
-      },
-      (error) => {
-        setIsLoading(false);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            toast.error("Location request was denied");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            toast.error("Location information is unavailable");
-            break;
-          case error.TIMEOUT:
-            toast.error("Location request timed out");
-            break;
-          default:
-            toast.error("An unknown error occurred");
-        }
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-  };
+
+  React.useEffect(() => {
+    if (!isActivated) {
+      return;
+    }
+
+    toast.success("Location successfully detected!");
+    setShowRipple(true);
+
+    const timeoutId = window.setTimeout(() => {
+      setShowRipple(false);
+    }, 2000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isActivated]);
 
   return (
     <motion.div 
