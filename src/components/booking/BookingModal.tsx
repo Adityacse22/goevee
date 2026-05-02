@@ -10,7 +10,8 @@ import {
   ArrowRight,
   ShieldCheck,
   CreditCard,
-  Leaf
+  Leaf,
+  Calendar
 } from 'lucide-react';
 import type { EVStation } from '@/models/station.model';
 import { format, addDays, isSameDay } from 'date-fns';
@@ -41,7 +42,14 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState('10:00 PM');
   const [duration, setDuration] = useState(1); // 1 hour
-  const [selectedConnector, setSelectedConnector] = useState(station?.connectors?.[0]?.id || 'default');
+  const [selectedConnector, setSelectedConnector] = useState<string>('');
+
+  // Update selected connector when station changes
+  React.useEffect(() => {
+    if (station?.connectors && station.connectors.length > 0) {
+      setSelectedConnector(station.connectors[0].id);
+    }
+  }, [station]);
 
   // Generate 7 days starting from today
   const dates = useMemo(() => {
