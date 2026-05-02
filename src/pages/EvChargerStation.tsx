@@ -72,11 +72,20 @@ const EvChargerStation = () => {
   };
 
   const handleConfirmBooking = (booking: BookingDetails) => {
+    // booking.timeSlot is "HH:mm:ss"
+    // booking.duration is in hours (0.5, 1, 2, etc.)
+    const [h, m, s] = booking.timeSlot.split(':').map(Number);
+    const startDate = new Date();
+    startDate.setHours(h, m, s);
+    
+    const endDate = new Date(startDate.getTime() + booking.duration * 3600000);
+    const end_time = `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}:00`;
+
     createBooking.mutate({
       connector_id: booking.stationId,
       booking_date: booking.date,
       start_time: booking.timeSlot,
-      end_time: String(Number(booking.timeSlot.split(':')[0]) + booking.duration).padStart(2, '0') + ':00',
+      end_time: end_time,
       total_price: booking.estimatedCost,
       status: 'confirmed',
       user_id: user?.id || '',

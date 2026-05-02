@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import type { EVStation } from '@/models/station.model';
 import { format, addDays, isSameDay } from 'date-fns';
+import { formatDistance } from '@/utils/formatting';
 
 export interface BookingDetails {
   stationId: string;
@@ -77,11 +78,23 @@ const BookingModal: React.FC<BookingModalProps> = ({
   if (!station) return null;
 
   const handleConfirm = () => {
+    // Convert 12h time (e.g., "10:00 PM") to 24h time (e.g., "22:00:00")
+    const convertTo24Hour = (time12h: string) => {
+      const [time, period] = time12h.split(' ');
+      let [hours, minutes] = time.split(':');
+      let hour = parseInt(hours);
+      
+      if (period === 'PM' && hour !== 12) hour += 12;
+      if (period === 'AM' && hour === 12) hour = 0;
+      
+      return `${hour.toString().padStart(2, '0')}:${minutes}:00`;
+    };
+
     onConfirm({
       stationId: station.id,
       stationName: station.name,
       date: format(selectedDate, 'yyyy-MM-dd'),
-      timeSlot: selectedTime,
+      timeSlot: convertTo24Hour(selectedTime),
       duration,
       connectorType: station.connectors?.find(c => c.id === selectedConnector)?.connector_type || 'CCS2',
       estimatedCost: totalPrice
@@ -154,7 +167,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                     <div className="p-1.5 rounded-full bg-ev-blue/10 text-ev-blue">
                       <MapPin className="w-3 h-3" />
                     </div>
-                    <span className="text-xs font-bold text-white">{station.distance?.toFixed(1) || '0.0'} km</span>
+                    <span className="text-xs font-bold text-white">{formatDistance(station.distance)}</span>
                     <span className="text-[10px] text-white/40 uppercase">Away</span>
                   </div>
                   <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex flex-col items-center gap-1">

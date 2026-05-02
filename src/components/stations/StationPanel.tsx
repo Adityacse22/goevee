@@ -14,15 +14,7 @@ interface StationPanelProps {
   highlightedStationId?: string | null;
 }
 
-function formatStationDistance(distance?: number) {
-  if (distance == null) {
-    return 'Distance unavailable';
-  }
-
-  return distance < 1000
-    ? `${Math.round(distance)} m`
-    : `${(distance / 1000).toFixed(1)} km`;
-}
+// Removed local formatStationDistance and using imported formatDistance instead
 
 const StationPanel: React.FC<StationPanelProps> = ({
   isOpen,
@@ -127,7 +119,7 @@ const StationPanel: React.FC<StationPanelProps> = ({
                     <div className="flex items-center gap-3 mb-3 text-xs">
                       <span className="text-white/60 flex items-center gap-1">
                         <ChevronRight className="w-3 h-3 text-ev-blue" />
-                        {formatStationDistance(station.distance)}
+                        {formatDistance(station.distance)}
                       </span>
                       <span className="text-white/60 flex items-center gap-1">
                         <Star className="w-3 h-3 text-yellow-400" />
