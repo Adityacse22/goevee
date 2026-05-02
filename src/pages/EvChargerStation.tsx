@@ -6,8 +6,11 @@ import toast from 'react-hot-toast';
 import MapComponent from '@/components/Map';
 import StationPanel from '@/components/stations/StationPanel';
 import SearchBar from '@/components/SearchBar';
+import BookingModal from '@/components/booking/BookingModal';
+import type { BookingDetails } from '@/components/booking/BookingModal';
 import { useSearch } from '@/controllers/useSearchController';
 import { useAuth } from '@/controllers/useAuth';
+import { useCreateBooking } from '@/controllers/useBookings';
 import type { EVStation } from '@/models/station.model';
 
 const EvChargerStation = () => {
@@ -17,6 +20,10 @@ const EvChargerStation = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const { requestCurrentLocation, locationStatus } = useSearch();
   const { user } = useAuth();
+  const createBooking = useCreateBooking();
+
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [selectedStation, setSelectedStation] = useState<EVStation | null>(null);
 
   // Sync theme on mount
   useEffect(() => {
@@ -54,6 +61,34 @@ const EvChargerStation = () => {
   const handleHighlightedStationChange = React.useCallback((id: string | null) => {
     setHighlightedStationId(id);
   }, []);
+
+  const handleBookStation = (station: EVStation) => {
+    if (!user) {
+      toast.error('Please log in to book a station');
+      return;
+    }
+    setSelectedStation(station);
+    setIsBookingOpen(true);
+  };
+
+  const handleConfirmBooking = (booking: BookingDetails) => {
+    createBooking.mutate({
+      connector_id: booking.stationId,
+      booking_date: booking.date,
+      start_time: booking.timeSlot,
+      end_time: String(Number(booking.timeSlot.split(':')[0]) + booking.duration).padStart(2, '0') + ':00',
+      total_price: booking.estimatedCost,
+      status: 'confirmed',
+      user_id: user?.id || '',
+      station_id: booking.stationId,
+      duration_hours: booking.duration,
+    }, {
+      onSuccess: () => {
+        setIsBookingOpen(false);
+        setSelectedStation(null);
+      }
+    });
+  };
 
   // Filtered and Sorted Stations
   const filteredStations = useMemo(() => {
@@ -227,10 +262,22 @@ const EvChargerStation = () => {
         isOpen={isPanelOpen}
         onClose={() => setIsPanelOpen(false)}
         stations={filteredStations}
-        onBookStation={() => {}}
+        onBookStation={handleBookStation}
         highlightedStationId={highlightedStationId}
         onStationClick={handleStationClick}
       />
+
+      {user && (
+        <BookingModal
+          isOpen={isBookingOpen}
+          station={selectedStation}
+          onClose={() => {
+            setIsBookingOpen(false);
+            setSelectedStation(null);
+          }}
+          onConfirm={handleConfirmBooking}
+        />
+      )}
     </div>
   );
 };
