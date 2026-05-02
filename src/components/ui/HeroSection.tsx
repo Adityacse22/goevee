@@ -174,11 +174,12 @@ const HeroSection: React.FC = () => {
       </div>
 
       <motion.div 
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
+        className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 1 }}
-      >        <motion.img
+      >
+        <motion.img
           src="/images/tata_harrier_ev_transparent.png"
           alt="Tata Harrier EV"
           className="w-48 object-contain"
