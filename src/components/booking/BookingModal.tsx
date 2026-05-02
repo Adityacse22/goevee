@@ -1,262 +1,322 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Zap, Calendar, Clock, CreditCard } from 'lucide-react';
-
-interface BookingConnector {
-  available?: boolean;
-  connector_type?: string;
-  type?: string;
-  power_output?: number;
-  power?: number;
-}
-
-interface BookingStation {
-  id: string;
-  name: string;
-  address?: string;
-  distance?: number;
-  price_per_kwh?: number;
-  pricePerKwh?: number;
-  connectors?: BookingConnector[];
-}
-
-interface BookingModalProps {
-  isOpen: boolean;
-  station: BookingStation | null;
-  onClose: () => void;
-  onConfirm: (booking: BookingDetails) => void;
-}
+import { 
+  X, 
+  ChevronLeft, 
+  Clock, 
+  Zap, 
+  MapPin, 
+  CheckCircle2, 
+  ArrowRight,
+  ShieldCheck,
+  CreditCard,
+  Leaf
+} from 'lucide-react';
+import type { EVStation } from '@/models/station.model';
+import { format, addDays, isSameDay } from 'date-fns';
 
 export interface BookingDetails {
   stationId: string;
   stationName: string;
   date: string;
   timeSlot: string;
-  duration: number;
+  duration: number; // in hours
   connectorType: string;
   estimatedCost: number;
 }
 
-const timeSlots = [
-  { label: '6:00 AM', value: '06:00' },
-  { label: '8:00 AM', value: '08:00' },
-  { label: '10:00 AM', value: '10:00' },
-  { label: '12:00 PM', value: '12:00' },
-  { label: '2:00 PM', value: '14:00' },
-  { label: '4:00 PM', value: '16:00' },
-  { label: '6:00 PM', value: '18:00' },
-  { label: '8:00 PM', value: '20:00' },
-  { label: '10:00 PM', value: '22:00' },
-];
+interface BookingModalProps {
+  isOpen: boolean;
+  station: EVStation | null;
+  onClose: () => void;
+  onConfirm: (details: BookingDetails) => void;
+}
 
-const durations = [
-  { label: '30 min', value: 0.5 },
-  { label: '1 hour', value: 1 },
-  { label: '2 hours', value: 2 },
-  { label: '3 hours', value: 3 },
-];
+const BookingModal: React.FC<BookingModalProps> = ({
+  isOpen,
+  station,
+  onClose,
+  onConfirm,
+}) => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState('10:00 PM');
+  const [duration, setDuration] = useState(1); // 1 hour
+  const [selectedConnector, setSelectedConnector] = useState(station?.connectors?.[0]?.id || 'default');
 
-const BookingModal: React.FC<BookingModalProps> = ({ isOpen, station, onClose, onConfirm }) => {
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split('T')[0]
-  );
-  const [selectedTime, setSelectedTime] = useState('');
-  const [selectedDuration, setSelectedDuration] = useState(1);
-  const [selectedConnector, setSelectedConnector] = useState('');
+  // Generate 7 days starting from today
+  const dates = useMemo(() => {
+    return Array.from({ length: 7 }, (_, i) => addDays(new Date(), i));
+  }, []);
+
+  const timeSlots = [
+    '6:00 AM', '8:00 AM', '10:00 AM',
+    '12:00 PM', '2:00 PM', '4:00 PM',
+    '6:00 PM', '8:00 PM', '10:00 PM'
+  ];
+
+  const durations = [
+    { label: '30 min', value: 0.5 },
+    { label: '1 hour', value: 1 },
+    { label: '2 hours', value: 2 },
+    { label: '3 hours', value: 3 }
+  ];
+
+  const pricePerKwh = station?.price_per_kwh || 15; 
+  const kwhPerHour = 15; // Estimated consumption for calculation
+  const totalKwh = duration * kwhPerHour;
+  const totalPrice = Math.round(totalKwh * pricePerKwh);
 
   if (!station) return null;
 
-  const availableConnectors = station.connectors?.filter((c) => c.available) || [];
-  const activeConnector = availableConnectors.find((c) => (c.connector_type || c.type) === selectedConnector) || availableConnectors[0];
-  const estimatedKwh = activeConnector ? (activeConnector.power_output || activeConnector.power || 50) * selectedDuration * 0.8 : 0;
-  const price = station.price_per_kwh || station.pricePerKwh || 14;
-  const estimatedCost = estimatedKwh * price;
-
   const handleConfirm = () => {
-    if (!selectedTime) return;
     onConfirm({
       stationId: station.id,
       stationName: station.name,
-      date: selectedDate,
+      date: format(selectedDate, 'yyyy-MM-dd'),
       timeSlot: selectedTime,
-      duration: selectedDuration,
-      connectorType: selectedConnector || activeConnector?.connector_type || activeConnector?.type || '',
-      estimatedCost,
+      duration,
+      connectorType: station.connectors?.find(c => c.id === selectedConnector)?.connector_type || 'CCS2',
+      estimatedCost: totalPrice
     });
   };
-
-  const isValid = selectedTime && selectedDate;
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
           <motion.div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
+            className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
           />
 
-          {/* Modal */}
           <motion.div
-            className="booking-modal"
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative w-full max-w-xl bg-slate-900 border-t sm:border border-white/10 rounded-t-[32px] sm:rounded-[32px] overflow-hidden shadow-2xl"
           >
             {/* Header */}
-            <div className="flex items-start justify-between mb-5">
-              <div>
-                <h2 className="text-xl font-bold text-white">Book Charging Slot</h2>
-                <p className="text-white/50 text-sm mt-1 flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5 text-ev-blue" />
-                  {station.name}
-                </p>
+            <div className="p-6 flex items-center justify-between border-b border-white/5">
+              <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+                <ChevronLeft className="w-5 h-5 text-white/70" />
+              </button>
+              <div className="text-center">
+                <h2 className="text-xl font-bold text-white flex items-center justify-center gap-2">
+                  <Zap className="w-5 h-5 text-ev-blue fill-ev-blue/20" />
+                  Book Charging Slot
+                </h2>
+                <p className="text-xs text-white/50">{station.name}</p>
               </div>
-              <motion.button
-                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/60 hover:text-white"
-                onClick={onClose}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <X className="w-4 h-4" />
-              </motion.button>
+              <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+                <X className="w-5 h-5 text-white/70" />
+              </button>
             </div>
 
-            {/* Station info */}
-            <div className="bg-white/5 rounded-xl p-3.5 mb-5 border border-white/5">
-              <p className="text-white/40 text-xs flex items-center gap-1.5">
-                <MapPin className="w-3 h-3" />
-                {station.address}
-              </p>
-              <div className="flex items-center gap-3 mt-2 text-xs text-white/60">
-                <span>₹{price}/kWh</span>
-                <span>·</span>
-                <span>{station.distance ? station.distance.toFixed(1) : '1.2'} km away</span>
-                <span>·</span>
-                <span className="text-green-400">Available</span>
+            <div className="p-6 space-y-8 max-h-[70vh] overflow-y-auto no-scrollbar">
+              {/* Station Info Card */}
+              <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex gap-3">
+                    <div className="mt-1 p-2 rounded-lg bg-ev-blue/10">
+                      <MapPin className="w-5 h-5 text-ev-blue" />
+                    </div>
+                    <p className="text-sm text-white/80 leading-relaxed max-w-[70%]">
+                      {station.address}
+                    </p>
+                  </div>
+                  <div className="px-3 py-1.5 rounded-full bg-ev-green/10 border border-ev-green/20 flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-ev-green animate-pulse" />
+                    <span className="text-[10px] font-bold text-ev-green uppercase tracking-wider">Available</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex flex-col items-center gap-1">
+                    <div className="p-1.5 rounded-full bg-ev-blue/10 text-ev-blue">
+                      <CreditCard className="w-3 h-3" />
+                    </div>
+                    <span className="text-xs font-bold text-white">₹{pricePerKwh}/kWh</span>
+                    <span className="text-[10px] text-white/40 uppercase">Price</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex flex-col items-center gap-1">
+                    <div className="p-1.5 rounded-full bg-ev-blue/10 text-ev-blue">
+                      <MapPin className="w-3 h-3" />
+                    </div>
+                    <span className="text-xs font-bold text-white">{station.distance?.toFixed(1) || '0.0'} km</span>
+                    <span className="text-[10px] text-white/40 uppercase">Away</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/5 flex flex-col items-center gap-1">
+                    <div className="p-1.5 rounded-full bg-ev-blue/10 text-ev-blue">
+                      <Zap className="w-3 h-3" />
+                    </div>
+                    <span className="text-xs font-bold text-white">CCS2 • 50kW</span>
+                    <span className="text-[10px] text-white/40 uppercase">Connector</span>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            {/* Date */}
-            <div className="mb-4">
-              <label className="booking-label">
-                <Calendar className="w-3.5 h-3.5" />
-                Date
-              </label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                className="booking-input"
-              />
-            </div>
-
-            {/* Time Slots */}
-            <div className="mb-4">
-              <label className="booking-label">
-                <Clock className="w-3.5 h-3.5" />
-                Time Slot
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {timeSlots.map((slot) => (
-                  <motion.button
-                    key={slot.value}
-                    className={`time-slot-btn ${selectedTime === slot.value ? 'time-slot-active' : ''}`}
-                    onClick={() => setSelectedTime(slot.value)}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {slot.label}
-                  </motion.button>
-                ))}
+              {/* Date Selector */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-white/60">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-xs font-bold uppercase tracking-widest">Date</span>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+                  {dates.map((date, i) => {
+                    const isSelected = isSameDay(date, selectedDate);
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedDate(date)}
+                        className={`flex-shrink-0 px-5 py-2.5 rounded-xl border text-sm font-bold transition-all ${
+                          isSelected 
+                            ? 'bg-ev-blue/20 border-ev-blue text-ev-blue shadow-[0_0_15px_rgba(45,212,191,0.2)]' 
+                            : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
+                        }`}
+                      >
+                        {i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : format(date, 'MMM d')}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            {/* Duration */}
-            <div className="mb-4">
-              <label className="booking-label">Duration</label>
-              <div className="flex gap-2">
-                {durations.map((d) => (
-                  <motion.button
-                    key={d.value}
-                    className={`time-slot-btn flex-1 ${selectedDuration === d.value ? 'time-slot-active' : ''}`}
-                    onClick={() => setSelectedDuration(d.value)}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {d.label}
-                  </motion.button>
-                ))}
+              {/* Time Slot Grid */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-white/60">
+                  <Clock className="w-4 h-4" />
+                  <span className="text-xs font-bold uppercase tracking-widest">Time Slot</span>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {timeSlots.map((time) => {
+                    const isSelected = selectedTime === time;
+                    return (
+                      <button
+                        key={time}
+                        onClick={() => setSelectedTime(time)}
+                        className={`py-3 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                          isSelected 
+                            ? 'bg-ev-blue/20 border-ev-blue text-ev-blue shadow-[0_0_15px_rgba(45,212,191,0.2)]' 
+                            : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
+                        }`}
+                      >
+                        {time}
+                        {isSelected && <CheckCircle2 className="w-4 h-4" />}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            {/* Connector type */}
-            {availableConnectors.length > 0 && (
-              <div className="mb-5">
-                <label className="booking-label">
-                  <Zap className="w-3.5 h-3.5" />
-                  Connector
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {availableConnectors.map((c, i) => (
-                    <motion.button
-                      key={i}
-                      className={`time-slot-btn ${
-                        (selectedConnector === (c.connector_type || c.type) || (!selectedConnector && i === 0))
-                          ? 'time-slot-active'
-                          : ''
+              {/* Duration Segmented Control */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-white/60">
+                  <Clock className="w-4 h-4" />
+                  <span className="text-xs font-bold uppercase tracking-widest">Duration</span>
+                </div>
+                <div className="p-1 bg-white/5 rounded-xl border border-white/10 flex">
+                  {durations.map((d) => (
+                    <button
+                      key={d.value}
+                      onClick={() => setDuration(d.value)}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                        duration === d.value 
+                          ? 'bg-slate-700 text-white shadow-lg' 
+                          : 'text-white/40 hover:text-white/60'
                       }`}
-                      onClick={() => setSelectedConnector(c.connector_type || c.type)}
-                      whileTap={{ scale: 0.95 }}
                     >
-                      {c.connector_type || c.type} · {c.power_output || c.power}kW
-                    </motion.button>
+                      {d.label}
+                    </button>
                   ))}
                 </div>
               </div>
-            )}
 
-            {/* Estimated cost */}
-            <div className="bg-gradient-to-r from-ev-blue/10 to-ev-green/10 rounded-xl p-4 mb-5 border border-ev-blue/20">
-              <div className="flex items-center justify-between">
-                <span className="text-white/60 text-sm flex items-center gap-1.5">
-                  <CreditCard className="w-4 h-4" />
-                  Estimated Cost
-                </span>
-                <span className="text-2xl font-bold gradient-text">
-                  ₹{estimatedCost.toFixed(0)}
-                </span>
+              {/* Connectors & Eco Credits */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-white/60">
+                    <Zap className="w-4 h-4" />
+                    <span className="text-xs font-bold uppercase tracking-widest">Connector</span>
+                  </div>
+                  <div className="px-3 py-1.5 rounded-lg bg-ev-green/10 border border-ev-green/20 flex items-center gap-2">
+                    <Leaf className="w-3 h-3 text-ev-green" />
+                    <span className="text-[10px] font-bold text-ev-green uppercase">Earn 20 Eco Credits</span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  {(station.connectors && station.connectors.length > 0) ? station.connectors.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => setSelectedConnector(c.id)}
+                      className={`px-4 py-3 rounded-xl border flex items-center gap-3 transition-all ${
+                        selectedConnector === c.id 
+                          ? 'bg-ev-blue/20 border-ev-blue text-white' 
+                          : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
+                      }`}
+                    >
+                      <Zap className={`w-4 h-4 ${selectedConnector === c.id ? 'text-ev-blue' : 'text-white/40'}`} />
+                      <span className="text-xs font-bold">{c.connector_type} • {c.power_output}kW</span>
+                    </button>
+                  )) : (
+                    <div className="px-4 py-3 rounded-xl border bg-white/5 border-white/10 text-white/40">
+                      <span className="text-xs font-bold">Standard CCS2 • 50kW</span>
+                    </div>
+                  )}
+                </div>
               </div>
-              <p className="text-white/30 text-xs mt-1">
-                ~{estimatedKwh.toFixed(1)} kWh · {selectedDuration}h session
-              </p>
+
+              {/* Summary */}
+              <div className="p-5 bg-white/5 rounded-2xl border border-white/10 relative overflow-hidden">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-bold text-white">Summary</h3>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1.5 text-white/40">
+                        <Zap className="w-3 h-3" />
+                        <span className="text-[10px] uppercase font-bold">{totalKwh.toFixed(1)} kWh</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-white/40">
+                        <Clock className="w-3 h-3" />
+                        <span className="text-[10px] uppercase font-bold">{duration >= 1 ? `${duration} hour` : '30 min'} session</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-black text-white">₹{totalPrice}</p>
+                    <p className="text-[10px] text-white/40 uppercase font-bold">Incl. taxes</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-2 pt-4 border-t border-white/5">
+                  <ShieldCheck className="w-3 h-3 text-white/30" />
+                  <span className="text-[10px] text-white/30 uppercase font-bold tracking-widest">No Hidden Fees | Price Verified</span>
+                </div>
+              </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-3">
-              <motion.button
-                className="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-white/60 text-sm font-medium hover:bg-white/10 transition-colors"
+            {/* Footer Actions */}
+            <div className="p-6 bg-slate-900 border-t border-white/5 flex gap-4">
+              <button
                 onClick={onClose}
-                whileTap={{ scale: 0.98 }}
+                className="flex-1 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all"
               >
                 Cancel
-              </motion.button>
-              <motion.button
-                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-ev-blue to-ev-green text-white text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed"
+              </button>
+              <button
                 onClick={handleConfirm}
-                disabled={!isValid}
-                whileHover={isValid ? { scale: 1.02 } : {}}
-                whileTap={isValid ? { scale: 0.98 } : {}}
+                className="flex-[2] py-4 rounded-2xl bg-gradient-to-r from-ev-blue to-ev-green text-slate-950 font-bold hover:shadow-[0_0_20px_rgba(45,212,191,0.3)] transition-all flex items-center justify-center gap-3 group"
               >
-                Confirm Booking
-              </motion.button>
+                Book Now
+                <div className="p-1.5 rounded-lg bg-slate-950/10 group-hover:bg-slate-950/20 transition-colors">
+                  <ArrowRight className="w-4 h-4" />
+                </div>
+              </button>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );
