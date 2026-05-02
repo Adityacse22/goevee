@@ -267,17 +267,15 @@ const EvChargerStation = () => {
         onStationClick={handleStationClick}
       />
 
-      {user && (
-        <BookingModal
-          isOpen={isBookingOpen}
-          station={selectedStation}
-          onClose={() => {
-            setIsBookingOpen(false);
-            setSelectedStation(null);
-          }}
-          onConfirm={handleConfirmBooking}
-        />
-      )}
+      <BookingModal
+        isOpen={isBookingOpen}
+        station={selectedStation}
+        onClose={() => {
+          setIsBookingOpen(false);
+          setSelectedStation(null);
+        }}
+        onConfirm={handleConfirmBooking}
+      />
     </div>
   );
 };

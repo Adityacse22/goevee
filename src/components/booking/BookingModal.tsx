@@ -46,7 +46,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   // Update selected connector when station changes
   React.useEffect(() => {
-    if (station?.connectors && station.connectors.length > 0) {
+    if (station?.connectors && station.connectors.length > 0 && station.connectors[0]) {
       setSelectedConnector(station.connectors[0].id);
     }
   }, [station]);
