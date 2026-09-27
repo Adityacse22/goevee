@@ -8,6 +8,17 @@ import { formatDistance } from '@/utils/formatting';
 import { DEFAULT_CENTER, DEFAULT_RADIUS, RADIUS_OPTIONS } from '@/config/constants';
 import PlacesAutocompleteInput from './PlacesAutocompleteInput';
 
+/** Place names/addresses come from Google and are inserted as HTML, so escape them. */
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[char] ?? char);
+}
+
 interface MapComponentProps {
   onStationsUpdate?: (stations: EVStation[]) => void;
   onSearchingChange?: (isSearching: boolean) => void;
@@ -30,6 +41,10 @@ const MapComponent = ({
   const locationMarkerRef = useRef<GoogleMarker | null>(null);
   const stationsRef = useRef<EVStation[]>([]);
   const latestCoordsRef = useRef<MapLocation | null>(null);
+  // Read by loadEVChargers so a radius change doesn't recreate the callback and
+  // re-trigger the location/search effects (each re-run is a billed Places call).
+  const searchRadiusRef = useRef<number>(DEFAULT_RADIUS);
+  const searchRequestIdRef = useRef(0);
   const [stations, setStations] = useState<EVStation[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [searchRadius, setSearchRadius] = useState(DEFAULT_RADIUS);
@@ -75,11 +90,11 @@ const MapComponent = ({
         infoWindowRef.current = new window.google.maps.InfoWindow({
           content: `
             <div style="padding:12px;min-width:210px;font-family:sans-serif">
-              <strong style="font-size:13px;color:#0f766e">${station.name}</strong>
-              <p style="font-size:11px;color:#4b5563;margin:6px 0 2px">${station.address}</p>
+              <strong style="font-size:13px;color:#0f766e">${escapeHtml(station.name)}</strong>
+              <p style="font-size:11px;color:#4b5563;margin:6px 0 2px">${escapeHtml(station.address)}</p>
               <p style="font-size:11px;margin:0 0 8px">${distanceText} away</p>
               <button
-                onclick="window.__eveeBook && window.__eveeBook('${station.id}')"
+                onclick="window.__eveeBook && window.__eveeBook(${escapeHtml(JSON.stringify(station.id))})"
                 style="background:#00c9a7;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold;font-size:12px"
               >
                 Book Now
@@ -102,6 +117,7 @@ const MapComponent = ({
   const loadEVChargers = useCallback(async (lat: number, lng: number) => {
     if (!mapRef.current) return;
 
+    const requestId = ++searchRequestIdRef.current;
     setIsFetching(true);
     onSearchingChange?.(true);
     setStations([]);
@@ -111,8 +127,11 @@ const MapComponent = ({
       const nearbyStations = await searchNearbyEVStations(
         lat,
         lng,
-        searchRadius,
+        searchRadiusRef.current,
       );
+      // A newer search started while this one was in flight; drop this result.
+      if (requestId !== searchRequestIdRef.current) return;
+
       setStations(nearbyStations);
       stationsRef.current = nearbyStations;
       onStationsUpdate?.(nearbyStations);
@@ -122,13 +141,22 @@ const MapComponent = ({
         toast.error('No EV charging stations found nearby. Try a larger radius.');
       }
     } catch (error) {
+      if (requestId !== searchRequestIdRef.current) return;
+
       console.error('Nearby station lookup failed:', error);
-      toast.error('Could not load nearby EV stations. Check your connection.');
+      stationsRef.current = [];
+      onStationsUpdate?.([]);
+      toast.error(
+        error instanceof Error ? error.message : 'Could not load nearby EV stations.',
+        { duration: 8000 },
+      );
     } finally {
-      setIsFetching(false);
-      onSearchingChange?.(false);
+      if (requestId === searchRequestIdRef.current) {
+        setIsFetching(false);
+        onSearchingChange?.(false);
+      }
     }
-  }, [clearMarkers, onSearchingChange, onStationsUpdate, renderStations, searchRadius]);
+  }, [clearMarkers, onSearchingChange, onStationsUpdate, renderStations]);
 
   useEffect(() => {
     if (sdkStatus !== 'ready' || mapRef.current || !mapContainerRef.current || !window.google?.maps) {
@@ -253,6 +281,7 @@ const MapComponent = ({
               value={searchRadius}
               onChange={(event) => {
                 const nextRadius = Number(event.target.value);
+                searchRadiusRef.current = nextRadius;
                 setSearchRadius(nextRadius);
                 if (latestCoordsRef.current) {
                   void loadEVChargers(latestCoordsRef.current.lat, latestCoordsRef.current.lng);

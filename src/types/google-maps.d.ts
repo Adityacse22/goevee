@@ -16,7 +16,56 @@ declare global {
         AutocompleteService: new () => GoogleAutocompleteService;
         PlacesServiceStatus: { OK: string };
       };
+      importLibrary: (name: 'places') => Promise<GooglePlacesLibrary>;
     };
+  }
+
+  // ─── Places API (New) — google.maps.importLibrary('places') ────────────────
+
+  interface GooglePlacesLibrary {
+    Place: {
+      searchNearby: (request: GoogleSearchNearbyRequest) => Promise<{ places: GooglePlace[] }>;
+    };
+    SearchNearbyRankPreference?: { DISTANCE: string; POPULARITY: string };
+  }
+
+  interface GoogleSearchNearbyRequest {
+    fields: string[];
+    locationRestriction: {
+      center: { lat: number; lng: number };
+      radius: number;
+    };
+    includedTypes?: string[];
+    includedPrimaryTypes?: string[];
+    maxResultCount?: number;
+    rankPreference?: string;
+    language?: string;
+    region?: string;
+  }
+
+  interface GooglePlace {
+    id: string;
+    displayName?: string | null;
+    formattedAddress?: string | null;
+    location?: { lat: () => number; lng: () => number } | null;
+    businessStatus?: string | null;
+    rating?: number | null;
+    userRatingCount?: number | null;
+    evChargeOptions?: GoogleEVChargeOptions | null;
+  }
+
+  interface GoogleEVChargeOptions {
+    connectorCount: number;
+    connectorAggregations: GoogleConnectorAggregation[];
+  }
+
+  interface GoogleConnectorAggregation {
+    type?: string | null;
+    maxChargeRateKw: number;
+    count: number;
+    availableCount?: number | null;
+    outOfServiceCount?: number | null;
+    availabilityLastUpdateTime?: Date | null;
   }
 
   interface GoogleMapOptions {
