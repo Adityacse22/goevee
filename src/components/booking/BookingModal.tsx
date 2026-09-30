@@ -1,12 +1,14 @@
+import { bookingWindow } from '../../../shared/booking';
+import toast from 'react-hot-toast';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, 
-  ChevronLeft, 
-  Clock, 
-  Zap, 
-  MapPin, 
-  CheckCircle2, 
+import {
+  X,
+  ChevronLeft,
+  Clock,
+  Zap,
+  MapPin,
+  CheckCircle2,
   ArrowRight,
   ShieldCheck,
   CreditCard,
@@ -19,6 +21,7 @@ import { formatDistance } from '@/utils/formatting';
 
 export interface BookingDetails {
   stationId: string;
+  connectorId: string;
   stationName: string;
   date: string;
   timeSlot: string;
@@ -70,7 +73,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     { label: '3 hours', value: 3 }
   ];
 
-  const pricePerKwh = station?.price_per_kwh || 15; 
+  const pricePerKwh = station?.price_per_kwh || 15;
   const kwhPerHour = 15; // Estimated consumption for calculation
   const totalKwh = duration * kwhPerHour;
   const totalPrice = Math.round(totalKwh * pricePerKwh);
@@ -81,17 +84,21 @@ const BookingModal: React.FC<BookingModalProps> = ({
     // Convert 12h time (e.g., "10:00 PM") to 24h time (e.g., "22:00:00")
     const convertTo24Hour = (time12h: string) => {
       const [time, period] = time12h.split(' ');
-      let [hours, minutes] = time.split(':');
+      const [hours, minutes] = time.split(':');
       let hour = parseInt(hours);
-      
+
       if (period === 'PM' && hour !== 12) hour += 12;
       if (period === 'AM' && hour === 12) hour = 0;
-      
+
       return `${hour.toString().padStart(2, '0')}:${minutes}:00`;
     };
 
+    try { bookingWindow(format(selectedDate, 'yyyy-MM-dd'), convertTo24Hour(selectedTime), duration); }
+    catch (error) { toast.error(error instanceof Error ? error.message : 'Check your booking details.'); return; }
+    if (!selectedConnector) { toast.error('Select an available connector.'); return; }
     onConfirm({
       stationId: station.id,
+      connectorId: selectedConnector,
       stationName: station.name,
       date: format(selectedDate, 'yyyy-MM-dd'),
       timeSlot: convertTo24Hour(selectedTime),
@@ -194,8 +201,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
                         key={i}
                         onClick={() => setSelectedDate(date)}
                         className={`flex-shrink-0 px-5 py-2.5 rounded-xl border text-sm font-bold transition-all ${
-                          isSelected 
-                            ? 'bg-ev-blue/20 border-ev-blue text-ev-blue shadow-[0_0_15px_rgba(45,212,191,0.2)]' 
+                          isSelected
+                            ? 'bg-ev-blue/20 border-ev-blue text-ev-blue shadow-[0_0_15px_rgba(45,212,191,0.2)]'
                             : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
                         }`}
                       >
@@ -220,8 +227,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
                         key={time}
                         onClick={() => setSelectedTime(time)}
                         className={`py-3 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-2 ${
-                          isSelected 
-                            ? 'bg-ev-blue/20 border-ev-blue text-ev-blue shadow-[0_0_15px_rgba(45,212,191,0.2)]' 
+                          isSelected
+                            ? 'bg-ev-blue/20 border-ev-blue text-ev-blue shadow-[0_0_15px_rgba(45,212,191,0.2)]'
                             : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'
                         }`}
                       >
@@ -245,8 +252,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
                       key={d.value}
                       onClick={() => setDuration(d.value)}
                       className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                        duration === d.value 
-                          ? 'bg-slate-700 text-white shadow-lg' 
+                        duration === d.value
+                          ? 'bg-slate-700 text-white shadow-lg'
                           : 'text-white/40 hover:text-white/60'
                       }`}
                     >
@@ -274,8 +281,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
                       key={c.id}
                       onClick={() => setSelectedConnector(c.id)}
                       className={`px-4 py-3 rounded-xl border flex items-center gap-3 transition-all ${
-                        selectedConnector === c.id 
-                          ? 'bg-ev-blue/20 border-ev-blue text-white' 
+                        selectedConnector === c.id
+                          ? 'bg-ev-blue/20 border-ev-blue text-white'
                           : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
                       }`}
                     >

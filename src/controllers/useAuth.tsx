@@ -1,3 +1,4 @@
+import type { BotProtection } from '../../shared/validation';
 /**
  * CONTROLLER — Auth context provider + hook.
  * Orchestrates auth state by calling authService (Model layer).
@@ -44,14 +45,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    const signedInUser = await authService.signIn(email, password);
+  const signIn = async (email: string, password: string, protection?: BotProtection) => {
+    const signedInUser = await authService.signIn(email, password, protection);
     setUser(signedInUser);
     setProfile(authService.toProfile(signedInUser));
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    const signedUpUser = await authService.signUp(email, password, fullName);
+  const signUp = async (email: string, password: string, fullName: string, protection?: BotProtection) => {
+    const signedUpUser = await authService.signUp(email, password, fullName, protection);
     setUser(signedUpUser);
     setProfile(authService.toProfile(signedUpUser));
   };

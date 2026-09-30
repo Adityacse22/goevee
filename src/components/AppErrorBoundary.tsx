@@ -26,7 +26,7 @@ export class AppErrorBoundary extends Component<AppErrorBoundaryProps, AppErrorB
           <div className="max-w-lg space-y-4">
             <h1 className="text-2xl font-semibold text-white">Something went wrong while loading Evee</h1>
             <p className="text-sm text-white/70">
-              Open the browser console to see the exact error, then refresh the page.
+              Please refresh the page and try again. If the problem continues, email contact.goevee@gmail.com.
             </p>
           </div>
         </div>

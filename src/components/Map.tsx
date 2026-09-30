@@ -186,7 +186,7 @@ const MapComponent = ({
     }
 
     latestCoordsRef.current = resolvedCoords;
-    
+
     if (resolvedViewport) {
       mapRef.current.fitBounds(resolvedViewport);
     } else {
@@ -202,7 +202,7 @@ const MapComponent = ({
     });
 
     void loadEVChargers(resolvedCoords.lat, resolvedCoords.lng);
-  }, [loadEVChargers, resolvedCoords, resolvedName, resolvedRequestId, sdkStatus]);
+  }, [loadEVChargers, resolvedCoords, resolvedName, resolvedRequestId, resolvedViewport, sdkStatus]);
 
   useEffect(() => {
     if (!locationRequestId) return;
@@ -271,13 +271,13 @@ const MapComponent = ({
 
   return (
     <div className="relative h-full w-full">
-      {showControls && (
+      {showControls && sdkStatus === 'ready' && (
         <div className="absolute right-4 top-4 z-10 flex w-full max-w-[200px] flex-col gap-3">
           <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3 shadow-lg backdrop-blur-xl">
             <label className="block text-sm font-medium text-white/80">
               Search Radius ({searchRadius / 1000}km)
             </label>
-            <select
+            <select aria-label="Search radius"
               value={searchRadius}
               onChange={(event) => {
                 const nextRadius = Number(event.target.value);
@@ -314,13 +314,13 @@ const MapComponent = ({
       )}
 
       {sdkStatus === 'error' && (
-        <div className="flex h-full min-h-[600px] items-center justify-center text-[#00c9a7]">
-          <p>Map failed to load. Check VITE_GOOGLE_MAPS_API_KEY.</p>
+        <div role="alert" className="flex h-full min-h-[320px] items-center justify-center px-6 text-center text-slate-300">
+          <div className="max-w-sm space-y-4"><h2 className="text-xl font-semibold text-white">The map is unavailable</h2><p>Check your connection and try again. If the problem continues, contact our support team.</p><a className="action-secondary" href="/help">Get help</a></div>
         </div>
       )}
 
       {sdkStatus === 'loading' && (
-        <div className="flex h-full min-h-[600px] items-center justify-center text-slate-400">
+        <div className="flex h-full min-h-[320px] items-center justify-center text-slate-400">
           <p>Loading map...</p>
         </div>
       )}
@@ -331,7 +331,7 @@ const MapComponent = ({
         style={{
           width: '100%',
           height: '100%',
-          minHeight: '600px',
+          minHeight: '320px',
           display: sdkStatus === 'ready' ? 'block' : 'none',
         }}
       />

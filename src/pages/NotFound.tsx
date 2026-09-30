@@ -1,27 +1,12 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { Link } from 'react-router-dom';
+import PublicPage from '@/components/layout/PublicPage';
 
-const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
-      </div>
+export default function NotFound() {
+  return <PublicPage title="This stop isn’t on the map." eyebrow="404 · Page not found">
+    <p>The address may have changed or the link may be incorrect. Let’s get you back to your electric journey.</p>
+    <div className="flex flex-wrap gap-4">
+      <Link to="/" className="action-primary no-underline">Back to home</Link>
+      <Link to="/ev-charger-station" className="action-secondary no-underline">Find chargers</Link>
     </div>
-  );
-};
-
-export default NotFound;
+  </PublicPage>;
+}

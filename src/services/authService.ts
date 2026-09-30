@@ -1,3 +1,4 @@
+import type { BotProtection } from '../../shared/validation';
 /**
  * SERVICE — Auth data access layer.
  * Pure REST API calls — no state management, no UI logic.
@@ -33,10 +34,10 @@ function toProfile(user: AppUser): Profile {
 }
 
 /** Sign in with email + password. Throws on error. */
-export async function signIn(email: string, password: string): Promise<AppUser> {
+export async function signIn(email: string, password: string, protection?: BotProtection): Promise<AppUser> {
   const response = await apiRequest<AuthResponse>('/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, ...protection }),
   });
   setAuthToken(response.token);
   return response.user;
@@ -47,10 +48,11 @@ export async function signUp(
   email: string,
   password: string,
   fullName: string,
+  protection?: BotProtection,
 ): Promise<AppUser> {
   const response = await apiRequest<AuthResponse>('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ email, password, fullName }),
+    body: JSON.stringify({ email, password, fullName, ...protection }),
   });
   setAuthToken(response.token);
   return response.user;

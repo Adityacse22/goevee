@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<title>Evee — Find your next charging stop.</title>
+<defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#1eaedb"/><stop offset="1" stop-color="#64ffda"/></linearGradient><radialGradient id="glow"><stop stop-color="#153b46"/><stop offset="1" stop-color="#09090b"/></radialGradient></defs>
+<rect width="1200" height="630" fill="#09090b"/><ellipse cx="990" cy="300" rx="420" ry="360" fill="url(#glow)"/>
+<path d="M780 630V450q0-55 65-55h160q50 0 50-55V0" stroke="#1e454e" fill="none" stroke-width="3"/>
+<circle cx="1055" cy="142" r="9" fill="#64ffda"/>
+<g font-family="Arial, Helvetica, sans-serif"><text x="72" y="100" font-size="48" font-weight="700" fill="url(#g)">Evee</text><text x="72" y="248" font-size="68" font-weight="700" fill="#f8fafc">Find your next</text><text x="72" y="332" font-size="68" font-weight="700" fill="url(#g)">charging stop.</text><text x="76" y="392" font-size="25" fill="#cbd5e1">EV charging station discovery in India.</text><rect x="74" y="450" width="248" height="58" rx="29" fill="url(#g)"/><text x="105" y="488" font-size="24" font-weight="700" fill="#07151c">Find chargers →</text><text x="76" y="574" font-size="23" fill="#cbd5e1">goevee.in</text></g>
+<g transform="translate(858 203)"><rect x="0" y="0" width="180" height="256" rx="30" fill="#101f26" stroke="#49d9d4" stroke-width="3"/><rect x="24" y="26" width="132" height="94" rx="14" fill="#143b43"/><path d="M91 37L59 82h29l-6 29 40-48H91z" fill="url(#g)"/><path d="M182 84h20q24 0 24 30v76q0 21-18 21h-10" fill="none" stroke="#64ffda" stroke-width="8" stroke-linecap="round"/><circle cx="90" cy="177" r="17" fill="#64ffda"/><rect x="52" y="223" width="76" height="7" rx="3" fill="#4f6671"/></g>
+</svg>

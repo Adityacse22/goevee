@@ -1,19 +1,20 @@
 import { z } from 'zod';
+import { nameSchema, phoneSchema } from '../../shared/validation.js';
 
 export const updateProfileSchema = z.object({
   body: z.object({
-    fullName: z.string().trim().min(1).optional(),
-    phone: z.string().trim().optional(),
+    fullName: nameSchema.optional(),
+    phone: phoneSchema.optional(),
   }),
 });
 
 export const createVehicleSchema = z.object({
   body: z.object({
-    vehicleName: z.string().trim().min(1),
-    brand: z.string().trim().optional(),
-    model: z.string().trim().optional(),
-    connectorType: z.string().trim().optional(),
-    batteryCapacity: z.coerce.number().positive().optional(),
+    vehicleName: z.string().trim().min(1).max(100),
+    brand: z.string().trim().max(100).optional(),
+    model: z.string().trim().max(100).optional(),
+    connectorType: z.string().trim().max(100).optional(),
+    batteryCapacity: z.coerce.number().positive().max(1000).optional(),
   }),
 });
 

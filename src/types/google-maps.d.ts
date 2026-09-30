@@ -79,7 +79,7 @@ declare global {
   interface GoogleMap {
     setCenter: (center: { lat: number; lng: number }) => void;
     setZoom: (zoom: number) => void;
-    fitBounds: (bounds: GoogleLatLngBounds) => void;
+    fitBounds: (bounds: GoogleLatLngBounds | GoogleLatLngBoundsLiteral) => void;
   }
 
   interface GoogleMarkerOptions {
@@ -101,7 +101,10 @@ declare global {
     open: (options: { map: GoogleMap; anchor: GoogleMarker }) => void;
   }
 
+  interface GoogleLatLngBoundsLiteral { north: number; south: number; east: number; west: number; }
+
   interface GoogleLatLngBounds {
+    toJSON: () => GoogleLatLngBoundsLiteral;
     extend: (point: { lat: number; lng: number }) => void;
   }
 
@@ -114,6 +117,7 @@ declare global {
   interface GoogleGeocoderResult {
     formatted_address: string;
     geometry: {
+      viewport?: GoogleLatLngBounds;
       location: {
         lat: () => number;
         lng: () => number;

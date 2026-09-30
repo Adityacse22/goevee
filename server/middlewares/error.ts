@@ -20,10 +20,11 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ): void {
-  const statusCode = error instanceof AppError ? error.statusCode : 500;
+  const parserStatus = (error as Error & { status?: number }).status;
+  const statusCode = error instanceof AppError ? error.statusCode : parserStatus === 413 ? 413 : error instanceof SyntaxError && parserStatus === 400 ? 400 : 500;
 
   res.status(statusCode).json({
-    error: error.message || 'Internal server error',
+    error: statusCode >= 500 && NODE_ENV === 'production' ? 'Something went wrong. Please try again.' : statusCode === 413 ? 'Request body is too large.' : statusCode === 400 && error instanceof SyntaxError ? 'Invalid JSON body.' : error.message || 'Internal server error',
     ...(NODE_ENV === 'production' ? {} : { stack: error.stack }),
   });
 }

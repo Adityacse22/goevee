@@ -1142,3 +1142,6 @@ License
 This project is currently intended for learning, portfolio, and product development purposes.
 
 You can replace this section later with your preferred license, such as MIT.
+## Website readiness updates
+
+See [docs/WEBSITE_READINESS.md](docs/WEBSITE_READINESS.md) for the implemented privacy, security, SEO, accessibility and performance changes, verification commands, and required production analytics/Turnstile/key settings. Use npm and `npm run build`; do not deploy a test analytics ID.

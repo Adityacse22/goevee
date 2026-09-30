@@ -16,7 +16,7 @@ const Favorites = () => {
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
       <Navbar hasScrolled />
-      <main className="container px-4 pt-28">
+      <main id="main-content" tabIndex={-1} className="container px-4 pt-28">
         <h1 className="mb-6 text-3xl font-bold text-white">Favorites</h1>
         {error && <p className="text-red-400">{error}</p>}
         <div className="grid gap-3 md:grid-cols-2">

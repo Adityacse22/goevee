@@ -27,8 +27,8 @@ const Booking = () => {
   return (
     <div className="min-h-screen w-full pb-0 overflow-x-hidden">
       <Navbar hasScrolled={true} />
-      
-      <main className="container pt-24 px-4">
+
+      <main id="main-content" tabIndex={-1} className="container pt-24 px-4">
         <motion.div
           className="mb-8"
           initial={{ opacity: 0, y: 20 }}
@@ -43,7 +43,7 @@ const Booking = () => {
           </p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -51,8 +51,8 @@ const Booking = () => {
         >
           <SearchBar />
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           className="mb-6 flex items-center justify-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -62,7 +62,7 @@ const Booking = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <motion.div 
+          <motion.div
             className="glass-card p-5"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -72,14 +72,14 @@ const Booking = () => {
             <StationList onStationSelect={handleStationSelect} />
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="glass-card p-5"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             {showBookingForm && selectedStationId ? (
-              <BookingForm 
+              <BookingForm
                 stationId={selectedStationId}
                 stationName={selectedStationName}
                 price="$0.45"
@@ -90,11 +90,11 @@ const Booking = () => {
                 <div className="text-center">
                   <motion.div
                     className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center"
-                    animate={{ 
+                    animate={{
                       scale: [1, 1.1, 1],
                       opacity: [0.5, 1, 0.5]
                     }}
-                    transition={{ 
+                    transition={{
                       duration: 2,
                       repeat: Infinity,
                       ease: "easeInOut"

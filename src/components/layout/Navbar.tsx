@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import SearchBar from "../SearchBar";
+const SearchBar = lazy(() => import("../SearchBar"));
 import { Menu, User, Sun, Moon } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from 'react-router-dom';
@@ -12,16 +12,18 @@ interface NavbarProps {
   hasScrolled?: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ 
+const Navbar: React.FC<NavbarProps> = ({
   hasScrolled = false
 }) => {
+  const [searchActive, setSearchActive] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
 
   useEffect(() => {
     // Check system preference or saved preference when component mounts
-    const savedTheme = localStorage.getItem('theme');
+    let savedTheme: string | null = null;
+    try { savedTheme = localStorage.getItem('theme'); } catch { /* Use the default theme when storage is unavailable. */ }
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
       document.documentElement.classList.toggle('light-mode', savedTheme !== 'dark');
@@ -34,14 +36,21 @@ const Navbar: React.FC<NavbarProps> = ({
   const toggleDarkMode = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
-    
+    try { localStorage.setItem('theme', newMode ? 'dark' : 'light'); } catch { /* Keep the preference for this page. */ }
+
     // Update CSS variables or classes if needed for actual theme change
     document.documentElement.classList.toggle('light-mode', !newMode);
-    
+
     // Show feedback to user
     toast.success(`${newMode ? 'Dark' : 'Light'} mode activated`);
   };
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const close = (event: KeyboardEvent) => { if (event.key === 'Escape') setIsMenuOpen(false); };
+    window.addEventListener('keydown', close);
+    return () => window.removeEventListener('keydown', close);
+  }, [isMenuOpen]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -60,10 +69,10 @@ const Navbar: React.FC<NavbarProps> = ({
 
   const navVariants = {
     hidden: { y: -20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
-      transition: { 
+      transition: {
         type: "spring",
         stiffness: 300,
         damping: 20,
@@ -71,44 +80,44 @@ const Navbar: React.FC<NavbarProps> = ({
       }
     }
   };
-  
+
   const itemVariants = {
     hidden: { y: -20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
       transition: { type: "spring", stiffness: 300, damping: 20 }
     }
   };
 
   return (
-    <motion.nav 
+    <motion.nav
       className={`fixed top-0 left-0 right-0 z-50 ${
-        hasScrolled 
-          ? 'glass-card bg-black/40 backdrop-blur-lg border-b border-white/10' 
+        hasScrolled
+          ? 'glass-card bg-black/40 backdrop-blur-lg border-b border-white/10'
           : 'bg-transparent backdrop-blur-none'
       } px-4 py-3 mx-0 md:mx-4 md:mt-4 flex items-center justify-between transition-all duration-500`}
-      initial="hidden"
+      initial={false}
       animate="visible"
       variants={navVariants}
     >
       <Link to="/" className="flex items-center">
-        <motion.h1 
+        <motion.span
           className="text-2xl font-bold gradient-text"
           variants={itemVariants}
         >
           Evee
-        </motion.h1>
+        </motion.span>
       </Link>
-      
-      <motion.div 
+
+      <motion.div
         className="hidden md:flex items-center gap-4 flex-grow max-w-md mx-4"
         variants={itemVariants}
       >
-        <SearchBar />
+        {searchActive ? <Suspense fallback={<span role="status">Loading search…</span>}><SearchBar autoFocus /></Suspense> : <button className="glass-input w-full text-left text-slate-300" onFocus={() => setSearchActive(true)} onClick={() => setSearchActive(true)}>Search a city or place…</button>}
       </motion.div>
-      
-      <motion.div 
+
+      <motion.div
         className="flex items-center gap-3"
         variants={itemVariants}
       >
@@ -118,11 +127,12 @@ const Navbar: React.FC<NavbarProps> = ({
         >
           <motion.button
             className="glass-button rounded-full w-10 h-10 flex items-center justify-center"
+            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             onClick={toggleDarkMode}
-            whileHover={{ 
-              boxShadow: isDarkMode 
-                ? "0 0 15px 5px rgba(30, 174, 219, 0.4)" 
-                : "0 0 15px 5px rgba(255, 166, 0, 0.4)" 
+            whileHover={{
+              boxShadow: isDarkMode
+                ? "0 0 15px 5px rgba(30, 174, 219, 0.4)"
+                : "0 0 15px 5px rgba(255, 166, 0, 0.4)"
             }}
             whileTap={{ scale: 0.9 }}
           >
@@ -139,39 +149,36 @@ const Navbar: React.FC<NavbarProps> = ({
             </motion.div>
           </motion.button>
         </motion.div>
-        
+
         {/* User Button */}
         <motion.div whileTap={{ scale: 0.9 }}>
-          <Link to={user ? "/profile" : "/login"}>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="glass-button rounded-full w-10 h-10"
-            >
+          <Button asChild variant="ghost" size="icon" className="glass-button rounded-full w-11 h-11"><Link aria-label={user ? "Your profile" : "Sign in"} to={user ? "/profile" : "/login"}>
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 <User className="h-5 w-5 text-white" />
               </motion.div>
-            </Button>
-          </Link>
+          </Link></Button>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           className="flex items-center"
           whileTap={{ scale: 0.9 }}
         >
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             className="glass-button rounded-full w-10 h-10"
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="navigation-menu"
             onClick={toggleMenu}
           >
             <motion.div
               animate={{ rotate: isMenuOpen ? 90 : 0 }}
               transition={{ duration: 0.3 }}
-              whileHover={{ 
+              whileHover={{
                 rotate: [0, 10, -10, 0],
                 transition: { duration: 0.3 }
               }}
@@ -186,11 +193,12 @@ const Navbar: React.FC<NavbarProps> = ({
       {isMenuOpen && (
         <>
           {/* Backdrop to close menu when clicking outside */}
-          <div 
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm" 
+          <div
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm"
             onClick={() => setIsMenuOpen(false)}
           />
-          <motion.div 
+          <motion.div
+            id="navigation-menu"
             className="absolute top-full right-0 bg-zinc-950 border border-white/10 mt-2 p-4 flex flex-col gap-4 z-[101] max-h-[85vh] w-full max-w-[300px] overflow-y-auto origin-top-right rounded-2xl shadow-2xl"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -209,8 +217,8 @@ const Navbar: React.FC<NavbarProps> = ({
               </div>
             </div>
           ) : (
-            <Link 
-              to="/login" 
+            <Link
+              to="/login"
               onClick={toggleMenu}
               className="flex items-center gap-3 p-3 rounded-xl bg-ev-blue/10 border border-ev-blue/20 text-ev-blue"
             >
@@ -261,8 +269,8 @@ const Navbar: React.FC<NavbarProps> = ({
           {/* AUTH Section */}
           {user && (
             <div className="flex flex-col gap-1 pt-2 border-t border-white/5">
-              <button 
-                onClick={() => { signOut(); toggleMenu(); }} 
+              <button
+                onClick={() => { signOut(); toggleMenu(); }}
                 className="flex items-center gap-3 text-red-400 hover:text-red-300 transition-colors p-3 rounded-xl hover:bg-red-500/10 text-left w-full"
               >
                 <motion.svg className="w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></motion.svg>

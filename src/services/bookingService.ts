@@ -1,3 +1,4 @@
+import { bookingWindow } from '../../shared/booking';
 /**
  * SERVICE — Booking API layer.
  * Uses the README-defined Express REST API and adapts existing UI input shapes.
@@ -27,11 +28,6 @@ interface ApiBooking {
   created_at?: string;
   updatedAt?: string;
   updated_at?: string;
-}
-
-function toLocalIso(date: string, time: string): string {
-  const normalizedTime = time.length === 5 ? `${time}:00` : time;
-  return new Date(`${date}T${normalizedTime}`).toISOString();
 }
 
 function mapBooking(booking: ApiBooking): Booking {
@@ -67,12 +63,13 @@ export async function fetchUserBookings(): Promise<Booking[]> {
 export async function createBooking(
   bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>,
 ): Promise<Booking> {
+  const window = bookingWindow(bookingData.booking_date, bookingData.start_time, bookingData.duration_hours);
+  if (!bookingData.connector_id?.trim()) throw new Error('Select an available charger.');
   const response = await apiRequest<{ booking: ApiBooking }>('/bookings', {
     method: 'POST',
     body: JSON.stringify({
       chargerId: bookingData.connector_id,
-      startTime: toLocalIso(bookingData.booking_date, bookingData.start_time),
-      endTime: toLocalIso(bookingData.booking_date, bookingData.end_time),
+      ...window,
       totalPrice: bookingData.total_price,
     }),
   });

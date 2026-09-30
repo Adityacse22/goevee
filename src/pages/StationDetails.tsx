@@ -13,7 +13,7 @@ const StationDetails = () => {
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
       <Navbar hasScrolled />
-      <main className="container px-4 pt-28">
+      <main id="main-content" tabIndex={-1} className="container px-4 pt-28">
         {isLoading && <p className="text-white/70">Loading station...</p>}
         {error && <p className="text-red-400">Could not load station.</p>}
         {station && (

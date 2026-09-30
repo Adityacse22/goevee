@@ -27,7 +27,7 @@ export const useCreateBooking = () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       toast.success('Booking created successfully!');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('Booking creation failed:', error);
       toast.error(error.message || 'Failed to create booking. Please try again.');
     },
@@ -43,7 +43,7 @@ export const useCancelBooking = () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       toast.success('Booking cancelled successfully.');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('Booking cancellation failed:', error);
       toast.error(error.message || 'Failed to cancel booking. Please try again.');
     },

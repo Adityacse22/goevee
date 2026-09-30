@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { IngestionService } from './services/IngestionService';
+import { IngestionService } from './services/IngestionService.js';
 
 export function startCronJobs() {
   console.log('Initializing cron jobs...');

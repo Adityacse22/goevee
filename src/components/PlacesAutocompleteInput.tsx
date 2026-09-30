@@ -8,6 +8,7 @@ interface PlacesAutocompleteInputProps {
   onValueChange: (value: string) => void;
   onManualSearch: (query: string) => void;
   disabled?: boolean;
+  autoFocus?: boolean;
   error?: string;
   placeholder?: string;
   inputClassName: string;
@@ -24,6 +25,7 @@ const PlacesAutocompleteInput = ({
   onValueChange,
   onManualSearch,
   disabled = false,
+  autoFocus = false,
   error,
   placeholder = 'Search for a place...',
   inputClassName,
@@ -114,6 +116,9 @@ const PlacesAutocompleteInput = ({
       <input
         ref={inputRef}
         type="text"
+        autoFocus={autoFocus}
+        aria-label="Search for a city or place"
+        maxLength={200}
         value={value}
         placeholder={placeholder}
         autoComplete="off"
@@ -159,6 +164,7 @@ const PlacesAutocompleteInput = ({
       )}
       {value && (
         <button
+          aria-label="Clear search"
           className={clearButtonClassName}
           onClick={() => {
             onValueChange('');

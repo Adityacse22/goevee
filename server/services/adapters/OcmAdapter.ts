@@ -1,6 +1,8 @@
-import { BaseAdapter, NormalizedStationData } from './BaseAdapter';
+import { BaseAdapter, NormalizedStationData } from './BaseAdapter.js';
 
-export class OcmAdapter extends BaseAdapter {
+interface OcmStation { ID: number; AddressInfo?: { Latitude?: number; Longitude?: number; Title?: string; AddressLine1?: string; Town?: string; StateOrProvince?: string }; Connections?: { ConnectionType?: { Title?: string }; PowerKW?: number }[]; }
+
+export class OcmAdapter extends BaseAdapter<OcmStation> {
   sourceName = 'OPEN_CHARGE_MAP';
   private apiKey: string;
 
@@ -9,22 +11,24 @@ export class OcmAdapter extends BaseAdapter {
     this.apiKey = process.env.OCM_API_KEY || '';
   }
 
-  async fetchStations(): Promise<any[]> {
+  async fetchStations(): Promise<OcmStation[]> {
     try {
-      const url = this.apiKey 
+      const url = this.apiKey
         ? `https://api.openchargemap.io/v3/poi/?output=json&countrycode=IN&maxresults=50&key=${this.apiKey}`
         : `https://api.openchargemap.io/v3/poi/?output=json&countrycode=IN&maxresults=50`;
-      
+
       const response = await fetch(url);
       if (!response.ok) throw new Error('OCM fetch failed');
-      return await response.json();
+      const data: unknown = await response.json();
+      if (!Array.isArray(data)) throw new Error('Unexpected station response');
+      return data;
     } catch (error) {
       console.error('Error fetching OCM data:', error);
       return [];
     }
   }
 
-  normalizeStation(rawData: any): NormalizedStationData | null {
+  normalizeStation(rawData: OcmStation): NormalizedStationData | null {
     if (!rawData.AddressInfo || !rawData.AddressInfo.Latitude || !rawData.AddressInfo.Longitude) {
       return null;
     }
@@ -41,9 +45,9 @@ export class OcmAdapter extends BaseAdapter {
     };
 
     const chargers: NormalizedStationData['chargers'] = [];
-    
+
     if (rawData.Connections && Array.isArray(rawData.Connections) && rawData.Connections.length > 0) {
-      rawData.Connections.forEach((conn: any, index: number) => {
+      rawData.Connections.forEach((conn, index: number) => {
         chargers.push({
           stationId: '', // Will be assigned during insertion
           chargerCode: `OCM-${rawData.ID}-${index}`,

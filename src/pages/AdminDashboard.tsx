@@ -8,7 +8,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
       <Navbar hasScrolled />
-      <main className="container px-4 pt-28">
+      <main id="main-content" tabIndex={-1} className="container px-4 pt-28">
         <h1 className="mb-6 text-3xl font-bold text-white">Admin Dashboard</h1>
         <div className="grid gap-4 md:grid-cols-3">
           <div className="glass-card p-5">

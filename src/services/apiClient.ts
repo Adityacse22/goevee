@@ -1,10 +1,10 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000/api/v1';
+  import.meta.env.VITE_API_BASE_URL ?? '/api/v1';
 
 const TOKEN_STORAGE_KEY = 'evee.jwt';
 
 export function getAuthToken(): string | null {
-  return window.localStorage.getItem(TOKEN_STORAGE_KEY);
+  try { return window.localStorage.getItem(TOKEN_STORAGE_KEY); } catch { return null; }
 }
 
 export function setAuthToken(token: string): void {
@@ -12,7 +12,7 @@ export function setAuthToken(token: string): void {
 }
 
 export function clearAuthToken(): void {
-  window.localStorage.removeItem(TOKEN_STORAGE_KEY);
+  try { window.localStorage.removeItem(TOKEN_STORAGE_KEY); } catch { /* Storage is unavailable. */ }
 }
 
 export class ApiError extends Error {
@@ -45,7 +45,10 @@ export async function apiRequest<T>(
   });
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch {
+    throw new ApiError(response.status || 502, 'The service returned an unexpected response. Please try again.');
+  }
 
   if (!response.ok) {
     throw new ApiError(response.status, data?.error ?? response.statusText);

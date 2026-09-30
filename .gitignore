@@ -25,3 +25,9 @@ server/.env
 *.njsproj
 *.sln
 *.sw?
+
+!.env.example
+!server/.env.example
+playwright-report/
+test-results/
+artifacts/

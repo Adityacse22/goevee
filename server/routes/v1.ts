@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { BOOKING_BUFFER_MINUTES, GOOGLE_MAPS_API_KEY } from '../config/index.js';
 import authRoutes from './auth.routes.js';
 import bookingRoutes from './booking.routes.js';
 import chargerRoutes from './charger.routes.js';
@@ -12,8 +11,6 @@ router.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     api: 'v1',
-    google_maps_key_set: Boolean(GOOGLE_MAPS_API_KEY.trim()),
-    booking_buffer_minutes: BOOKING_BUFFER_MINUTES,
   });
 });
 

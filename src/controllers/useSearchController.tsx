@@ -27,7 +27,7 @@ interface SearchContextType {
   resolveSelectedLocation: (result: SearchResult) => void;
   clearSearchError: () => void;
   resolvedCoords: Coords | null;
-  resolvedViewport: google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral | null;
+  resolvedViewport: GoogleLatLngBounds | GoogleLatLngBoundsLiteral | null;
   resolvedName: string;
   resolvedPin: string;
   resolvedRequestId: number;
@@ -43,7 +43,7 @@ const Ctx = createContext<SearchContextType | null>(null);
 
 export function SearchProvider({ children }: { children: ReactNode }) {
   const [resolvedCoords, setResolvedCoords] = useState<Coords | null>(null);
-  const [resolvedViewport, setResolvedViewport] = useState<google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral | null>(null);
+  const [resolvedViewport, setResolvedViewport] = useState<GoogleLatLngBounds | GoogleLatLngBoundsLiteral | null>(null);
   const [resolvedName, setResolvedName] = useState('');
   const [resolvedPin, setResolvedPin] = useState('');
   const [isSearching, setIsSearching] = useState(false);

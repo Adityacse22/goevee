@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   index,
   jsonb,
@@ -73,7 +74,7 @@ export const vehicles = pgTable('vehicles', {
 }));
 
 export const stations = pgTable('stations', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => randomUUID()),
   operatorId: text('operator_id').references(() => users.id, { onDelete: 'set null' }),
   name: text('name').notNull(),
   address: text('address').notNull(),
@@ -96,7 +97,7 @@ export const stations = pgTable('stations', {
 }));
 
 export const chargers = pgTable('chargers', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => randomUUID()),
   stationId: text('station_id').notNull().references(() => stations.id, { onDelete: 'cascade' }),
   chargerCode: text('charger_code').notNull(),
   connectorType: text('connector_type').notNull(),

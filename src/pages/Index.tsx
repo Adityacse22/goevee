@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import LocationButton from '../components/ui/LocationButton';
 import SearchBar from '../components/SearchBar';
 import HeroSection from '../components/ui/HeroSection';
-import MapComponent from '../components/Map';
+import DeferredContent from '@/components/DeferredContent';
+const MapComponent = lazy(() => import('../components/Map'));
 import StationPanel from '../components/stations/StationPanel';
 import BookingModal from '../components/booking/BookingModal';
 import { BookingDetails } from '../components/booking/BookingModal';
@@ -27,21 +28,21 @@ const Index = () => {
   // Live Search States
   const [isSearching, setIsSearching] = useState(false);
   const [liveStations, setLiveStations] = useState<EVStation[]>([]);
-  
+
   // Handle scroll events
   useEffect(() => {
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 100);
     };
-    
-    window.addEventListener('scroll', handleScroll);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-  
+
   const createBooking = useCreateBooking();
-  
+
   const togglePanel = () => {
     setIsPanelOpen(!isPanelOpen);
   };
@@ -57,7 +58,7 @@ const Index = () => {
 
   const handleConfirmBooking = (booking: BookingDetails) => {
     createBooking.mutate({
-      connector_id: booking.stationId, // Using stationId as a fallback for now, needs to be a real chargerId
+      connector_id: booking.connectorId,
       booking_date: booking.date,
       start_time: booking.timeSlot,
       end_time: String(Number(booking.timeSlot.split(':')[0]) + booking.duration).padStart(2, '0') + ':00',
@@ -87,20 +88,20 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full pb-0 overflow-x-hidden">
-      <Navbar 
+      <Navbar
         hasScrolled={hasScrolled}
       />
-      
+
       {/* Hero Section */}
       <HeroSection />
-      
-      <motion.main 
+
+      <motion.main id="main-content" tabIndex={-1}
         className="container pt-24 px-4"
         variants={containerVariants}
-        initial="hidden"
+        initial={false}
         animate="visible"
       >
-        <motion.div 
+        <motion.div
           className="mb-6 flex items-center justify-center gap-4"
           variants={itemVariants}
         >
@@ -109,7 +110,7 @@ const Index = () => {
             className="glass-button py-2 px-4"
             onClick={togglePanel}
             whileTap={{ scale: 0.95 }}
-            whileHover={{ 
+            whileHover={{
               scale: 1.05,
               boxShadow: "0 0 20px rgba(30, 174, 219, 0.6)"
             }}
@@ -117,27 +118,27 @@ const Index = () => {
             {isPanelOpen ? "Hide List" : "Show List"}
           </motion.button>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           className="grid grid-cols-1 gap-6"
           variants={itemVariants}
         >
           {/* Map is always visible and isolated from Auth failures */}
-          <motion.div 
-            className="glass-card p-5 h-[600px]"
-            whileHover={{ 
+          <motion.div
+            className="glass-card p-2 sm:p-5 h-[65svh] min-h-[400px] max-h-[600px]"
+            whileHover={{
               boxShadow: "0 0 22px rgba(30, 174, 219, 0.35)",
               transition: { type: "spring", stiffness: 300, damping: 22 }
             }}
           >
-            <MapErrorBoundary>
-              <MapComponent 
+            <DeferredContent><Suspense fallback={<p role="status">Loading map…</p>}><MapErrorBoundary>
+              <MapComponent
                 onStationsUpdate={setLiveStations}
                 onSearchingChange={setIsSearching}
                 onHighlightedStationChange={setHighlightedStationId}
                 onBookStation={handleBookStation}
               />
-            </MapErrorBoundary>
+            </MapErrorBoundary></Suspense></DeferredContent>
           </motion.div>
         </motion.div>
       </motion.main>

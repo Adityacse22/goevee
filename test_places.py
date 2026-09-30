@@ -2,7 +2,11 @@ import urllib.request
 import json
 import sys
 
-url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=28.9931,76.9507&radius=10000&type=electric_vehicle_charging_station&key=AIzaSyCSq_i1nrF8-flgwtod_TbmV4DftFDWqZ4"
+import os
+from urllib.parse import quote
+
+api_key = quote(os.environ["GOOGLE_MAPS_API_KEY"], safe="")
+url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=28.9931,76.9507&radius=10000&type=electric_vehicle_charging_station&key={api_key}"
 
 req = urllib.request.Request(url)
 with urllib.request.urlopen(req) as response:

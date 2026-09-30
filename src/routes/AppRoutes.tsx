@@ -3,25 +3,38 @@
  * Extracted from App.tsx to separate routing concerns.
  */
 
-import { Routes, Route } from 'react-router-dom';
-import Index from '@/pages/Index';
-import Booking from '@/pages/Booking';
-import Login from '@/pages/Login';
-import SignUp from '@/pages/SignUp';
-import NotFound from '@/pages/NotFound';
-import NearbyStations from '@/pages/NearbyStations';
-import StationDetails from '@/pages/StationDetails';
-import MyBookings from '@/pages/MyBookings';
-import Favorites from '@/pages/Favorites';
-import Profile from '@/pages/Profile';
-import OperatorDashboard from '@/pages/OperatorDashboard';
-import AdminDashboard from '@/pages/AdminDashboard';
+import { lazy, Suspense } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+const Index = lazy(() => import('@/pages/Index'));
+const Booking = lazy(() => import('@/pages/Booking'));
+const Login = lazy(() => import('@/pages/Login'));
+const SignUp = lazy(() => import('@/pages/SignUp'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+const NearbyStations = lazy(() => import('@/pages/NearbyStations'));
+const StationDetails = lazy(() => import('@/pages/StationDetails'));
+const MyBookings = lazy(() => import('@/pages/MyBookings'));
+const Favorites = lazy(() => import('@/pages/Favorites'));
+const Profile = lazy(() => import('@/pages/Profile'));
+const OperatorDashboard = lazy(() => import('@/pages/OperatorDashboard'));
+const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { BookingHistory, VehicleProfile, Settings, Help, About } from '@/pages/Placeholders';
-import EvChargerStation from '@/pages/EvChargerStation';
+import { BookingHistory, VehicleProfile, Settings } from '@/pages/Placeholders';
+const EvChargerStation = lazy(() => import('@/pages/EvChargerStation'));
+
+const Privacy = lazy(() => import('@/pages/Privacy'));
+const Terms = lazy(() => import('@/pages/Terms'));
+const Cookies = lazy(() => import('@/pages/Cookies'));
+const Help = lazy(() => import('@/pages/Help'));
+const About = lazy(() => import('@/pages/About'));
 
 const AppRoutes = () => (
+  <Suspense fallback={<main className="grid min-h-screen place-items-center" role="status">Loading Evee…</main>}>
   <Routes>
+    <Route path="/privacy" element={<Privacy />} />
+    <Route path="/terms" element={<Terms />} />
+    <Route path="/cookies" element={<Cookies />} />
+    <Route path="/contact" element={<Navigate to="/help" replace />} />
+    <Route path="/reset-password" element={<Navigate to="/help" replace />} />
     <Route path="/" element={<Index />} />
     <Route path="/ev-charger-station" element={<EvChargerStation />} />
     <Route path="/search" element={<NearbyStations />} />
@@ -42,6 +55,7 @@ const AppRoutes = () => (
     <Route path="/signup" element={<SignUp />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
+  </Suspense>
 );
 
 export default AppRoutes;

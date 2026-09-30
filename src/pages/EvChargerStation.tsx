@@ -27,7 +27,8 @@ const EvChargerStation = () => {
 
   // Sync theme on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
+    let savedTheme: string | null = null;
+    try { savedTheme = localStorage.getItem('theme'); } catch { /* Use the default theme when storage is unavailable. */ }
     const isDark = savedTheme !== 'light'; // Default to dark
     setIsDarkMode(isDark);
     document.documentElement.classList.toggle('light-mode', !isDark);
@@ -36,7 +37,7 @@ const EvChargerStation = () => {
   const toggleDarkMode = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+    try { localStorage.setItem('theme', newMode ? 'dark' : 'light'); } catch { /* Keep the preference for this page. */ }
     document.documentElement.classList.toggle('light-mode', !newMode);
     toast.success(`${newMode ? 'Dark' : 'Light'} mode activated`);
   };
@@ -77,12 +78,12 @@ const EvChargerStation = () => {
     const [h, m, s] = booking.timeSlot.split(':').map(Number);
     const startDate = new Date();
     startDate.setHours(h, m, s);
-    
+
     const endDate = new Date(startDate.getTime() + booking.duration * 3600000);
     const end_time = `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}:00`;
 
     createBooking.mutate({
-      connector_id: booking.stationId,
+      connector_id: booking.connectorId,
       booking_date: booking.date,
       start_time: booking.timeSlot,
       end_time: end_time,
@@ -123,21 +124,22 @@ const EvChargerStation = () => {
   const navItems = [
     { icon: <MapIcon className="w-5 h-5" />, label: 'Map', path: '/ev-charger-station', active: true },
     { icon: <Calendar className="w-5 h-5" />, label: 'Bookings', path: '/bookings' },
-    { icon: <Activity className="w-5 h-5" />, label: 'Activity', path: '/activity' },
-    { icon: <Wallet className="w-5 h-5" />, label: 'Wallet', path: '/wallet' },
+    { icon: <Activity className="w-5 h-5" />, label: 'About Evee', path: '/about' },
+    { icon: <Wallet className="w-5 h-5" />, label: 'Help & contact', path: '/help' },
     { icon: <Bookmark className="w-5 h-5" />, label: 'Saved Places', path: '/favorites' },
-    { icon: <Bell className="w-5 h-5" />, label: 'Notifications', path: '/notifications' },
+    { icon: <Bell className="w-5 h-5" />, label: 'Privacy & cookies', path: '/cookies' },
   ];
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 dark:bg-slate-950 overflow-hidden text-slate-900 dark:text-slate-200 transition-colors duration-300">
+    <div className="flex h-dvh w-full bg-slate-50 dark:bg-slate-950 overflow-hidden text-slate-900 dark:text-slate-200 transition-colors duration-300">
       {/* Left Sidebar */}
       <aside className="hidden md:flex flex-col w-64 bg-slate-900 border-r border-white/5 p-4 z-20 shadow-xl">
         <div className="flex items-center justify-between mb-8 px-2">
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold gradient-text">Evee</h1>
+            <span className="text-2xl font-bold gradient-text">Evee</span>
           </Link>
-          <button 
+          <button
+            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             onClick={toggleDarkMode}
             className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
           >
@@ -151,8 +153,8 @@ const EvChargerStation = () => {
               key={i}
               to={item.path}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                item.active 
-                  ? 'bg-ev-green/10 text-ev-green font-bold shadow-sm' 
+                item.active
+                  ? 'bg-ev-green/10 text-ev-green font-bold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -162,29 +164,8 @@ const EvChargerStation = () => {
           ))}
         </nav>
 
-        {/* My EV Card */}
-        <div className="mt-auto mb-4 bg-slate-800 rounded-2xl p-4 border border-white/5">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">My EV</p>
-              <p className="text-sm font-bold text-white">Harrier EV</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 mt-4">
-            <div>
-              <p className="text-xl font-black text-ev-green">52%</p>
-              <p className="text-[10px] text-slate-400 uppercase">Battery</p>
-            </div>
-            <div className="h-8 w-px bg-white/10" />
-            <div>
-              <p className="text-xl font-black text-white">~ 162 km</p>
-              <p className="text-[10px] text-slate-400 uppercase">Est. Range</p>
-            </div>
-          </div>
-        </div>
-
         {/* Profile */}
-        <Link 
+        <Link
           to={user ? "/profile" : "/login"}
           className="mt-auto p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:border-ev-blue/30 transition-all group cursor-pointer"
         >
@@ -202,39 +183,49 @@ const EvChargerStation = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 relative flex flex-col h-full overflow-hidden bg-slate-950">
+      <main id="main-content" tabIndex={-1} className="flex-1 relative flex flex-col h-full overflow-hidden bg-slate-950">
+        <h1 className="sr-only">Find EV charging stations</h1>
+        <nav aria-label="Mobile navigation" className="absolute inset-x-4 top-3 z-30 flex items-center justify-between rounded-xl bg-slate-950/95 p-2 text-white md:hidden">
+          <Link to="/" className="gradient-text text-xl font-bold">Evee</Link>
+          <Link className="text-sm underline" to="/help">Help</Link>
+          <Link className="text-sm underline" to="/cookies">Privacy</Link>
+          <Link className="text-sm underline" to={user ? '/profile' : '/login'}>{user ? 'Profile' : 'Sign in'}</Link>
+        </nav>
         {/* Top Search Bar */}
-        <div className="absolute top-4 left-4 right-4 z-20 flex flex-col gap-3 pointer-events-none">
+        <div className="absolute top-16 md:top-4 left-4 right-4 z-20 flex flex-col gap-3 pointer-events-none">
           <div className="max-w-2xl pointer-events-auto bg-slate-950/80 backdrop-blur-xl rounded-2xl p-1 shadow-2xl border border-white/10">
             <SearchBar />
           </div>
           {/* Filters */}
           <div className="flex gap-2 pointer-events-auto overflow-x-auto pb-2 scrollbar-hide">
-            <button 
+            <button
+              aria-pressed={availableOnly}
               onClick={() => setAvailableOnly(!availableOnly)}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap shadow-sm ${
-                availableOnly 
-                  ? 'bg-ev-green text-slate-950 border-ev-green' 
+                availableOnly
+                  ? 'bg-ev-green text-slate-950 border-ev-green'
                   : 'bg-slate-900 text-white border-white/10 hover:bg-slate-800'
               }`}
             >
               ⚡ Available now
             </button>
-            <button 
+            <button
+              aria-pressed={fastOnly}
               onClick={() => setFastOnly(!fastOnly)}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap shadow-sm ${
-                fastOnly 
-                  ? 'bg-ev-blue text-white border-ev-blue' 
+                fastOnly
+                  ? 'bg-ev-blue text-white border-ev-blue'
                   : 'bg-slate-900 text-white border-white/10 hover:bg-slate-800'
               }`}
             >
               🚀 Fast Charger
             </button>
-            <button 
+            <button
+              aria-pressed={ccs2Only}
               onClick={() => setCcs2Only(!ccs2Only)}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap shadow-sm ${
-                ccs2Only 
-                  ? 'bg-ev-blue text-white border-ev-blue' 
+                ccs2Only
+                  ? 'bg-ev-blue text-white border-ev-blue'
                   : 'bg-slate-900 text-white border-white/10 hover:bg-slate-800'
               }`}
             >
@@ -245,10 +236,10 @@ const EvChargerStation = () => {
 
         {/* Prominent Live Location CTA (if not loading and not active) */}
         {locationStatus === 'idle' && (
-          <div className="absolute top-32 left-1/2 -translate-x-1/2 z-20 pointer-events-auto">
-            <button 
+          <div className="absolute top-44 md:top-32 left-1/2 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 z-20 pointer-events-auto">
+            <button
               onClick={requestCurrentLocation}
-              className="bg-ev-blue text-white px-8 py-3 rounded-full font-bold shadow-xl shadow-ev-blue/30 hover:bg-ev-blue/90 transition-all flex items-center gap-2 transform hover:scale-105"
+              className="bg-ev-blue text-white px-5 sm:px-8 py-3 rounded-full font-bold shadow-xl shadow-ev-blue/30 hover:bg-ev-blue/90 transition-all flex items-center gap-2 transform hover:scale-105"
             >
               <MapIcon className="w-5 h-5" />
               Use my live location
@@ -258,7 +249,7 @@ const EvChargerStation = () => {
 
         {/* Map */}
         <div className="absolute inset-0 z-0">
-          <MapComponent 
+          <MapComponent
             onStationsUpdate={handleStationsUpdate}
             onHighlightedStationChange={handleHighlightedStationChange}
             showControls={false}

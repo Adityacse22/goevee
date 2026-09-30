@@ -1,8 +1,8 @@
-import { db } from '../db';
-import { stations, chargers } from '../db/schema';
-import { BaseAdapter } from './adapters/BaseAdapter';
-import { OcmAdapter } from './adapters/OcmAdapter';
-import { DelhiAdapter } from './adapters/DelhiAdapter';
+import { db } from '../db/index.js';
+import { stations, chargers } from '../db/schema.js';
+import { BaseAdapter } from './adapters/BaseAdapter.js';
+import { OcmAdapter } from './adapters/OcmAdapter.js';
+import { DelhiAdapter } from './adapters/DelhiAdapter.js';
 
 export class IngestionService {
   private adapters: BaseAdapter[];
@@ -16,14 +16,14 @@ export class IngestionService {
 
   async runIngestion() {
     console.log('Starting EV Station data ingestion process...');
-    
+
     for (const adapter of this.adapters) {
       console.log(`Running adapter: ${adapter.sourceName}`);
       try {
         const normalizedDataList = await adapter.process();
-        
+
         console.log(`Upserting ${normalizedDataList.length} stations from ${adapter.sourceName}`);
-        
+
         let successCount = 0;
         let failCount = 0;
 
@@ -34,9 +34,9 @@ export class IngestionService {
             const insertedStation = await db.insert(stations)
               .values(data.station)
               .returning({ id: stations.id });
-              
+
             const stationId = insertedStation[0].id;
-            
+
             if (data.chargers.length > 0) {
               const chargersToInsert = data.chargers.map(c => ({
                 ...c,
@@ -55,7 +55,7 @@ export class IngestionService {
         console.error(`Adapter ${adapter.sourceName} failed critically:`, adapterError);
       }
     }
-    
+
     console.log('Data ingestion complete.');
   }
 }

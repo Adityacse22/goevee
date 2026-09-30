@@ -21,7 +21,7 @@ export interface SearchResult {
   name: string;
   address: string;
   eLoc: string;
-  viewport?: google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral;
+  viewport?: GoogleLatLngBounds | GoogleLatLngBoundsLiteral;
 }
 
 export interface SearchSuggestion extends SearchResult {

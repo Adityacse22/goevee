@@ -9,7 +9,7 @@ const NearbyStations = () => {
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
       <Navbar hasScrolled />
-      <main className="container px-4 pt-28">
+      <main id="main-content" tabIndex={-1} className="container px-4 pt-28">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white">Nearby Stations</h1>
         </div>

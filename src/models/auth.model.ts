@@ -1,3 +1,4 @@
+import type { BotProtection } from '../../shared/validation';
 /**
  * MODEL — Auth domain types and helpers.
  *
@@ -38,8 +39,8 @@ export interface AuthContextType {
   user: AppUser | null;
   profile: Profile | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signIn: (email: string, password: string, protection?: BotProtection) => Promise<void>;
+  signUp: (email: string, password: string, fullName: string, protection?: BotProtection) => Promise<void>;
   signOut: () => Promise<void>;
 }
 

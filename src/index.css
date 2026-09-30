@@ -163,7 +163,7 @@ body {
 }
 
 /* Fix dialog, calendar and tooltip pointer events */
-[data-radix-popper-content-wrapper], 
+[data-radix-popper-content-wrapper],
 [data-radix-tooltip-content],
 [data-radix-dialog-content],
 [data-radix-dialog-overlay],
@@ -443,3 +443,49 @@ html.light-mode canvas {
   filter: invert(1) hue-rotate(180deg);
 }
 
+
+/* Accessible shared controls and mobile defaults. */
+:root {
+  color-scheme: dark;
+  --background: 240 6% 4%;
+  --foreground: 0 0% 98%;
+  --primary: 190 80% 60%;
+  --primary-foreground: 222 47% 8%;
+  --secondary: 240 5% 18%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 5% 18%;
+  --muted-foreground: 215 20% 75%;
+  --accent: 240 5% 20%;
+  --accent-foreground: 0 0% 98%;
+  --border: 240 5% 30%;
+  --input: 240 5% 35%;
+  --ring: 187 85% 68%;
+  --popover: 240 6% 8%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 6% 8%;
+  --card-foreground: 0 0% 98%;
+  --destructive: 0 70% 42%;
+  --destructive-foreground: 0 0% 100%;
+}
+html { scroll-padding-top: 6rem; }
+body { min-width: 320px; }
+img { max-width: 100%; }
+input, select, textarea { font-size: max(16px, 1em); }
+:where(a, button, input, select, textarea):focus-visible { outline: 2px solid #67e8f9; outline-offset: 4px; }
+.action-primary, .action-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 999px; padding: 0.75rem 1.5rem; font-weight: 600; line-height: 1.4; text-align: center; }
+.action-primary { background: linear-gradient(110deg, #1eaedb, #64ffda); color: #07151c !important; }
+.action-primary:hover { background: #64ffda; }
+.action-secondary { background: #18181b; border: 1px solid #71717a; color: #fafafa !important; }
+.action-secondary:hover { background: #27272a; }
+.skip-link { position: fixed; top: 0.5rem; left: 0.5rem; transform: translateY(-160%); z-index: 3000; background: #67e8f9; color: #07151c; padding: 0.75rem 1rem; border-radius: 8px; }
+.skip-link:focus { transform: translateY(0); }
+/* Bright brand fills need dark foregrounds for readable text. */
+:where(button, a)[class*="bg-ev-blue"], :where(button, a)[class*="from-ev-blue"][class*="to-ev-green"] { color: #07151c; }
+:where(button, a)[class*="bg-ev-blue/10"], :where(button, a)[class*="bg-ev-blue/20"] { color: #67e8f9; }
+.text-white\/30, .text-white\/40, .text-white\/50 { color: #aeb8c6; }
+.glass-input::placeholder { color: #aeb8c6; }
+footer a:hover { color: #67e8f9; text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+p a:not(.action-primary):not(.action-secondary), label a { text-decoration: underline; text-underline-offset: 3px; }

@@ -1,5 +1,5 @@
 import { InferInsertModel } from 'drizzle-orm';
-import { stations, chargers } from '../../db/schema';
+import { stations, chargers } from '../../db/schema.js';
 
 export type InsertStation = InferInsertModel<typeof stations>;
 export type InsertCharger = InferInsertModel<typeof chargers>;
@@ -9,22 +9,22 @@ export interface NormalizedStationData {
   chargers: InsertCharger[];
 }
 
-export abstract class BaseAdapter {
+export abstract class BaseAdapter<T = unknown> {
   abstract sourceName: string;
-  abstract fetchStations(): Promise<any[]>;
-  abstract normalizeStation(rawData: any): NormalizedStationData | null;
+  abstract fetchStations(): Promise<T[]>;
+  abstract normalizeStation(rawData: T): NormalizedStationData | null;
 
   async process(): Promise<NormalizedStationData[]> {
     const rawData = await this.fetchStations();
     const normalized: NormalizedStationData[] = [];
-    
+
     for (const data of rawData) {
       const result = this.normalizeStation(data);
       if (result) {
         normalized.push(result);
       }
     }
-    
+
     return normalized;
   }
 }
