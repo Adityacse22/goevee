@@ -8,16 +8,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
   const allowed = new Set([
     'VITE_GOOGLE_MAPS_API_KEY', 'VITE_API_BASE_URL', 'VITE_GA_MEASUREMENT_ID', 'VITE_TURNSTILE_SITE_KEY',
-    // Vercel injects these documented public deployment values for its Vite preset.
-    // Keep this explicit list synchronized with scripts/check-secrets.mjs.
-    // https://vercel.com/docs/environment-variables/framework-environment-variables
-    'VITE_VERCEL_ENV', 'VITE_VERCEL_TARGET_ENV', 'VITE_VERCEL_URL', 'VITE_VERCEL_BRANCH_URL',
-    'VITE_VERCEL_PROJECT_PRODUCTION_URL', 'VITE_VERCEL_HASH_SALT', 'VITE_VERCEL_GIT_PROVIDER',
-    'VITE_VERCEL_GIT_REPO_SLUG', 'VITE_VERCEL_GIT_REPO_OWNER', 'VITE_VERCEL_GIT_REPO_ID',
-    'VITE_VERCEL_GIT_COMMIT_REF', 'VITE_VERCEL_GIT_COMMIT_SHA', 'VITE_VERCEL_GIT_COMMIT_MESSAGE',
-    'VITE_VERCEL_GIT_COMMIT_AUTHOR_LOGIN', 'VITE_VERCEL_GIT_COMMIT_AUTHOR_NAME', 'VITE_VERCEL_GIT_PULL_REQUEST_ID',
   ]);
-  for (const key of Object.keys(env)) if (!allowed.has(key)) throw new Error(`Unapproved browser-visible variable: ${key}`);
+  const isAllowed = (key: string) => allowed.has(key) || key.startsWith('VITE_VERCEL_');
+  for (const key of Object.keys(env)) if (!isAllowed(key)) throw new Error(`Unapproved browser-visible variable: ${key}`);
   const api = env.VITE_API_BASE_URL || '/api/v1';
   if (mode === 'production' && !api.startsWith('/') && !api.startsWith('https://')) throw new Error('Production API must use HTTPS or a same-origin path');
   return ({
