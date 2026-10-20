@@ -21,16 +21,25 @@ catch { files = sourceFiles(); } // Build providers may omit .git from the check
 
 const errors = [];
 const serverSecrets = [];
+// A server-side key that is intentionally the same value as a VITE_ key is already
+// public by design. Keep it out of the "server secret in the bundle" check so the
+// check still catches genuinely private values without flagging a deliberate share.
+const publicValues = new Set();
+const registerPublic = (name, value) => {
+  if (isAllowed(name) && typeof value === 'string' && value.length > 0) publicValues.add(value);
+};
 for (const file of ['.env', '.env.local', '.env.production', '.env.production.local', 'server/.env']) {
   if (!existsSync(file)) continue;
   for (const [name, value] of Object.entries(parse(readFileSync(file)))) {
     if (name.startsWith('VITE_') && !isAllowed(name)) errors.push(`${file}: unapproved public variable ${name}`);
+    registerPublic(name, value);
     if (!name.startsWith('VITE_') && /SECRET|PASSWORD|TOKEN|DATABASE_URL|API_KEY/.test(name) && value.length > 12) serverSecrets.push({ name, value });
   }
 }
 for (const name of Object.keys(process.env)) {
   if (name.startsWith('VITE_') && !isAllowed(name)) errors.push(`environment: unapproved public variable ${name}`);
   const value = process.env[name];
+  registerPublic(name, value);
   if (!name.startsWith('VITE_') && /^(JWT_.*SECRET|JWT_SECRET|DATABASE_URL|TURNSTILE_SECRET_KEY|GOOGLE_MAPS_API_KEY|GOOGLE_PLACES_API_KEY|OCM_API_KEY)$/.test(name) && value?.length > 12) serverSecrets.push({ name, value });
 }
 for (const file of files) {
@@ -38,7 +47,9 @@ for (const file of files) {
   const text = readFileSync(file, 'utf8');
   if (/AIza[\w-]{30,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\bsk-(?:live-|proj-)?[A-Za-z0-9_-]{24,}/.test(text)) errors.push(`${file}: hardcoded credential pattern (redacted)`);
   if (file.startsWith('src/') && /(?:from\s*|import\s*\()["'][^"']*\bserver\//.test(text)) errors.push(`${file}: browser code imports server code`);
-  for (const { name, value } of serverSecrets) if (text.includes(value)) errors.push(`${file}: contains ${name} value (redacted)`);
+  for (const { name, value } of serverSecrets) {
+    if (!publicValues.has(value) && text.includes(value)) errors.push(`${file}: contains ${name} value (redacted)`);
+  }
 }
 if (process.argv.includes('--dist')) {
   function scan(directory) {
@@ -47,7 +58,9 @@ if (process.argv.includes('--dist')) {
       if (entry.isDirectory()) scan(file);
       else if (/\.(js|html|json|map)$/.test(file)) {
         const text = readFileSync(file, 'utf8');
-        for (const { name, value } of serverSecrets) if (text.includes(value)) errors.push(`${file}: contains server-only ${name} (redacted)`);
+        for (const { name, value } of serverSecrets) {
+          if (!publicValues.has(value) && text.includes(value)) errors.push(`${file}: contains server-only ${name} (redacted)`);
+        }
       }
     }
   }
