@@ -19,6 +19,10 @@ export const DATABASE_URL =
 export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET ?? process.env.JWT_SECRET ?? '';
 export const JWT_ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN ?? '1d';
 export const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY ?? '';
+/** Server-only key for Places API (New) + Geocoding. Falls back to GOOGLE_MAPS_API_KEY. Never exposed to the client. */
+export const GOOGLE_PLACES_API_KEY = (process.env.GOOGLE_PLACES_API_KEY ?? GOOGLE_MAPS_API_KEY).trim();
+/** 'off' drops connector data from list searches (Nearby Search Pro instead of Enterprise + Atmosphere billing). */
+export const GOOGLE_PLACES_EV_FIELDS = (process.env.GOOGLE_PLACES_EV_FIELDS ?? 'on').trim().toLowerCase() !== 'off';
 export const APP_ORIGIN = process.env.APP_ORIGIN ?? (NODE_ENV === 'production' ? 'https://www.goevee.in' : 'http://localhost:8080');
 export const PUBLIC_ORIGIN = 'https://www.goevee.in';
 export const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY?.trim() ?? '';

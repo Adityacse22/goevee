@@ -2,8 +2,14 @@ export const SITE_URL = 'https://www.goevee.in';
 export const SUPPORT_EMAIL = 'contact.goevee@gmail.com';
 export const POLICY_DATE = '1 October 2026';
 
+/** Routes rendered in the redesigned GoEvee shell (keep in sync with the theme script in index.html). */
+export const SHELL_PATHS = ['/', '/chargers', '/map', '/wallet'];
+
 export const pageMetadata: Record<string, { title: string; description: string; index?: boolean }> = {
-  '/': { title: 'Evee | Find EV charging stations in India', description: 'Find nearby EV charging stations with Evee. Explore locations, compare connector options and plan your next electric journey.', index: true },
+  '/': { title: 'GoEvee | Find an EV charger you can trust', description: 'GoEvee brings EV chargers from every network into one app. See real-time availability and clear per-kWh pricing, then charge without juggling apps.', index: true },
+  '/chargers': { title: 'Nearby EV chargers | GoEvee', description: 'Every nearby charger with live availability, connector, power and per-kWh price.' },
+  '/map': { title: 'Charger map | GoEvee', description: 'See nearby EV chargers and their live availability on the map.' },
+  '/wallet': { title: 'Wallet | GoEvee', description: 'Your GoEvee balance for charging on every network.' },
   '/ev-charger-station': { title: 'Find EV charging stations near you | Evee', description: 'Search for EV chargers by city or location. Explore charging stations on the map and check details before your next trip.', index: true },
   '/stations': { title: 'Browse EV charging stations | Evee', description: 'Explore nearby electric vehicle charging stations, connector options and station details with Evee.', index: true },
   '/about': { title: 'About Evee | EV charging made easier', description: 'Learn how Evee helps electric vehicle drivers discover charging stations and plan charging stops across India.', index: true },

@@ -1,11 +1,14 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { pageMetadata, getPageMetadata, SITE_URL } from '../src/config/site';
+import { pageMetadata, getPageMetadata, SITE_URL, SHELL_PATHS } from '../src/config/site';
 
 const template = await readFile('dist/index.html', 'utf8');
 const escape = (text: string) => text.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+// Brand fonts are preloaded only where the GoEvee shell renders; legacy pages never use them.
+const usesShell = (path: string) => SHELL_PATHS.includes(path) || path.startsWith('/stations/');
 function htmlFor(path: string) {
   const page = getPageMetadata(path);
   let html = template.replace(/<title>.*?<\/title>/, `<title>${escape(page.title)}</title>`);
+  if (!usesShell(path)) html = html.replace(/\s*<link rel="preload" as="font"[^>]*>/g, '');
   for (const [attribute, key, value] of [
     ['name', 'description', page.description], ['name', 'robots', page.index ? 'index, follow' : 'noindex, follow'],
     ['property', 'og:title', page.title], ['property', 'og:description', page.description], ['property', 'og:url', SITE_URL + page.path],

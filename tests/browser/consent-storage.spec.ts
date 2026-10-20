@@ -33,7 +33,8 @@ for (const blockRemoval of [false, true]) {
       document.cookie = '_ga=previous-grant; Path=/';
     }, { blockRemoval });
 
-    await page.getByRole('button', { name: 'Cookie settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    await page.getByRole('dialog', { name: 'Menu' }).getByRole('button', { name: 'Cookie settings', exact: true }).click();
     await page.getByRole('button', { name: 'Reject analytics', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Your privacy choices' })).toHaveCount(0);
     expect(await page.evaluate(() => (window as Window & { consentTestDocument?: boolean }).consentTestDocument)).toBe(true);
@@ -44,7 +45,8 @@ for (const blockRemoval of [false, true]) {
     else expect(stored).toBeNull();
 
     const queuedEvents = await page.evaluate(() => (window as Window & { dataLayer?: unknown[] }).dataLayer?.length);
-    await page.locator('footer').getByRole('link', { name: 'Privacy policy', exact: true }).click();
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    await page.getByRole('dialog', { name: 'Menu' }).getByRole('link', { name: 'Privacy', exact: true }).click();
     await expect(page).toHaveURL('/privacy');
     expect(await page.evaluate(() => (window as Window & { consentTestDocument?: boolean }).consentTestDocument)).toBe(true);
     expect(await page.evaluate(id => (window as unknown as Record<string, unknown>)[`ga-disable-${id}`], measurementId)).toBe(true);

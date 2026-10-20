@@ -74,6 +74,8 @@ declare global {
     mapTypeControl?: boolean;
     fullscreenControl?: boolean;
     streetViewControl?: boolean;
+    clickableIcons?: boolean;
+    gestureHandling?: 'cooperative' | 'greedy' | 'none' | 'auto';
   }
 
   interface GoogleMap {

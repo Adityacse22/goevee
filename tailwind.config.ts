@@ -65,11 +65,22 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				// GoEvee design tokens (defined in src/styles/goevee.css, light + dark)
+				page: 'var(--bg)',
+				surface: { DEFAULT: 'var(--surface)', 2: 'var(--surface-2)' },
+				ink: { 950: 'var(--ink-950)', 900: 'var(--ink-900)', 700: 'var(--ink-700)', 600: 'var(--ink-600)', 500: 'var(--ink-500)' },
+				line: { DEFAULT: 'var(--line)', soft: 'var(--line-soft)' },
+				brand: { 400: 'var(--brand-400)', 600: 'var(--brand-600)', 700: 'var(--brand-700)' },
+				mint: { 100: 'var(--mint-100)', 200: 'var(--mint-200)' },
 				// EV Charging App Custom Colors
 				"ev-blue": "#1EAEDB",
 				"ev-green": "#10B981",
 				"ev-navy": "#1A1F2C",
 				"ev-orange": "#F97316",
+			},
+			fontFamily: {
+				display: 'var(--font-display)',
+				ui: 'var(--font-ui)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

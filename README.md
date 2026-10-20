@@ -889,15 +889,16 @@ docker compose up -d
 bash
 npm run db:generate
 npm run db:migrate
-6. Start development servers
-Frontend:
+6. Start both development servers
 
 bash
-npm run dev
-Backend:
+npm run dev:all
 
-bash
-npm run dev
+This starts the Vite frontend on `http://localhost:8080` and the Express API on
+`http://localhost:3001` (the dev server proxies `/api/v1` to it). To run them
+separately, use `npm run dev` for the frontend and `npm run dev:server` for the
+API.
+
 Running with Docker
 A simple PostgreSQL setup can be used for local development.
 

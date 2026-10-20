@@ -2,6 +2,7 @@ import { and, desc, eq, gt, inArray, lt } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { bookings, chargers } from '../db/schema.js';
 import { AppError } from '../middlewares/error.js';
+import { chargerBookingBlocker } from '../services/booking-guard.js';
 
 export type BookingRecord = typeof bookings.$inferSelect;
 
@@ -54,28 +55,22 @@ export async function createBookingWithSafety(
       .for('update')
       .limit(1);
 
-    // If it's a local charger, enforce strict rules
-    if (charger) {
-      if (charger.status === 'OUT_OF_SERVICE' || charger.status === 'MAINTENANCE') {
-        throw new AppError(409, 'Charger is not available for booking');
-      }
-
-      const [overlap] = await tx
-        .select({ id: bookings.id })
-        .from(bookings)
-        .where(and(
-          eq(bookings.chargerId, input.chargerId),
-          inArray(bookings.status, ['PENDING', 'CONFIRMED', 'ACTIVE']),
-          lt(bookings.startTime, bufferedEnd),
-          gt(bookings.endTime, bufferedStart),
-        ))
-        .limit(1);
-
-      if (overlap) {
-        throw new AppError(409, 'Requested booking window overlaps an existing reservation');
-      }
+    // Only verified GoEvee inventory can be booked; unknown IDs (e.g. provider place IDs) are rejected.
+    const blocker = chargerBookingBlocker(charger);
+    if (blocker) throw new AppError(blocker.statusCode, blocker.message);
+    const [overlap] = await tx
+      .select({ id: bookings.id })
+      .from(bookings)
+      .where(and(
+        eq(bookings.chargerId, input.chargerId),
+        inArray(bookings.status, ['PENDING', 'CONFIRMED', 'ACTIVE']),
+        lt(bookings.startTime, bufferedEnd),
+        gt(bookings.endTime, bufferedStart),
+      ))
+      .limit(1);
+    if (overlap) {
+      throw new AppError(409, 'Requested booking window overlaps an existing reservation');
     }
-
     const [booking] = await tx
       .insert(bookings)
       .values({
@@ -91,15 +86,13 @@ export async function createBookingWithSafety(
       })
       .returning();
 
-    if (charger) {
-      await tx
-        .update(chargers)
-        .set({
-          estimatedAvailableAt: nextEstimatedAvailableAt,
-          updatedAt: new Date(),
-        })
-        .where(eq(chargers.id, input.chargerId));
-    }
+    await tx
+      .update(chargers)
+      .set({
+        estimatedAvailableAt: nextEstimatedAvailableAt,
+        updatedAt: new Date(),
+      })
+      .where(eq(chargers.id, input.chargerId));
 
     return booking;
   });

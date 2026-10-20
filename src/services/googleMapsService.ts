@@ -120,6 +120,8 @@ function toConnectors(place: GooglePlace, createdAt: string): StationConnector[]
     power_output: aggregation.maxChargeRateKw ?? 0,
     // Google reports live availability only for some networks; unknown is treated as available.
     available: aggregation.availableCount == null ? true : aggregation.availableCount > 0,
+    // Lets the adapter tell a published free count from an unknown count coerced to available.
+    availabilityKnown: aggregation.availableCount != null,
     created_at: createdAt,
   }));
 }

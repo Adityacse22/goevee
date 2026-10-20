@@ -26,7 +26,7 @@ app.use(express.static('dist', { redirect: false }));
 app.get('*', (req, res) => {
   const route = config.rewrites.find(item => item.source === req.path);
   if (route && existsSync(resolve('dist', '.' + route.destination))) { res.sendFile(resolve('dist', '.' + route.destination)); return; }
-  if (/^\/stations\/[^/]+\/?$/.test(req.path)) { res.sendFile(resolve('dist/station.html')); return; }
+  if (/^\/stations\/[^/]+(\/navigate)?\/?$/.test(req.path)) { res.sendFile(resolve('dist/station.html')); return; }
   res.status(404).sendFile(resolve('dist/404.html'));
 });
 app.listen(4173, '127.0.0.1', () => console.log('Production preview: http://127.0.0.1:4173'));

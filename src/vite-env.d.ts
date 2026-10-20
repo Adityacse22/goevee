@@ -9,7 +9,7 @@
 // Fallback: declare import.meta.env directly so tsc never fails on TS2339,
 // even if the triple-slash reference above can't resolve vite/client.d.ts.
 interface ImportMetaEnv {
-  [key: string]: any
+  [key: string]: string | boolean | undefined
   readonly BASE_URL: string
   readonly MODE: string
   readonly DEV: boolean

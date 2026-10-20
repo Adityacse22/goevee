@@ -31,7 +31,7 @@ for (const file of ['.env', '.env.local', '.env.production', '.env.production.lo
 for (const name of Object.keys(process.env)) {
   if (name.startsWith('VITE_') && !isAllowed(name)) errors.push(`environment: unapproved public variable ${name}`);
   const value = process.env[name];
-  if (!name.startsWith('VITE_') && /^(JWT_.*SECRET|JWT_SECRET|DATABASE_URL|TURNSTILE_SECRET_KEY|GOOGLE_MAPS_API_KEY|OCM_API_KEY)$/.test(name) && value?.length > 12) serverSecrets.push({ name, value });
+  if (!name.startsWith('VITE_') && /^(JWT_.*SECRET|JWT_SECRET|DATABASE_URL|TURNSTILE_SECRET_KEY|GOOGLE_MAPS_API_KEY|GOOGLE_PLACES_API_KEY|OCM_API_KEY)$/.test(name) && value?.length > 12) serverSecrets.push({ name, value });
 }
 for (const file of files) {
   if (!existsSync(file) || /(?:^|\/)\.env(?:\.|$)/.test(file) || /\.(?:png|jpg|jpeg|gif|webp|ico|svg|woff|woff2|ttf|eot|lockb|mp4|mov|pdf|zip|gz)$/i.test(file)) continue;

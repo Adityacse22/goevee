@@ -1,3 +1,5 @@
+@import './styles/goevee.css';
+@import './features/goevee-app/app-screens.css';
 
 @tailwind base;
 @tailwind components;
@@ -430,16 +432,16 @@ button:not(:disabled) {
 /* ============================================
    Light Mode Override (CSS Filter based)
    ============================================ */
-html.light-mode {
+html.light-mode:not(.ge-shell) {
   filter: invert(1) hue-rotate(180deg);
 }
 
 /* Re-invert elements that should preserve their natural colors */
-html.light-mode img,
-html.light-mode video,
-html.light-mode .gm-style,
-html.light-mode [class*="map"],
-html.light-mode canvas {
+html.light-mode:not(.ge-shell) img,
+html.light-mode:not(.ge-shell) video,
+html.light-mode:not(.ge-shell) .gm-style,
+html.light-mode:not(.ge-shell) [class*="map"],
+html.light-mode:not(.ge-shell) canvas {
   filter: invert(1) hue-rotate(180deg);
 }
 

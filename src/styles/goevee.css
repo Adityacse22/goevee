@@ -1,0 +1,935 @@
+/* ==========================================================================
+   GoEvee design system — tokens (primitive → semantic) and shell components.
+   Applies to pages inside the new app shell (html.ge-shell). Legacy pages keep
+   their own dark styles until they migrate.
+   ========================================================================== */
+
+/* ₹ in Inter from a 1.2 KB subset (variable weight). Declared after the Fontsource
+   faces, so it wins for U+20B9 and pages never download Inter's 85 KB Latin-ext file
+   just for the rupee sign. Built from Inter (SIL OFL 1.1) with fontTools. */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../assets/fonts/inter-rupee-wght.woff2') format('woff2-variations');
+  unicode-range: U+20B9;
+}
+
+/* Size-adjusted local fallbacks keep text metrics stable while web fonts load. */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('Helvetica'), local('Roboto');
+  size-adjust: 107.4%;
+  ascent-override: 90.2%;
+  descent-override: 22.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans Fallback';
+  src: local('Arial'), local('Helvetica'), local('Roboto');
+  size-adjust: 106.5%;
+  ascent-override: 96.9%;
+  descent-override: 20.6%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* Surfaces */
+  --bg: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-2: #F1F5F9;
+  --surface-glass: rgba(255, 255, 255, 0.85);
+  /* Ink */
+  --ink-950: #0B1220;
+  --ink-900: #0F172A;
+  --ink-700: #334155;
+  --ink-600: #475569;
+  --ink-500: #64748B;
+  /* Lines */
+  --line: #E2E8F0;
+  --line-soft: #EDF1F5;
+  /* Brand */
+  --brand-400: #22C55E;
+  --brand-600: #16A34A;
+  --brand-700: #15803D; /* any small green text (AA) */
+  --mint-100: #DCFCE7;
+  --mint-200: #BBF7D0;
+  /* Status */
+  --amber-500: #F59E0B;
+  --amber-700: #B45309;
+  --amber-100: #FEF3C7;
+  --red-600: #DC2626;
+  --red-700: #B91C1C; /* small red text: #DC2626 on #FEE2E2 is 3.9:1 and fails AA */
+  --red-100: #FEE2E2;
+  --blue-500: #3B82F6;
+  /* Foregrounds drawn on filled status colours */
+  --on-brand: #FFFFFF;
+  --on-amber: #0B1220;
+  --on-red: #FFFFFF;
+  --on-muted: #FFFFFF;
+  --pin-stroke: #FFFFFF;
+  /* Gradients */
+  --grad-cta: linear-gradient(90deg, #B4F2CF, #E3FBEE);
+  /* Solid deep-green CTA used across the GoEvee app screens (matches mockups). */
+  --cta-solid: #157A52;
+  --cta-solid-ink: #FFFFFF;
+  --grad-battery: linear-gradient(90deg, #16A34A, #4ADE80);
+  --grad-battery-amber: linear-gradient(90deg, #D97706, #FBBF24);
+  --grad-battery-red: linear-gradient(90deg, #DC2626, #F87171);
+  /* Dusk-graded placeholder shown behind station photos while they load. */
+  --thumb-placeholder: linear-gradient(180deg, #24324F 0%, #5A4A6E 55%, #C98A5E 100%);
+  /* Elevation */
+  --e1: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --e2: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+  --e3: 0 12px 32px -12px rgba(15, 23, 42, 0.18);
+  --e-nav: 0 -6px 24px rgba(15, 23, 42, 0.06);
+  --scrim: rgba(11, 18, 32, 0.45);
+  --focus: var(--brand-600);
+  --shimmer: rgba(255, 255, 255, 0.6);
+  /* Map style */
+  --map-land: #F2F4F3;
+  --map-road: #FFFFFF;
+  --map-casing: #E6E9EC;
+  --map-park: #DCF2E3;
+  --map-water: #D6E8F7;
+  --map-rail: #C9CED6;
+  --map-block: #E9ECEB;
+  /* Type */
+  --font-display: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans Fallback', 'Noto Sans Devanagari Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-ui: 'Inter Variable', 'Inter Fallback', 'Noto Sans Devanagari Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017 19.9%, 1.043 23.5%, 1.035 27.3%, 1.006 37.5%, 0.998 47.2%, 1);
+  --dur-press: 120ms;
+  --dur-state: 200ms;
+  --dur-sheet: 320ms;
+  /* Layout */
+  --header-h: 4rem;
+  --nav-h: 4rem;
+  --gutter: 1rem;
+  --container: 90rem;
+}
+
+html.dark {
+  --bg: #0A0F14;
+  --surface: #111821;
+  --surface-2: #18222D;
+  --surface-glass: rgba(17, 24, 33, 0.72);
+  --ink-950: #F8FAFC;
+  --ink-900: #E2E8F0;
+  --ink-700: #CBD5E1;
+  --ink-600: #A7B3C2;
+  --ink-500: #94A3B8;
+  --line: rgba(148, 163, 184, 0.18);
+  --line-soft: rgba(148, 163, 184, 0.12);
+  --cta-solid: #1EA06B;
+  --cta-solid-ink: #04140C;
+  --brand-400: #4ADE80;
+  --brand-600: #34D399;
+  --brand-700: #86EFAC;
+  --mint-100: rgba(34, 197, 94, 0.16);
+  --mint-200: rgba(34, 197, 94, 0.28);
+  --amber-500: #FBBF24;
+  --amber-700: #FCD34D;
+  --amber-100: rgba(245, 158, 11, 0.16);
+  --red-600: #F87171;
+  --red-700: #FCA5A5;
+  --red-100: rgba(239, 68, 68, 0.16);
+  --blue-500: #60A5FA;
+  --on-brand: #052E1B;
+  --on-amber: #1A1203;
+  --on-red: #2A0808;
+  --on-muted: #0A0F14;
+  --pin-stroke: #0A0F14;
+  --grad-cta: linear-gradient(90deg, rgba(34, 197, 94, 0.30), rgba(34, 197, 94, 0.14));
+  --e1: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --e2: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --e3: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --e-nav: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --scrim: rgba(0, 0, 0, 0.6);
+  --focus: var(--brand-400);
+  --shimmer: rgba(255, 255, 255, 0.06);
+  --map-land: #121A22;
+  --map-road: #1D2731;
+  --map-casing: #0C1218;
+  --map-park: #12261B;
+  --map-water: #0F2236;
+  --map-rail: #3A4754;
+  --map-block: #151E27;
+}
+
+@media (min-width: 768px) {
+  :root { --gutter: 1.5rem; }
+}
+@media (min-width: 1024px) {
+  :root { --gutter: 2rem; }
+}
+@media (min-width: 1280px) {
+  :root { --gutter: 2.5rem; }
+}
+
+/* ---------- Shell base ---------- */
+html.ge-shell {
+  color-scheme: light;
+  scroll-padding-top: calc(var(--header-h) + env(safe-area-inset-top) + 1rem);
+  scroll-padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 1rem);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html.ge-shell.dark { color-scheme: dark; }
+html.ge-shell body {
+  background: var(--bg);
+  color: var(--ink-900);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.45;
+  -webkit-tap-highlight-color: transparent;
+}
+html.ge-shell :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+html.ge-shell ::selection { background: var(--mint-200); color: var(--ink-950); }
+
+.ge-app { min-height: 100dvh; background: var(--bg); color: var(--ink-900); position: relative; }
+.ge-container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+}
+.ge-main { padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 1.5rem); }
+@media (min-width: 1024px) { .ge-main { padding-bottom: 3rem; } }
+
+.ge-display { font-family: var(--font-display); }
+.ge-tnum { font-variant-numeric: tabular-nums; }
+.ge-sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+.ge-skip {
+  position: fixed; top: 0.5rem; left: 0.5rem; z-index: 3000;
+  transform: translateY(-200%);
+  padding: 0.75rem 1rem; border-radius: 0.75rem;
+  background: var(--ink-950); color: var(--bg);
+  font: 600 0.875rem/1.2 var(--font-ui);
+}
+.ge-skip:focus { transform: none; }
+
+/* Glass is reserved for header, vehicle card and bottom nav. */
+.ge-glass {
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ge-glass, .ge-header[data-scrolled='true'], .ge-bottom-nav { background: var(--surface) !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .ge-glass, .ge-header[data-scrolled='true'], .ge-bottom-nav, .ge-icon-btn__face {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+html.ge-lowfx .ge-glass, html.ge-lowfx .ge-header[data-scrolled='true'], html.ge-lowfx .ge-bottom-nav {
+  background: var(--surface) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Press feedback for every tappable element in the shell. */
+.ge-press { transition: transform var(--dur-press) var(--ease); }
+.ge-press:active { transform: scale(0.97); }
+
+/* ---------- Header ---------- */
+.ge-header {
+  position: sticky; top: 0; z-index: 30;
+  min-height: calc(var(--header-h) + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+  border-bottom: 1px solid transparent;
+  transition: background-color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), box-shadow var(--dur-state) var(--ease);
+}
+.ge-header[data-scrolled='true'] {
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+  border-bottom-color: var(--line);
+}
+.ge-header__bar { display: flex; align-items: center; gap: 0.75rem; min-height: var(--header-h); }
+.ge-header__actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+.ge-header__nav { display: none; }
+.ge-header__search { display: none; }
+@media (min-width: 1024px) {
+  .ge-header__nav { display: flex; gap: 0.25rem; margin-left: 2rem; }
+  .ge-header__search { display: block; flex: 1 1 auto; max-width: 26rem; margin-left: 1.5rem; }
+}
+.ge-header__link {
+  display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 0.875rem;
+  border-radius: 999px; color: var(--ink-700); font: 600 0.875rem/1.2 var(--font-ui);
+  transition: background-color var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
+}
+.ge-header__link[aria-current='page'] { background: var(--mint-100); color: var(--ink-950); }
+@media (hover: hover) { .ge-header__link:not([aria-current='page']):hover { background: var(--surface-2); color: var(--ink-950); } }
+
+.ge-logo { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; color: var(--ink-950); border-radius: 0.75rem; }
+.ge-logo__mark { width: 1.75rem; height: 2.125rem; flex: none; }
+.ge-logo__text { display: flex; flex-direction: column; }
+.ge-logo__word { font: 800 1.5rem/1 var(--font-display); letter-spacing: -0.02em; }
+.ge-logo__word span { color: var(--brand-600); }
+.ge-logo__tagline { margin-top: 0.125rem; font: 500 0.625rem/1.3 var(--font-ui); letter-spacing: 0.01em; color: var(--ink-500); white-space: nowrap; }
+@media (max-width: 339.98px) { .ge-logo__tagline { display: none; } }
+
+.ge-icon-btn {
+  position: relative; display: inline-grid; place-items: center;
+  width: 2.75rem; height: 2.75rem; flex: none; border-radius: 0.875rem;
+  color: var(--ink-900);
+  transition: transform var(--dur-press) var(--ease);
+}
+.ge-icon-btn:active { transform: scale(0.97); }
+.ge-icon-btn__face {
+  display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
+  border-radius: 0.875rem; background: var(--surface-glass);
+  border: 1px solid var(--line); box-shadow: var(--e1);
+  transition: background-color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+}
+.ge-icon-btn svg { width: 1.375rem; height: 1.375rem; }
+@media (hover: hover) { .ge-icon-btn:hover .ge-icon-btn__face { background: var(--surface); border-color: var(--ink-500); } }
+@media (max-width: 359.98px) {
+  .ge-header__actions { gap: 0.25rem; }
+  .ge-icon-btn__face { width: 2.5rem; height: 2.5rem; }
+}
+.ge-avatar {
+  display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 50%;
+  background: var(--brand-600); color: var(--on-brand); font: 700 0.75rem/1 var(--font-ui);
+}
+
+.ge-compact-search {
+  display: flex; align-items: center; gap: 0.625rem; width: 100%; min-height: 2.75rem;
+  padding: 0 1rem; border-radius: 0.875rem; background: var(--surface); border: 1px solid var(--line);
+  color: var(--ink-500); font: 400 0.9375rem/1.2 var(--font-ui); text-align: left; box-shadow: var(--e1);
+  animation: ge-fade-up var(--dur-state) var(--ease);
+}
+.ge-compact-search svg { width: 1.125rem; height: 1.125rem; color: var(--ink-900); flex: none; }
+
+/* ---------- Hero ---------- */
+.ge-hero {
+  position: relative; isolation: isolate;
+  margin-top: calc(-1 * (var(--header-h) + env(safe-area-inset-top)));
+  padding-top: calc(var(--header-h) + env(safe-area-inset-top));
+}
+.ge-hero__inner { position: relative; }
+/* Phones: the media box runs from the top of the page to the search bar.
+   The scene is placed explicitly so the car sits beside the headline (never
+   under the subhead) with its rear and the charging pillar at the right edge. */
+.ge-hero-media {
+  position: absolute; z-index: 0; right: 0; width: 72%;
+  top: calc(-1 * (var(--header-h) + env(safe-area-inset-top)));
+  bottom: 7rem;
+  pointer-events: none; overflow: hidden;
+  /* Left fade per spec; the bottom fade ends exactly where the scene ends (2.375rem up). */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 40%), linear-gradient(to bottom, #000 calc(100% - 6rem), transparent calc(100% - 2.375rem));
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0%, #000 40%), linear-gradient(to bottom, #000 calc(100% - 6rem), transparent calc(100% - 2.375rem));
+  mask-composite: intersect;
+}
+@media (min-width: 768px) {
+  .ge-hero-media {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 40%), linear-gradient(to bottom, #000 80%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 40%), linear-gradient(to bottom, #000 80%, transparent 100%);
+  }
+}
+.ge-hero-media img { position: absolute; max-width: none; width: 116.7%; height: auto; left: -6%; bottom: 2.375rem; }
+@media (max-width: 359.98px) { .ge-hero-media img { width: 105.7%; left: 3.9%; } }
+.ge-hero-media__night { display: none; }
+html.dark .ge-hero-media__day { display: none; }
+html.dark .ge-hero-media__night { display: block; }
+.ge-hero__copy { position: relative; z-index: 1; }
+
+.ge-h1 {
+  margin-top: 1.25rem; max-width: 64%;
+  font: 800 clamp(1.75rem, 0.607rem + 5.714vw, 2.125rem)/1.08 var(--font-display);
+  letter-spacing: -0.025em; color: var(--ink-950);
+}
+.ge-h1__line { display: block; white-space: nowrap; }
+.ge-h1__accent { color: var(--brand-600); }
+.ge-subhead {
+  margin-top: 0.5rem; max-width: 17.5rem;
+  font: 400 0.9375rem/1.45 var(--font-ui); color: var(--ink-600);
+}
+.ge-subhead span { display: block; }
+
+@media (min-width: 768px) {
+  .ge-hero-media { width: 60%; bottom: auto; height: 22.5rem; }
+  .ge-hero-media img { width: auto; height: 100%; left: auto; right: 0; bottom: auto; top: 0; }
+  .ge-h1 { font-size: 2.75rem; max-width: 52%; }
+  .ge-subhead { max-width: 22rem; }
+}
+@media (min-width: 1024px) {
+  .ge-hero { padding-bottom: 0.5rem; }
+  .ge-hero-media { width: calc(7 / 12 * 100%); height: auto; bottom: -1rem; }
+  .ge-hero-media img { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 72% 100%; }
+  .ge-hero__copy { max-width: calc(5 / 12 * 100%); }
+  .ge-h1 { font-size: 3.5rem; max-width: none; margin-top: 2rem; }
+  .ge-h1__line { white-space: normal; text-wrap: balance; }
+  .ge-subhead { font-size: 1.0625rem; max-width: 26rem; }
+}
+/* Landscape phones: drop the image, keep search and chips. */
+@media (max-height: 499.98px) and (orientation: landscape) {
+  .ge-hero-media { display: none; }
+  .ge-h1 { max-width: none; }
+}
+
+/* ---------- Vehicle selector ---------- */
+.ge-vehicle {
+  display: flex; align-items: center; gap: 0.75rem;
+  width: fit-content; max-width: 100%; min-height: 4rem; margin-top: 0.75rem;
+  padding: 0.625rem 0.875rem 0.625rem 0.625rem; border-radius: 1rem;
+  border: 1px solid var(--line-soft); box-shadow: var(--e2);
+  text-align: left; color: var(--ink-900);
+  transition: transform var(--dur-press) var(--ease), border-color var(--dur-state) var(--ease);
+}
+.ge-vehicle:active { transform: scale(0.98); }
+@media (hover: hover) { .ge-vehicle:hover { border-color: var(--line); } }
+.ge-vehicle__thumb { width: 4.75rem; height: 2.75rem; flex: none; object-fit: contain; }
+.ge-vehicle__body { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+.ge-vehicle__name { display: flex; align-items: center; gap: 0.25rem; font: 600 1rem/1.25 var(--font-ui); color: var(--ink-900); }
+.ge-vehicle__name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ge-vehicle__name svg { width: 1rem; height: 1rem; color: var(--ink-700); flex: none; }
+/* The "·" separator lives in the gap; overflow clips it when the range wraps to a new line. */
+.ge-vehicle__meta { display: flex; align-items: center; flex-wrap: wrap; column-gap: 0.75rem; row-gap: 0.125rem; overflow: hidden; font: 500 0.8125rem/1.4 var(--font-ui); color: var(--ink-700); }
+.ge-vehicle__soc { display: inline-flex; align-items: center; gap: 0.375rem; white-space: nowrap; }
+.ge-vehicle__after { position: relative; white-space: nowrap; }
+.ge-vehicle__after::before { content: '·'; position: absolute; left: -0.5rem; color: var(--ink-500); font-weight: 400; }
+.ge-vehicle__meta .ge-dim { color: var(--ink-500); font-weight: 400; }
+.ge-vehicle__meta .ge-low { color: var(--red-700); font-weight: 600; }
+@media (max-width: 359.98px) { .ge-vehicle__thumb { width: 4rem; height: 2.375rem; } }
+
+.ge-battery {
+  position: relative; display: inline-block; width: 3rem; height: 0.5rem; flex: none;
+  border-radius: 999px; background: var(--mint-100); overflow: hidden;
+}
+.ge-battery__fill { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: var(--grad-battery); }
+.ge-battery[data-level='amber'] { background: var(--amber-100); }
+.ge-battery[data-level='amber'] .ge-battery__fill { background: var(--grad-battery-amber); }
+.ge-battery[data-level='red'] { background: var(--red-100); }
+.ge-battery[data-level='red'] .ge-battery__fill { background: var(--grad-battery-red); }
+
+/* ---------- Search ---------- */
+.ge-search-slot { position: relative; z-index: 10; margin-top: 1.25rem; min-height: 3.5rem; }
+.ge-search {
+  position: relative; display: flex; flex-direction: column;
+  border-radius: 1rem; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--e3);
+}
+.ge-search__row { display: flex; align-items: center; min-height: 3.375rem; }
+.ge-search__lead { display: grid; place-items: center; width: 3.25rem; flex: none; color: var(--ink-900); }
+.ge-search__lead svg { width: 1.25rem; height: 1.25rem; }
+.ge-search__back { width: 2.75rem; height: 2.75rem; margin-left: 0.25rem; border-radius: 0.75rem; display: grid; place-items: center; }
+.ge-search__input {
+  flex: 1 1 auto; min-width: 0; height: 3rem; padding: 0; border: 0; outline: none; background: transparent;
+  color: var(--ink-900); font: 400 max(16px, 0.9375rem)/1.2 var(--font-ui);
+  text-overflow: ellipsis;
+  -webkit-appearance: none; appearance: none;
+}
+.ge-search__input::placeholder { color: var(--ink-500); opacity: 1; }
+.ge-search__input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+.ge-search:focus-within { border-color: var(--brand-600); }
+html.ge-shell .ge-search__input:focus-visible { outline: none; }
+.ge-search__clear { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; flex: none; color: var(--ink-600); border-radius: 0.75rem; }
+.ge-search__clear svg { width: 1.125rem; height: 1.125rem; }
+.ge-search__divider { width: 1px; height: 1.75rem; background: var(--line); flex: none; }
+.ge-locate {
+  display: flex; align-items: center; gap: 0.5rem; align-self: stretch; flex: none;
+  min-height: 3.375rem; padding: 0 0.875rem 0 0.75rem; border-radius: 0 1rem 1rem 0;
+  color: var(--ink-700); text-align: left;
+}
+.ge-locate svg { width: 1.125rem; height: 1.125rem; color: var(--ink-900); flex: none; }
+.ge-locate__label { display: flex; flex-direction: column; font: 500 0.6875rem/1.15 var(--font-ui); }
+.ge-locate[data-state='locating'] svg { animation: ge-spin 1s linear infinite; }
+/* Very small phones: icon-only so the field keeps room for its placeholder. The label is
+   visually hidden (not display:none), so the button keeps its accessible name. */
+@media (max-width: 359.98px) {
+  .ge-locate { position: relative; padding: 0 0.8125rem; }
+  .ge-locate__label {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+}
+@media (hover: hover) { .ge-locate:hover { background: var(--surface-2); } }
+.ge-search__message {
+  display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem; padding: 0.625rem 0.75rem;
+  border-radius: 0.75rem; background: var(--surface); border: 1px solid var(--line);
+  font: 500 0.8125rem/1.4 var(--font-ui); color: var(--ink-700);
+}
+.ge-search__message button { font-weight: 600; color: var(--brand-700); text-decoration: underline; text-underline-offset: 3px; min-height: 1.5rem; }
+
+.ge-search__panel { display: none; }
+.ge-search[data-expanded='true'] .ge-search__panel { display: block; }
+.ge-search__panel {
+  padding: 0.5rem 0 0.75rem; border-top: 1px solid var(--line);
+  overflow-y: auto; overscroll-behavior: contain;
+}
+.ge-search__notice { display: flex; gap: 0.5rem; padding: 0.5rem 1rem 0.75rem; font: 400 0.8125rem/1.4 var(--font-ui); color: var(--ink-600); }
+.ge-search__notice svg { width: 1rem; height: 1rem; flex: none; margin-top: 0.125rem; color: var(--brand-700); }
+.ge-search__group-label { padding: 0.75rem 1rem 0.375rem; font: 600 0.75rem/1.35 var(--font-ui); color: var(--ink-600); }
+.ge-option {
+  display: flex; align-items: center; gap: 0.75rem; min-height: 3rem; padding: 0.375rem 1rem; cursor: pointer;
+  color: var(--ink-900);
+}
+.ge-option[aria-selected='true'] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--brand-600); }
+@media (hover: hover) { .ge-option:hover { background: var(--surface-2); } }
+.ge-option__icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 0.625rem; background: var(--surface-2); color: var(--ink-700); flex: none; }
+.ge-option__icon svg { width: 1rem; height: 1rem; }
+.ge-option__text { display: flex; flex-direction: column; min-width: 0; }
+.ge-option__label { font: 500 0.9375rem/1.3 var(--font-ui); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ge-option__detail { font: 400 0.8125rem/1.35 var(--font-ui); color: var(--ink-600); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ge-option--action .ge-option__label { color: var(--brand-700); font-weight: 600; font-size: 0.875rem; }
+.ge-mark { background: transparent; color: inherit; font-weight: 700; }
+.ge-search__empty { padding: 1rem; font: 400 0.875rem/1.45 var(--font-ui); color: var(--ink-600); }
+
+/* Phones: focusing search expands it into a full-screen view in place. While open,
+   the hero's stacking contexts are lifted so the fixed view can cover header and nav. */
+html.ge-search-open .ge-hero { isolation: auto; }
+html.ge-search-open .ge-hero__copy, html.ge-search-open .ge-search-slot { z-index: auto; }
+@media (max-width: 767.98px) {
+  .ge-search[data-expanded='true'] {
+    position: fixed; inset: 0; z-index: 50; border-radius: 0; border: 0; box-shadow: none;
+    background: var(--bg); padding-top: env(safe-area-inset-top);
+    animation: ge-fade-in var(--dur-state) var(--ease);
+  }
+  .ge-search[data-expanded='true'] .ge-search__row {
+    margin: 0.5rem var(--gutter) 0; border-radius: 1rem; background: var(--surface);
+    border: 1px solid var(--brand-600); box-shadow: var(--e2);
+  }
+  .ge-search[data-expanded='true'] .ge-search__panel { flex: 1 1 auto; border-top: 0; margin-top: 0.5rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom)); }
+}
+/* Tablet and up: suggestions open as a panel under the field. */
+@media (min-width: 768px) {
+  .ge-search[data-expanded='true'] { border-radius: 1rem; }
+  .ge-search__panel { max-height: min(60dvh, 28rem); }
+}
+
+/* ---------- Filter chips ---------- */
+.ge-chips-wrap { position: relative; margin-top: 0.75rem; margin-inline: calc(-1 * var(--gutter)); }
+.ge-chips {
+  display: flex; gap: 0.5rem; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity; scroll-padding-inline: var(--gutter);
+  padding: 0.125rem var(--gutter); scrollbar-width: none;
+}
+.ge-chips::-webkit-scrollbar { display: none; }
+.ge-chips > * { flex: none; scroll-snap-align: start; }
+.ge-chips-fade {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 1.5rem; pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--bg)); opacity: 0;
+  transition: opacity var(--dur-state) var(--ease);
+}
+.ge-chips-wrap[data-overflow='true'] .ge-chips-fade { opacity: 1; }
+@media (min-width: 1024px) { .ge-chips-wrap { margin-inline: 0; } .ge-chips { padding-inline: 0; flex-wrap: wrap; overflow: visible; } }
+
+.ge-chip {
+  display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.5rem; padding: 0 0.875rem 0 0.75rem;
+  border-radius: 999px; border: 1px solid var(--line); background: var(--surface);
+  color: var(--ink-900); font: 500 0.875rem/1.2 var(--font-ui); white-space: nowrap;
+  transition: background-color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), color var(--dur-state) var(--ease), transform var(--dur-press) var(--ease);
+}
+.ge-chip svg { width: 1.125rem; height: 1.125rem; flex: none; }
+.ge-chip[aria-pressed='true'] { background: var(--mint-100); border-color: var(--mint-200); color: var(--ink-950); font-weight: 600; }
+.ge-chip:active { transform: scale(0.97); }
+@media (hover: hover) { .ge-chip[aria-pressed='false']:hover { border-color: var(--ink-500); } }
+/* Bold-width placeholder keeps chips from shifting when the weight changes. */
+.ge-chip__label { display: inline-grid; }
+.ge-chip__label > span, .ge-chip__label::after { grid-area: 1 / 1; }
+.ge-chip__label::after { content: attr(data-text); font-weight: 600; visibility: hidden; height: 0; overflow: hidden; }
+
+/* ---------- Map preview ---------- */
+.ge-map {
+  position: relative; display: block; overflow: hidden; isolation: isolate;
+  height: 9.5rem; margin-top: 1rem; border-radius: 1.25rem;
+  border: 1px solid var(--line); box-shadow: var(--e1); background: var(--map-land);
+  transition: transform var(--dur-press) var(--ease);
+}
+a.ge-map:active { transform: scale(0.99); }
+@media (min-width: 768px) { .ge-map { height: 15rem; } }
+.ge-map__base { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ge-map__base .road-casing { stroke: var(--map-casing); }
+.ge-map__base .road { stroke: var(--map-road); }
+.ge-map__base .park { fill: var(--map-park); }
+.ge-map__base .water { fill: var(--map-water); }
+.ge-map__base .rail { stroke: var(--map-rail); }
+.ge-map__base .block { fill: var(--map-block); }
+.ge-map__base .label { fill: var(--ink-500); font: 500 12px/1 var(--font-ui); }
+.ge-map__pins { position: absolute; inset: 0; }
+.ge-pin {
+  position: absolute; width: 1.875rem; height: 2.375rem; transform: translate(-50%, -100%);
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 2px 3px rgba(15, 23, 42, 0.28));
+  transition: transform var(--dur-state) var(--ease);
+}
+.ge-pin svg { width: 100%; height: 100%; overflow: visible; }
+.ge-pin[data-active='true'] { transform: translate(-50%, -100%) scale(1.18); z-index: 2; }
+.ge-pin--interactive { cursor: pointer; }
+.ge-user-dot { position: absolute; width: 0.875rem; height: 0.875rem; transform: translate(-50%, -50%); }
+.ge-user-dot::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 2.75rem; height: 2.75rem; margin: -1.375rem 0 0 -1.375rem;
+  border-radius: 50%; background: rgba(59, 130, 246, 0.18); animation: ge-halo 2s var(--ease) infinite;
+}
+.ge-user-dot::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--blue-500);
+  box-shadow: 0 0 0 3px #FFFFFF, 0 1px 4px rgba(15, 23, 42, 0.3);
+}
+.ge-map__btn {
+  position: absolute; right: 0.75rem; bottom: 0.75rem; z-index: 3;
+  display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.5rem; padding: 0 0.875rem;
+  border-radius: 0.75rem; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--e2);
+  color: var(--ink-900); font: 600 0.875rem/1 var(--font-ui);
+}
+.ge-map__btn svg { width: 1.125rem; height: 1.125rem; }
+@media (hover: hover) { a.ge-map:hover .ge-map__btn, .ge-map__btn:hover { border-color: var(--ink-500); } }
+
+/* ---------- Section header ---------- */
+.ge-section-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 1.5rem; }
+.ge-h2 { font: 800 1.375rem/1.25 var(--font-display); letter-spacing: -0.015em; color: var(--ink-950); }
+.ge-see-all {
+  display: inline-flex; align-items: center; gap: 0.125rem; min-height: 2.75rem; padding: 0 0.25rem 0 0.5rem;
+  margin-right: -0.25rem; border-radius: 0.75rem; color: var(--ink-700); font: 500 0.875rem/1.2 var(--font-ui); white-space: nowrap;
+}
+.ge-see-all svg { width: 1rem; height: 1rem; }
+.ge-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem 0.5rem; margin-top: 0.25rem; font: 500 0.75rem/1.35 var(--font-ui); color: var(--ink-500); }
+.ge-meta__divider { width: 1px; height: 0.75rem; background: var(--line); }
+.ge-meta__sort { min-height: 1.75rem; border-radius: 0.5rem; color: var(--ink-600); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.ge-meta__sort::after { content: ''; position: absolute; inset: -0.5rem -0.25rem; }
+.ge-meta__sort { position: relative; }
+.ge-live-dot { position: relative; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--brand-400); flex: none; }
+.ge-live-dot[data-pulse='true']::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--brand-400);
+  animation: ge-pulse 2s var(--ease) infinite;
+}
+.ge-live-dot[data-state='paused'] { background: var(--ink-500); }
+
+/* ---------- Charger card ---------- */
+.ge-list { display: grid; gap: 0.75rem; margin-top: 0.75rem; }
+@media (min-width: 768px) and (max-width: 1023.98px) { .ge-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ge-list[data-animate='true'] > * { animation: ge-rise var(--dur-state) var(--ease) both; }
+
+.ge-card {
+  position: relative; container: card / inline-size;
+  padding: 0.625rem; border-radius: 1.25rem; background: var(--surface);
+  border: 1px solid var(--line-soft); box-shadow: var(--e1), var(--e2);
+  transition: box-shadow var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+}
+.ge-card[data-highlighted='true'] { border-color: var(--brand-600); box-shadow: 0 0 0 1px var(--brand-600), var(--e2); }
+.ge-card__body {
+  display: grid; grid-template-columns: 7rem minmax(0, 1fr);
+  grid-template-areas: 'media main' 'specs specs';
+  column-gap: 0.75rem; row-gap: 0.625rem;
+}
+.ge-card__media { grid-area: media; position: relative; min-height: 6rem; border-radius: 0.75rem; overflow: hidden; background: var(--thumb-placeholder); }
+.ge-card__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ge-card[data-offline='true'] .ge-card__media img { filter: grayscale(1); opacity: 0.8; }
+/* Phones: distance beside the title, ETA beside the address — no empty row under short titles. */
+.ge-card__main {
+  grid-area: main; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'title dist' 'addr eta' 'status status';
+  column-gap: 0.5rem; align-content: start;
+}
+.ge-card__title {
+  grid-area: title; font: 700 1rem/1.35 var(--font-ui); letter-spacing: -0.005em; color: var(--ink-950);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
+}
+.ge-card__link { color: inherit; outline: none; }
+.ge-card__link::after { content: ''; position: absolute; inset: 0; z-index: 0; border-radius: 1.25rem; }
+.ge-card__link:focus-visible::after { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ge-card__dist { grid-area: dist; font: 600 0.8125rem/1.6 var(--font-ui); color: var(--ink-900); white-space: nowrap; text-align: right; }
+.ge-card__addr { grid-area: addr; align-self: center; margin-top: 0.125rem; font: 400 0.8125rem/1.4 var(--font-ui); color: var(--ink-500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ge-card__status { grid-area: status; display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem 0.625rem; margin-top: 0.5rem; }
+.ge-eta { grid-area: eta; align-self: center; display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-top: 0.125rem; color: var(--ink-700); }
+.ge-eta svg { width: 1rem; height: 1rem; flex: none; }
+.ge-eta__value { font: 600 0.8125rem/1.35 var(--font-ui); color: var(--ink-900); white-space: nowrap; }
+.ge-eta__label { display: none; font: 400 0.75rem/1.35 var(--font-ui); color: var(--ink-500); }
+.ge-card__specs { grid-area: specs; }
+/* Four specs on one row. Items start at their min-content width (units are joined with
+   NBSP / word joiner, so "120 kW" or "14/kWh" never split), grow up to their natural
+   width, and only wrap to a second row when even the minimums can't fit. Text may wrap
+   at spaces ("(Ultra" / "Fast)") but never mid-word, and nothing is clipped. */
+.ge-specs {
+  display: flex; flex-wrap: wrap; justify-content: space-between; column-gap: 0.375rem; row-gap: 0.5rem;
+}
+.ge-spec {
+  display: flex; align-items: center; gap: 0.375rem;
+  flex: 1 0 auto; flex-basis: min-content; max-width: max-content;
+}
+.ge-spec > svg { width: 1.25rem; height: 1.25rem; flex: none; color: var(--ink-700); }
+.ge-spec > svg.ge-spec__bolt { color: var(--brand-600); }
+.ge-spec__text { display: flex; flex-direction: column; }
+.ge-spec__value { font: 600 0.8125rem/1.35 var(--font-ui); color: var(--ink-900); }
+.ge-spec__sub { font: 400 0.75rem/1.35 var(--font-ui); color: var(--ink-500); }
+.ge-spec[data-muted='true'] .ge-spec__value { color: var(--ink-500); }
+@media (max-width: 359.98px) {
+  .ge-card__body { grid-template-columns: 6rem minmax(0, 1fr); }
+  .ge-card__media { min-height: 5.5rem; }
+  .ge-specs { column-gap: 0.25rem; }
+  .ge-spec { gap: 0.25rem; }
+  .ge-spec > svg { width: 1.125rem; height: 1.125rem; }
+}
+/* Compact cards (most phones): slightly tighter icon gap so four specs fit at 360px. */
+@container card (max-width: 24.99rem) {
+  .ge-spec { gap: 0.25rem; }
+}
+/* Roomier cards: full-width address; ETA joins the status row as in the reference. */
+@container card (min-width: 25rem) {
+  .ge-card__main { grid-template-areas: 'title dist' 'addr addr' 'status eta'; }
+  /* Line up with the badge even when the live text wraps under it. */
+  .ge-eta { align-self: start; margin-top: 0.75rem; }
+}
+/* Exact reference layout once the card can hold all four specs beside a 168px thumbnail. */
+@container card (min-width: 32.5rem) {
+  .ge-card__body { grid-template-columns: 10.5rem minmax(0, 1fr); grid-template-areas: 'media main' 'media specs'; row-gap: 0.5rem; }
+  .ge-card__media { min-height: 6.5rem; }
+  .ge-card__status { margin-top: 0.375rem; }
+  .ge-eta { align-self: center; gap: 0.5rem; margin-top: 0.375rem; }
+  .ge-eta svg { width: 1.25rem; height: 1.25rem; }
+  .ge-eta__stack { display: flex; flex-direction: column; }
+  .ge-eta__label { display: block; }
+  .ge-card__title { -webkit-line-clamp: 1; }
+}
+
+.ge-cta {
+  position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  width: 100%; min-height: 2.75rem; margin-top: 0.625rem; padding: 0.5rem 1rem; border-radius: 0.75rem;
+  background: var(--surface-2); color: var(--ink-950); font: 600 0.9375rem/1.2 var(--font-ui);
+  transition: transform var(--dur-press) var(--ease), filter var(--dur-state) var(--ease);
+}
+.ge-cta[data-variant='primary'] { background: var(--grad-cta); }
+.ge-cta svg { width: 1.125rem; height: 1.125rem; transition: transform var(--dur-state) var(--ease); }
+.ge-cta:active { transform: scale(0.98); }
+@media (hover: hover) {
+  .ge-cta:hover { filter: brightness(0.97); }
+  .ge-cta:hover svg { transform: translateX(2px); }
+  html.dark .ge-cta:hover { filter: brightness(1.15); }
+}
+
+/* Availability badge + live indicator */
+.ge-badge {
+  display: inline-flex; align-items: center; min-height: 1.625rem; padding: 0 0.625rem; border-radius: 999px;
+  font: 600 0.8125rem/1.2 var(--font-ui); font-variant-numeric: tabular-nums; white-space: nowrap;
+  transition: background-color var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
+}
+.ge-badge[data-state='available'] { background: var(--mint-100); color: var(--brand-700); }
+.ge-badge[data-state='limited'] { background: var(--amber-100); color: var(--amber-700); }
+.ge-badge[data-state='full'] { background: var(--red-100); color: var(--red-700); }
+.ge-badge[data-state='offline'], .ge-badge[data-state='closed'], .ge-badge[data-state='unknown'] { background: var(--surface-2); color: var(--ink-600); }
+/* Only a live change animates: the count cross-fades and the pill flashes mint. */
+.ge-badge[data-flash='true'] { animation: ge-flash 600ms var(--ease); }
+.ge-badge[data-flash='true'] .ge-badge__text { animation: ge-fade-in var(--dur-state) var(--ease); }
+.ge-live { display: inline-flex; align-items: center; gap: 0.375rem; font: 500 0.8125rem/1.2 var(--font-ui); color: var(--ink-700); white-space: nowrap; }
+.ge-live[data-kind='recent'], .ge-live[data-kind='unavailable'] { color: var(--ink-500); }
+
+/* ---------- States: banners, empty, skeletons ---------- */
+.ge-banner {
+  display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.75rem; padding: 0.625rem 0.75rem;
+  border-radius: 0.75rem; background: var(--amber-100); color: var(--amber-700);
+  font: 600 0.8125rem/1.4 var(--font-ui);
+}
+.ge-banner svg { width: 1rem; height: 1rem; flex: none; margin-top: 0.125rem; }
+.ge-banner button { margin-left: auto; text-decoration: underline; text-underline-offset: 3px; min-height: 1.5rem; flex: none; }
+.ge-empty {
+  margin-top: 0.75rem; padding: 1.5rem 1rem; border-radius: 1.25rem; text-align: center;
+  background: var(--surface); border: 1px dashed var(--line);
+}
+.ge-empty h3 { font: 700 1rem/1.35 var(--font-ui); color: var(--ink-950); }
+.ge-empty p { margin-top: 0.25rem; font: 400 0.875rem/1.45 var(--font-ui); color: var(--ink-600); }
+.ge-empty__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+.ge-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.75rem; padding: 0 1rem;
+  border-radius: 0.75rem; font: 600 0.875rem/1.2 var(--font-ui); color: var(--ink-950); background: var(--surface-2);
+  transition: transform var(--dur-press) var(--ease);
+}
+.ge-btn[data-variant='primary'] { background: var(--grad-cta); }
+.ge-btn:active { transform: scale(0.98); }
+.ge-btn svg { width: 1.125rem; height: 1.125rem; }
+
+.ge-skel { position: relative; overflow: hidden; background: var(--surface-2); }
+.ge-skel::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--shimmer), transparent);
+  animation: ge-shimmer 1.2s ease-in-out infinite;
+}
+.ge-skel-line { display: block; height: 0.75rem; border-radius: 999px; }
+
+/* ---------- Bottom navigation ---------- */
+.ge-bottom-nav {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 40;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border-top: 1px solid var(--line); box-shadow: var(--e-nav);
+}
+.ge-bottom-nav ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); min-height: var(--nav-h); max-width: 40rem; margin-inline: auto; padding-inline: env(safe-area-inset-left) env(safe-area-inset-right); }
+.ge-tab {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem;
+  min-height: 3rem; height: 100%; color: var(--ink-500); font: 500 0.75rem/1.2 var(--font-ui);
+  transition: color var(--dur-state) var(--ease), transform var(--dur-press) var(--ease);
+}
+.ge-tab:active { transform: scale(0.97); }
+.ge-tab__icon { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 50%; transition: background-color var(--dur-state) var(--ease); }
+.ge-tab__icon svg { width: 1.5rem; height: 1.5rem; }
+.ge-tab[aria-current='page'] { color: var(--brand-700); font-weight: 600; }
+.ge-tab[aria-current='page'] .ge-tab__icon { background: var(--brand-600); color: var(--on-brand); }
+.ge-tab[aria-current='page'] .ge-tab__icon svg { width: 1.125rem; height: 1.125rem; }
+@media (min-width: 1024px) { .ge-bottom-nav { display: none; } }
+
+/* ---------- Sheets (vaul / Radix dialog) ---------- */
+.ge-sheet-overlay { position: fixed; inset: 0; z-index: 50; background: var(--scrim); }
+.ge-sheet {
+  position: fixed; z-index: 50; display: flex; flex-direction: column; outline: none;
+  background: var(--surface); color: var(--ink-900); box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.18);
+}
+.ge-sheet[vaul-drawer] { transition-duration: var(--dur-sheet) !important; }
+.ge-sheet[data-side='bottom'] {
+  left: 0; right: 0; bottom: 0; max-height: 88dvh; border-radius: 1.25rem 1.25rem 0 0;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 640px) { .ge-sheet[data-side='bottom'] { left: 50%; right: auto; width: 30rem; margin-left: -15rem; } }
+.ge-sheet[data-side='right'] {
+  top: 0; right: 0; bottom: 0; width: min(22rem, 88vw); border-radius: 1.25rem 0 0 1.25rem;
+  padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+}
+html.dark .ge-sheet { border: 1px solid var(--line); box-shadow: none; }
+.ge-sheet__handle { width: 2.5rem; height: 0.3125rem; margin: 0.5rem auto 0; border-radius: 999px; background: var(--line); flex: none; }
+.ge-sheet__head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1rem 0.5rem 1.25rem; }
+.ge-sheet__title { font: 800 1.125rem/1.3 var(--font-display); letter-spacing: -0.01em; color: var(--ink-950); }
+.ge-sheet__desc { padding: 0 1.25rem 0.5rem; font: 400 0.875rem/1.45 var(--font-ui); color: var(--ink-600); }
+.ge-sheet__body { overflow-y: auto; overscroll-behavior: contain; padding: 0.25rem 0.75rem 0.5rem; }
+.ge-sheet__close { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 0.875rem; color: var(--ink-700); flex: none; }
+.ge-sheet__close svg { width: 1.25rem; height: 1.25rem; }
+@media (hover: hover) { .ge-sheet__close:hover { background: var(--surface-2); } }
+
+.ge-radio {
+  display: flex; align-items: center; gap: 0.75rem; width: 100%; min-height: 3.5rem; padding: 0.5rem 0.75rem;
+  border-radius: 1rem; border: 1px solid transparent; text-align: left; color: var(--ink-900);
+}
+.ge-radio[data-state='checked'] { background: var(--mint-100); border-color: var(--mint-200); }
+@media (hover: hover) { .ge-radio[data-state='unchecked']:hover { background: var(--surface-2); } }
+.ge-radio__dot { margin-left: auto; width: 1.25rem; height: 1.25rem; border-radius: 50%; border: 2px solid var(--ink-500); display: grid; place-items: center; flex: none; }
+.ge-radio[data-state='checked'] .ge-radio__dot { border-color: var(--brand-600); }
+.ge-radio[data-state='checked'] .ge-radio__dot::after { content: ''; width: 0.625rem; height: 0.625rem; border-radius: 50%; background: var(--brand-600); }
+.ge-radio[data-disabled] { opacity: 0.6; cursor: not-allowed; }
+.ge-radio__label { font: 600 0.9375rem/1.3 var(--font-ui); }
+.ge-radio__detail { font: 400 0.8125rem/1.35 var(--font-ui); color: var(--ink-600); }
+
+.ge-menu-list { display: flex; flex-direction: column; gap: 0.125rem; }
+.ge-menu-item {
+  display: flex; align-items: center; gap: 0.75rem; width: 100%; min-height: 3rem; padding: 0 0.75rem;
+  border-radius: 0.875rem; color: var(--ink-900); font: 500 0.9375rem/1.3 var(--font-ui); text-align: left;
+}
+.ge-menu-item svg { width: 1.25rem; height: 1.25rem; color: var(--ink-600); flex: none; }
+@media (hover: hover) { .ge-menu-item:hover { background: var(--surface-2); } }
+.ge-menu-label { padding: 0.75rem 0.75rem 0.375rem; font: 600 0.75rem/1.35 var(--font-ui); color: var(--ink-600); }
+.ge-menu-divider { height: 1px; margin: 0.5rem 0.75rem; background: var(--line); }
+
+/* ---------- Desktop split view ---------- */
+.ge-results__map { display: none; }
+@media (min-width: 1024px) {
+  .ge-results { display: grid; grid-template-columns: 27.5rem minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  .ge-results__map {
+    display: block; position: sticky; top: calc(var(--header-h) + 1rem);
+    height: calc(100dvh - var(--header-h) - 2rem); margin-top: 1.5rem;
+  }
+  .ge-results__map .ge-map { height: 100%; margin-top: 0; }
+  .ge-map--mobile { display: none; }
+}
+/* Large map panels keep road widths at their drawn pixel size instead of scaling up. */
+.ge-results__map .ge-map__base path, .ge-page-map .ge-map__base path { vector-effect: non-scaling-stroke; }
+
+/* ---------- Simple pages ---------- */
+.ge-page-head { padding-top: 1.5rem; }
+.ge-page-title { font: 800 1.75rem/1.15 var(--font-display); letter-spacing: -0.02em; color: var(--ink-950); }
+@media (min-width: 768px) { .ge-page-title { font-size: 2.25rem; } }
+.ge-page-lead { margin-top: 0.5rem; max-width: 36rem; font: 400 0.9375rem/1.5 var(--font-ui); color: var(--ink-600); }
+.ge-panel { margin-top: 1rem; padding: 1rem; border-radius: 1.25rem; background: var(--surface); border: 1px solid var(--line-soft); box-shadow: var(--e1), var(--e2); }
+.ge-back { display: inline-flex; align-items: center; gap: 0.25rem; min-height: 2.75rem; color: var(--ink-700); font: 500 0.875rem/1.2 var(--font-ui); border-radius: 0.75rem; }
+.ge-back svg { width: 1rem; height: 1rem; }
+.ge-slot-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 3rem; padding: 0.5rem 0; border-top: 1px solid var(--line-soft); }
+.ge-slot-row:first-child { border-top: 0; }
+.ge-money { font: 800 2.25rem/1.1 var(--font-display); letter-spacing: -0.02em; color: var(--ink-950); font-variant-numeric: tabular-nums; }
+
+/* Cookie banner inside the shell: tokens instead of the legacy dark card. */
+html.ge-shell .cookie-banner {
+  background: var(--surface); color: var(--ink-900); border-color: var(--line); box-shadow: var(--e3);
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 0.75rem);
+}
+html.ge-shell .cookie-banner p { color: var(--ink-600); }
+html.ge-shell .cookie-banner a { color: var(--brand-700); }
+html.ge-shell .cookie-banner .action-secondary { background: var(--surface-2); border-color: var(--line); color: var(--ink-950) !important; border-radius: 0.75rem; }
+@media (min-width: 1024px) { html.ge-shell .cookie-banner { bottom: 1.5rem; } }
+
+/* ---------- Motion ---------- */
+@keyframes ge-fade-in { from { opacity: 0.35; } to { opacity: 1; } }
+@keyframes ge-fade-up { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes ge-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes ge-shimmer { to { transform: translateX(100%); } }
+@keyframes ge-spin { to { transform: rotate(360deg); } }
+@keyframes ge-pulse { 0% { transform: scale(1); opacity: 0.6; } 70%, 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes ge-halo { 0% { transform: scale(0.55); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+@keyframes ge-flash { 0% { box-shadow: 0 0 0 0 transparent; } 35% { box-shadow: 0 0 0 4px var(--mint-200); } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ge-user-dot::before, .ge-live-dot::after, .ge-skel::after { animation: none !important; }
+  .ge-list > * { animation: none !important; }
+}
+
+/* ---------- High contrast and forced colours ---------- */
+@media (prefers-contrast: more) {
+  :root { --line: #94A3B8; --line-soft: #94A3B8; --ink-500: #475569; --ink-600: #334155; }
+  html.dark { --line: #64748B; --line-soft: #64748B; --ink-500: #CBD5E1; --ink-600: #E2E8F0; }
+}
+@media (forced-colors: active) {
+  .ge-chip[aria-pressed='true'], .ge-tab[aria-current='page'] .ge-tab__icon, .ge-header__link[aria-current='page'] { outline: 2px solid Highlight; }
+  .ge-badge, .ge-card, .ge-search, .ge-chip, .ge-map, .ge-vehicle, .ge-cta, .ge-btn { border: 1px solid CanvasText; }
+  .ge-battery__fill { background: Highlight; }
+  .ge-pin svg path { forced-color-adjust: none; }
+}
+
+/* ---------- Discovery: radius chips, card actions, notes ---------- */
+.ge-chip { min-height: 2.75rem; }
+.ge-radius { margin-top: 0.75rem; min-width: 0; border: 0; padding: 0; }
+.ge-radius__legend { margin-bottom: 0.375rem; font: 600 0.8125rem/1.3 var(--font-ui); color: var(--ink-700); }
+.ge-radius__options { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ge-radius__chip { min-width: 2.75rem; justify-content: center; cursor: pointer; padding: 0 0.875rem; }
+.ge-radius__chip[data-checked='true'] { background: var(--ink-950); border-color: var(--ink-950); color: var(--surface); }
+.ge-radius__chip:has(input:focus-visible) { outline: 2px solid var(--focus, var(--brand-600)); outline-offset: 2px; }
+.ge-card__actions { position: relative; z-index: 1; display: grid; gap: 0.375rem; margin-top: 0.625rem; }
+.ge-card__actions .ge-cta { margin-top: 0; }
+.ge-card__booking { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 0.375rem; font: 500 0.75rem/1.4 var(--font-ui); color: var(--ink-600); text-align: center; }
+.ge-card__booking-title { font-weight: 600; color: var(--ink-700); }
+.ge-list__status { font: 500 0.875rem/1.4 var(--font-ui); color: var(--ink-600); }
+.ge-list__note, .ge-attribution { margin-top: 0.75rem; font: 500 0.75rem/1.4 var(--font-ui); color: var(--ink-500); }
+.ge-meta--note { margin-top: 0.125rem; }
+.ge-nav-map { position: relative; height: 16rem; border-radius: 1.25rem; overflow: hidden; background: var(--surface-2); }
+.ge-nav-map__fallback { display: grid; place-items: center; height: 100%; padding: 1rem; text-align: center; font: 500 0.875rem/1.45 var(--font-ui); color: var(--ink-700); }
+.ge-nav-cta { display: flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 3rem; padding: 0.5rem 1rem; border-radius: 0.875rem; background: var(--grad-cta); color: var(--ink-950); font: 700 1rem/1.2 var(--font-ui); }
+.ge-nav-cta svg { width: 1.25rem; height: 1.25rem; }
+.ge-nav-list { display: grid; gap: 0.5rem; margin-top: 0.5rem; }
+.ge-nav-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; font: 500 0.875rem/1.4 var(--font-ui); color: var(--ink-700); }
+@media (min-width: 768px) { .ge-nav-map { height: 22rem; } }
+.ge-search__attribution { padding: 0.5rem 1rem 0.75rem; font: 500 0.6875rem/1.3 var(--font-ui); color: var(--ink-500); }
+
+/* ---------- Solid primary CTA used across GoEvee app screens ---------- */
+.ge-solid-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 3rem; padding: 0 1.25rem; border-radius: 0.875rem;
+  background: var(--cta-solid); color: var(--cta-solid-ink);
+  font: 700 1rem/1.2 var(--font-ui); white-space: nowrap;
+  transition: transform var(--dur-press) var(--ease), filter var(--dur-state) var(--ease);
+}
+.ge-solid-cta svg { width: 1.125rem; height: 1.125rem; }
+.ge-solid-cta:active { transform: scale(0.98); }
+@media (hover: hover) { .ge-solid-cta:hover { filter: brightness(1.06); } }
+.ge-solid-cta[data-variant='ghost'] {
+  background: transparent; color: var(--cta-solid); border: 1.5px solid var(--line);
+}
+html.dark .ge-solid-cta[data-variant='ghost'] { color: var(--brand-400); }

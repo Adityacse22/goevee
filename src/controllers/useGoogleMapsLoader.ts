@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type SDKStatus = 'loading' | 'ready' | 'error';
+export type SDKStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 const SCRIPT_ID = 'google-maps-js';
 
@@ -8,14 +8,22 @@ function isGoogleReady(): boolean {
   return Boolean(window.google?.maps?.Map && window.google.maps.Geocoder);
 }
 
-export function useGoogleMapsLoader(): SDKStatus {
-  const [status, setStatus] = useState<SDKStatus>(() => (
-    typeof window !== 'undefined' && isGoogleReady() ? 'ready' : 'loading'
-  ));
+export function useGoogleMapsLoader(shouldLoad: boolean = true): SDKStatus {
+  const [status, setStatus] = useState<SDKStatus>(() => {
+    if (typeof window !== 'undefined' && isGoogleReady()) return 'ready';
+    return shouldLoad ? 'loading' : 'idle';
+  });
 
   useEffect(() => {
     if (isGoogleReady()) {
       setStatus('ready');
+      return;
+    }
+
+    // Deferral gate: while gated, append no script, attach no listeners, and do
+    // not read the API key. Stay 'idle' until the gate opens (design Section 2).
+    if (!shouldLoad) {
+      setStatus('idle');
       return;
     }
 
@@ -40,7 +48,7 @@ export function useGoogleMapsLoader(): SDKStatus {
     script.onload = () => setStatus(isGoogleReady() ? 'ready' : 'error');
     script.onerror = () => setStatus('error');
     document.head.appendChild(script);
-  }, []);
+  }, [shouldLoad]);
 
   return status;
 }

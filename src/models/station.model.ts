@@ -21,6 +21,8 @@ export interface StationConnector {
   connector_type: string;
   power_output: number;
   available: boolean;
+  /** True when Google published a live availability count; false when `available` was coerced from unknown. */
+  availabilityKnown?: boolean;
   created_at: string;
 }
 

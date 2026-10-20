@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import bookingRoutes from './booking.routes.js';
 import chargerRoutes from './charger.routes.js';
+import discoveryRoutes from './discovery.routes.js';
 import stationRoutes from './station.routes.js';
 import userRoutes from './user.routes.js';
 
@@ -16,6 +17,7 @@ router.get('/health', (_req, res) => {
 
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
+router.use('/discovery', discoveryRoutes);
 router.use('/stations', stationRoutes);
 router.use(chargerRoutes);
 router.use('/bookings', bookingRoutes);
