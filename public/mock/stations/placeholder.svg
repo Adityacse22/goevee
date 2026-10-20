@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 336 208" width="336" height="208" role="img" aria-label="EV charging station">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1F1A"/>
+      <stop offset="0.55" stop-color="#0F3D2E"/>
+      <stop offset="1" stop-color="#16A34A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="44%" r="52%">
+      <stop offset="0" stop-color="#4ADE80" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#4ADE80" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pillar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D1FAE5"/>
+    </linearGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0V28" fill="none" stroke="#FFFFFF" stroke-opacity="0.055" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="336" height="208" fill="url(#bg)"/>
+  <rect width="336" height="208" fill="url(#grid)"/>
+  <ellipse cx="168" cy="104" rx="150" ry="100" fill="url(#glow)"/>
+
+  <!-- Charger pillar -->
+  <g transform="translate(140 44)">
+    <rect x="0" y="0" width="56" height="108" rx="14" fill="url(#pillar)"/>
+    <rect x="10" y="12" width="36" height="28" rx="7" fill="#0B3B2A"/>
+    <path d="M30 15.5 21.5 27h7l-1.5 9.5L36 25h-7l1-9.5Z" fill="#4ADE80"/>
+    <rect x="18" y="52" width="20" height="5" rx="2.5" fill="#86EFAC"/>
+    <rect x="18" y="64" width="20" height="5" rx="2.5" fill="#A7F3D0" opacity="0.75"/>
+    <circle cx="28" cy="88" r="5" fill="#16A34A"/>
+    <path d="M56 34c13 0 18 8 18 19v24c0 9 4 13 10 13" fill="none" stroke="#D1FAE5" stroke-width="5" stroke-linecap="round"/>
+    <rect x="78" y="87" width="15" height="26" rx="6" fill="#D1FAE5"/>
+  </g>
+
+  <!-- Ground shadow -->
+  <ellipse cx="168" cy="163" rx="94" ry="11" fill="#04140F" opacity="0.4"/>
+
+  <!-- Small location marker to echo the GoEvee brand -->
+  <g transform="translate(234 68)" opacity="0.95">
+    <path d="M16 0C7.2 0 0 7 0 15.7 0 26.8 13.9 38.6 15.1 39.6a1.5 1.5 0 0 0 1.9 0C18.1 38.6 32 26.8 32 15.7 32 7 24.8 0 16 0Z" fill="#FFFFFF" fill-opacity="0.16" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1.5"/>
+    <path d="M17.7 8.3 11.6 16.2h4.1l-1.4 6.5 6.1-8.2h-4.1l1.4-6.2Z" fill="#FFFFFF"/>
+  </g>
+</svg>
